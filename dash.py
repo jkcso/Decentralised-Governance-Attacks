@@ -12,9 +12,9 @@ CAPABILITIES:
     with the real time values of the following parameters:
         1) Dash Price($)
         2) Price Increase Factor
-        3) Number of Active Masternodes
+        3) Number of Active MN
         4) Coins in Circulation
-        5) How many masternodes to control after purchasing them.
+        5) How many MN to control after purchasing them.
         
 IMPORTANT:
     Here, what we are trying to achieve is a Proof of Concept regarding the attack
@@ -50,7 +50,7 @@ Example:
 """
 
 
-def buy_X_MN(num, coin_price, exp_incr, coins, mn):
+def buy_x_mn(num, coin_price, exp_incr, coins, mn):
     collateral_req = 1000
     freezed = collateral_req * mn
     remaining_coins = coins - freezed
@@ -81,9 +81,10 @@ def buy_X_MN(num, coin_price, exp_incr, coins, mn):
     im = "IMPOSSIBLE!"
     attack_outcome = p if new_remaining >= 0 else im
     print("\n    --  PURCHASE OUTCOME:", attack_outcome, " --")
-    if attack_outcome == im: print(
-        "WHY: The reason is because the coins required for this purchase are not enough as\n     they exceed the "
-        "total available coin supply!")
+    if attack_outcome == im:
+        print(
+            "WHY: The reason is because the coins required for this purchase are not enough as\n     they exceed the "
+            "total available coin supply!")
     print("New Dash Price after this investment: $" + str(new_price)[0:8])
     print("Total Cost of Purchase (including dynamic price increase): $" + str(cost))
     print("Coins in circulations after purchase:", coins)
@@ -209,7 +210,7 @@ def main():
 
         try:
             price = float(price) if price else float(dash['price_usd'])
-            exp = float((int(exp) + 5) * -1) if exp and (int(exp) > 0 and int(exp) < 11) else float(-11.4)
+            exp = float((int(exp) + 5) * -1) if exp and (0 < int(exp) < 11) else float(-11.4)
             exp_incr = math.pow(math.e, exp)
             mn = int(mn) if mn else stats["raw"]["mn_count"]
             coins = float(coins * 1000000) if coins else float(dash['available_supply'])
@@ -223,7 +224,7 @@ def main():
         i += 1
 
     report(price, exp_incr, mn, coins)
-    cost, new_price = buy_X_MN(num_mn, price, exp_incr, coins, mn)
+    cost, new_price = buy_x_mn(num_mn, price, exp_incr, coins, mn)
     print()
 
 
