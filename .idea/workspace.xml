@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="856">
-              <caret line="231" selection-start-line="231" selection-end-line="231" />
+            <state relative-caret-position="2023">
+              <caret line="119" column="81" lean-forward="true" selection-start-line="119" selection-start-column="81" selection-end-line="119" selection-end-column="81" />
               <folding>
                 <element signature="e#38#70#0" expanded="true" />
               </folding>
@@ -38,6 +36,12 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>buy_X_MN</find>
+      <find>MN</find>
+      <find>new_num_freezed</find>
+      <find>perc_mal</find>
+      <find>freezed</find>
+      <find>perc_mn</find>
+      <find>perc_total_mn</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -114,12 +118,12 @@
       <workItem from="1555168603255" duration="107000" />
       <workItem from="1555168725367" duration="52000" />
       <workItem from="1555168995851" duration="763000" />
-      <workItem from="1555169776222" duration="1113000" />
+      <workItem from="1555169776222" duration="2593000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3082000" />
+    <option name="totallyTimeSpent" value="4562000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -166,8 +170,8 @@
     <entry file="file://$PROJECT_DIR$/.gitignore" />
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="856">
-          <caret line="231" selection-start-line="231" selection-end-line="231" />
+        <state relative-caret-position="2023">
+          <caret line="119" column="81" lean-forward="true" selection-start-line="119" selection-start-column="81" selection-end-line="119" selection-end-column="81" />
           <folding>
             <element signature="e#38#70#0" expanded="true" />
           </folding>
