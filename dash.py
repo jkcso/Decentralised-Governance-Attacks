@@ -195,9 +195,9 @@ def main():
 
     # Retrieves Dash real time data.
     cmc = Market()
-    coins = cmc.ticker(limit=20)
+    coins = cmc.ticker(limit=40)
     dash = ''
-    for i in range(0, 20):
+    for i in range(0, 40):
         if coins[i]['id'] == 'dash':
             dash = coins[i]
             break
