@@ -3,6 +3,9 @@
 # API Documentation: https://coinmarketcap.com/api/documentation/v1/#section/Introduction
 # Live Rankings: https://coinmarketcap.com
 
+# Info to Reference about this API:
+
+
 from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json

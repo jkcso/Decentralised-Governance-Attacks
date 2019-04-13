@@ -1,8 +1,11 @@
-# *** RUN IT USING PYTHON >= 3.6 ***
+# Run in Python3.6
 
-from coinmarketcap import Market
+from requests import Session
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from urllib.request import Request, urlopen
 import json
+import os
+import ssl
 import math
 
 """
@@ -182,7 +185,7 @@ to be achieved and does not guarantee success! Notice that in the long term, mor
 years would be needed to acquire further 1K Master Nodes!
 """)
 
-    return cost, new_price
+    # return cost, new_price
 
 
 # This is the main method of the program, responsible for IO using the above methods.
@@ -193,20 +196,6 @@ def main():
     --  Press enter to proceed with the real time values  --
     """)
 
-    # Retrieves Dash real time data.
-    cmc = Market()
-    coins = cmc.ticker(limit=40)
-    dash = ''
-    for i in range(0, 40):
-        if coins[i]['id'] == 'dash':
-            dash = coins[i]
-            break
-
-    # Retrieves master nodes real time data.
-    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
-    req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
-    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
-
     i = 1  # Keep looping with same questions unless data in correct form is provided.
     while True:
         price = input('Customised Price($): (press enter for real time price) ')
@@ -216,11 +205,48 @@ def main():
         num_mn = input('How many master nodes you want to control?:  (press enter for net 10% malicious Master Nodes) ')
 
         try:
-            price = float(price) if price else float(dash['price_usd'])
+            url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+            parameters = {
+                'start': '1',
+                'limit': '20',
+                'convert': 'GBP'
+            }
+            headers = {
+                'Accepts': 'application/json',
+                'X-CMC_PRO_API_KEY': 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
+            }
+
+            session = Session()
+            session.headers.update(headers)
+
+            try:
+                response = session.get(url, params=parameters)
+                data = json.loads(response.text)
+
+                global real_time_price, real_time_circulation
+                real_time_price = real_time_circulation = 0
+
+                for i in range(1, 20):
+                    if data['data'][i]['name'] == 'Dash':
+                        real_time_price = data['data'][i]['quote']['GBP']['price']
+                        real_time_circulation = data['data'][i]['circulating_supply']
+            except (ConnectionError, Timeout, TooManyRedirects) as e:
+                print(e)
+
+            # Retrieves master nodes real time data.
+            if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+                    getattr(ssl, '_create_unverified_context', None)):
+                ssl._create_default_https_context = ssl._create_unverified_context
+
+            mn_stats = 'https://stats.masternode.me/network-report/latest/json'
+            req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
+            stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+
+            price = float(price) if price else float(real_time_price)
             exp = float((int(exp) + 5) * -1) if exp and (0 < int(exp) < 11) else float(-11.4)
             exp_incr = math.pow(math.e, exp)
             mn = int(mn) if mn else stats["raw"]["mn_count"]
-            coins = float(coins * 1000000) if coins else float(dash['available_supply'])
+            coins = float(coins * 1000000) if coins else float(real_time_circulation)
             num_mn = int(num_mn) if num_mn else int((mn * 1.1) + 1)
             break
         except ValueError:
@@ -231,7 +257,7 @@ def main():
         i += 1
 
     report(price, exp_incr, mn, coins)
-    cost, new_price = buy_x_mn(num_mn, price, exp_incr, coins, mn)
+    buy_x_mn(num_mn, price, exp_incr, coins, mn)
     print()
 
 
