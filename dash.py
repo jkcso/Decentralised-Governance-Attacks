@@ -204,11 +204,11 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
         "<------ (Problematic Result)", "\nBut we requested the purchase of", num, "Master Nodes",
         "<------ (Problematic Result)")
 
-    anti_dos_poss = math.floor(num * 1.1)
-    anti_dos_needed = math.ceil(possible_mn * 1.1)
+    anti_dos_poss = math.floor(num * 1.1) + 1
+    anti_dos_needed = math.ceil(possible_mn * 1.1) + 1
     approved_anw = math.ceil(num / 1.1) - 1
     avg_mn_votes = math.floor(mn * 0.6)
-    net_10_anw = math.floor(avg_mn_votes * 1.1)
+    net_10_anw = math.floor(avg_mn_votes * 1.1) + 1
     negligence_out = "YES!" if num >= net_10_anw or (num + new_possible_mn) >= net_10_anw else "NO!"
     total_rem = total_supply - coins
     total_rem_mn = math.floor(int(total_rem // collateral_req))
@@ -297,7 +297,7 @@ def main():
             exp_incr = math.pow(math.e, exp)
             mn = int(mn) if mn else acquire_real_mn_number()
             coins = int(coins) if coins else acquire_real_time_circulation()
-            num_mn = int(num_mn) if num_mn else int(math.ceil(mn * 1.1))
+            num_mn = int(num_mn) if num_mn else int(math.ceil(mn * 1.1)) + 1
             break
         except ValueError:
             print()

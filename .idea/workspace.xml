@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="516">
-              <caret line="292" lean-forward="true" selection-start-line="292" selection-end-line="292" />
+            <state relative-caret-position="612">
+              <caret line="299" column="76" selection-start-line="299" selection-start-column="76" selection-end-line="299" selection-end-column="76" />
               <folding>
                 <element signature="e#20#48#0" expanded="true" />
               </folding>
@@ -69,10 +69,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-142" />
-    <option name="y" value="-1080" />
-    <option name="width" value="1920" />
-    <option name="height" value="1080" />
+    <option name="x" value="43" />
+    <option name="y" value="23" />
+    <option name="width" value="1637" />
+    <option name="height" value="1027" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -208,12 +208,13 @@
       <workItem from="1555168995851" duration="763000" />
       <workItem from="1555169776222" duration="10511000" />
       <workItem from="1555194449714" duration="387000" />
-      <workItem from="1555241946628" duration="10800000" />
+      <workItem from="1555241946628" duration="11044000" />
+      <workItem from="1555281514194" duration="236000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23667000" />
+    <option name="totallyTimeSpent" value="24147000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -225,7 +226,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-142" y="-1080" width="1920" height="1080" extended-state="6" />
+    <frame x="43" y="23" width="1877" height="1057" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.18530351" />
@@ -240,7 +241,7 @@
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32953367" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32124352" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32085562" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32953367" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.32894737" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -250,7 +251,7 @@
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="SciView" order="5" />
       <window_info anchor="right" id="Database" order="6" />
-      <window_info active="true" anchor="right" id="Run" order="7" visible="true" weight="0.43663472" />
+      <window_info anchor="right" id="Run" order="7" weight="0.62068963" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -285,8 +286,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="516">
-          <caret line="292" lean-forward="true" selection-start-line="292" selection-end-line="292" />
+        <state relative-caret-position="612">
+          <caret line="299" column="76" selection-start-line="299" selection-start-column="76" selection-end-line="299" selection-end-column="76" />
           <folding>
             <element signature="e#20#48#0" expanded="true" />
           </folding>
