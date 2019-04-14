@@ -13,7 +13,7 @@ CAPABILITIES:
     Using this simulator, an attacker is able to control the following parameters to make
     an attacking scenario against Dash Decentralised Governance fully customised, or proceed
     with the real time values of the following parameters:
-        1) Dash Price($)
+        1) Dash Price(£)
         2) Price Increase Factor
         3) Number of Active Master Nodes
         4) Coins in Circulation
@@ -29,11 +29,103 @@ IMPORTANT:
 """
 
 
+def intro():
+
+    print("""
+    --  DASH CORRUPTED GOVERNANCE ATTACK SIMULATOR  --
+    --  Please provide customised information for any parameter OR
+    --  Press enter to proceed with the real time values  --
+    """)
+
+
+def acquire_real_time_price():
+
+    try:
+        url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+        parameters = {
+            'start': '1',
+            'limit': '20',
+            'convert': 'GBP'
+        }
+        headers = {
+            'Accepts': 'application/json',
+            'X-CMC_PRO_API_KEY': 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
+        }
+
+        session = Session()
+        session.headers.update(headers)
+
+        try:
+            response = session.get(url, params=parameters)
+            data = json.loads(response.text)
+
+            real_time_price = 0
+
+            for i in range(1, 20):
+                if data['data'][i]['name'] == 'Dash':
+                    real_time_price = data['data'][i]['quote']['GBP']['price']
+            return float("{0:.2f}".format(real_time_price))
+
+        except (ConnectionError, Timeout, TooManyRedirects) as e:
+            print(e)
+    except ValueError:
+        pass
+
+
+def acquire_real_time_circulation():
+
+    try:
+        url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+        parameters = {
+            'start': '1',
+            'limit': '20',
+            'convert': 'GBP'
+        }
+        headers = {
+            'Accepts': 'application/json',
+            'X-CMC_PRO_API_KEY': 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
+        }
+
+        session = Session()
+        session.headers.update(headers)
+
+        try:
+            response = session.get(url, params=parameters)
+            data = json.loads(response.text)
+
+            real_time_circulation = 0
+
+            for i in range(1, 20):
+                if data['data'][i]['name'] == 'Dash':
+                    real_time_circulation = data['data'][i]['circulating_supply']
+            return int(real_time_circulation)
+
+        except (ConnectionError, Timeout, TooManyRedirects) as e:
+            print(e)
+    except ValueError:
+        pass
+
+
+# Retrieves master nodes real time data.
+def acquire_real_mn_number():
+
+    if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+            getattr(ssl, '_create_unverified_context', None)):
+        ssl._create_default_https_context = ssl._create_unverified_context
+
+    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
+    req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
+    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+
+    return stats["raw"]["mn_count"]
+
+
 # Outputs the values we proceed during the simulation.
 def report(price, exp_incr, mn, coins):
+
     print()
     print("    --  VALUES PROCEEDING WITH  --")
-    print("Price: $" + str(price))
+    print("Price: £" + str(price))
     print("Price Increase Factor (in Decimal):", exp_incr)
     print("Number of Active Master Nodes:", mn)
     print("Coins in circulation:", coins)
@@ -44,9 +136,9 @@ Proceeds to the purchase of X Master Nodes and then analyses the newly created s
 providing also possible scenarios on how attackers and defenders might proceed.
 Example:
     We purchase X=10 Master Nodes.  Each requires a collateral of 1K DASH, therefore
-    we would need 10K DASH.  If 1 DASH costs $300, then the final cost of investment
-    due to the dynamic price increase would be $3000559.71 and the new DASH price will
-    increase to $300.11.
+    we would need 10K DASH.  If 1 DASH costs £300, then the final cost of investment
+    due to the dynamic price increase would be £3000559.71 and the new DASH price will
+    increase to £300.11.
     Then we generate statistics on how successful the attacker can be by controlling this
     X amount of Master Nodes and we provide further options on how to proceed that are able
     to help both attacking and defending parties for one step forward, always ethically.
@@ -61,7 +153,7 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
     percentage_master_nodes = str(float((possible_mn / mn) * 100))[0:4]
 
     print("\n    --  PROCEEDING TO THE PURCHASE OF", num, "MASTER NODES  --")
-    print("Dash Price before purchase: $" + str(coin_price))
+    print("Dash Price before purchase: £" + str(coin_price))
     print("Active Master Nodes before purchase:", mn)
     print("Coins in circulations before purchase:", coins)
     print("From which coins frozen for required collateral:", frozen)
@@ -88,12 +180,12 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
         print(
             "WHY: The reason is because the coins required for this purchase are not enough as\n     they exceed the "
             "total available coin supply!")
-    print("New Dash Price after this investment: $" + str(new_price)[0:8])
-    print("Total Cost of Purchase (including dynamic price increase): $" + str(cost))
+    print("New Dash Price after this investment: £" + "{0:.2f}".format(new_price))
+    print("Total Cost of Purchase (including dynamic price increase): £" + "{0:.3f}".format(cost))
     print("Coins in circulations after purchase:", coins)
     print("From which coins frozen for required collateral:", new_num_frozen) if attack_outcome == p else print(
         "From which coins frozen for required collateral:", new_num_frozen, "<------ (Problematic Result)")
-    print("Therefore, coins remaining unfrozen:", new_remaining,
+    print("Therefore, coins remaining unfrozen:", "{0:.3f}".format(new_remaining),
           "<------ (Problematic Result)") if attack_outcome == im else print("Therefore, coins remaining unfrozen:",
                                                                              new_remaining,
                                                                              "\nWhich are enough to acquire more Master"
@@ -112,11 +204,11 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
         "<------ (Problematic Result)", "\nBut we requested the purchase of", num, "Master Nodes",
         "<------ (Problematic Result)")
 
-    anti_dos_poss = math.floor(num * 1.1) + 1
-    anti_dos_needed = math.ceil(possible_mn * 1.1) + 1
+    anti_dos_poss = math.floor(num * 1.1)
+    anti_dos_needed = math.ceil(possible_mn * 1.1)
     approved_anw = math.ceil(num / 1.1) - 1
     avg_mn_votes = math.floor(mn * 0.6)
-    net_10_anw = math.floor(avg_mn_votes * 1.1) + 1
+    net_10_anw = math.floor(avg_mn_votes * 1.1)
     negligence_out = "YES!" if num >= net_10_anw or (num + new_possible_mn) >= net_10_anw else "NO!"
     total_rem = total_supply - coins
     total_rem_mn = math.floor(int(total_rem // collateral_req))
@@ -168,7 +260,8 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
         print("     and we previously needed at least this amount for majority:", net_10_anw, "Master Nodes")
 
     print("\n3) Maintain a stealthy future")
-    print("Current supply (% against total): ", coins, "(" + percentage_total_master_nodes + "%)")
+    print("Current supply (% against total): ", coins, "(" +
+          percentage_total_master_nodes + "%)")
     print("Total (ever) coin supply:", total_supply)
     print("Remaining Supply/Possible new Master Nodes:", total_rem, "/", total_rem_mn)
     print("Below is the minimum number of coins expected per year along with (%) against total coin supply:")
@@ -185,76 +278,30 @@ to be achieved and does not guarantee success! Notice that in the long term, mor
 years would be needed to acquire further 1K Master Nodes!
 """)
 
-    # return cost, new_price
-
 
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
-    print("""
-    --  DASH CORRUPTED GOVERNANCE ATTACK SIMULATOR  --
-    --  Please provide customised information for any parameter OR
-    --  Press enter to proceed with the real time values  --
-    """)
 
-    i = 1  # Keep looping with same questions unless data in correct form is provided.
+    intro()
+
     while True:
-        price = input('Customised Price($): (press enter for real time price) ')
+        price = input('Customised Price(£): (press enter for real time price) ')
         exp = input('Price Increase Factor (1-10)(1: Aggressive, 10: Slow): (press enter for default factor) ')
         mn = input('Number of Active Master Nodes:  (press enter for real time active Master Nodes) ')
         coins = input('Coins in Circulation (in Millions):  (press enter for real time circulation) ')
         num_mn = input('How many master nodes you want to control?:  (press enter for net 10% malicious Master Nodes) ')
 
         try:
-            url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
-            parameters = {
-                'start': '1',
-                'limit': '20',
-                'convert': 'GBP'
-            }
-            headers = {
-                'Accepts': 'application/json',
-                'X-CMC_PRO_API_KEY': 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
-            }
-
-            session = Session()
-            session.headers.update(headers)
-
-            try:
-                response = session.get(url, params=parameters)
-                data = json.loads(response.text)
-
-                global real_time_price, real_time_circulation
-                real_time_price = real_time_circulation = 0
-
-                for i in range(1, 20):
-                    if data['data'][i]['name'] == 'Dash':
-                        real_time_price = data['data'][i]['quote']['GBP']['price']
-                        real_time_circulation = data['data'][i]['circulating_supply']
-            except (ConnectionError, Timeout, TooManyRedirects) as e:
-                print(e)
-
-            # Retrieves master nodes real time data.
-            if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
-                    getattr(ssl, '_create_unverified_context', None)):
-                ssl._create_default_https_context = ssl._create_unverified_context
-
-            mn_stats = 'https://stats.masternode.me/network-report/latest/json'
-            req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
-            stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
-
-            price = float(price) if price else float(real_time_price)
+            price = float(price) if price else acquire_real_time_price()
             exp = float((int(exp) + 5) * -1) if exp and (0 < int(exp) < 11) else float(-11.4)
             exp_incr = math.pow(math.e, exp)
-            mn = int(mn) if mn else stats["raw"]["mn_count"]
-            coins = float(coins * 1000000) if coins else float(real_time_circulation)
-            num_mn = int(num_mn) if num_mn else int((mn * 1.1) + 1)
+            mn = int(mn) if mn else acquire_real_mn_number()
+            coins = int(coins) if coins else acquire_real_time_circulation()
+            num_mn = int(num_mn) if num_mn else int(math.ceil(mn * 1.1))
             break
         except ValueError:
+            print()
             pass
-
-    while i <= price:
-        ...
-        i += 1
 
     report(price, exp_incr, mn, coins)
     buy_x_mn(num_mn, price, exp_incr, coins, mn)
