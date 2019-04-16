@@ -13,11 +13,12 @@ CAPABILITIES:
     Using this simulator, an attacker is able to control the following parameters to make
     an attacking scenario against Dash Decentralised Governance fully customised, or proceed
     with the real time values of the following parameters:
-        1) Dash Price(£)
-        2) Price Increase Factor
-        3) Number of Active Master Nodes
-        4) Coins in Circulation
-        5) How many Master Nodes to control after purchasing them.
+        1) Attack Budget (£)
+        2) Dash Price (£)
+        3) Price Increase Factor
+        4) Total of Active Master Nodes
+        5) Coins in Circulation
+        6) Number of Master Nodes already in possession
         
 IMPORTANT:
     Here, what we are trying to achieve is a Proof of Concept regarding the attack
@@ -30,7 +31,6 @@ IMPORTANT:
 
 
 def intro():
-
     print("""
     --  DASH CORRUPTED GOVERNANCE ATTACK SIMULATOR  --
     --  Please provide customised information for any parameter OR
@@ -39,7 +39,6 @@ def intro():
 
 
 def acquire_real_time_price():
-
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
@@ -73,7 +72,6 @@ def acquire_real_time_price():
 
 
 def acquire_real_time_circulation():
-
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
@@ -107,8 +105,7 @@ def acquire_real_time_circulation():
 
 
 # Retrieves master nodes real time data.
-def acquire_real_mn_number():
-
+def acquire_real_time_mn_number():
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -121,14 +118,16 @@ def acquire_real_mn_number():
 
 
 # Outputs the values we proceed during the simulation.
-def report(price, exp_incr, mn, coins):
-
+def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled):
     print()
     print("    --  VALUES PROCEEDING WITH  --")
-    print("Price: £" + str(price))
-    print("Price Increase Factor (in Decimal):", exp_incr)
-    print("Number of Active Master Nodes:", mn)
+    print("Attack Budget: Equals total cost as estimated below") if budget == 0\
+        else print("Attack Budget: £" + str(budget))
+    print("Dash Price: £" + str(coin_price))
+    print("Dash Price Increase Factor (in Decimal):", exp_incr)
+    print("Number of Active Master Nodes:", active_mn)
     print("Coins in circulation:", coins)
+    print("Master Nodes already under control or bribe:", mn_controlled)
 
 
 """
@@ -145,16 +144,17 @@ Example:
 """
 
 
-def buy_x_mn(num, coin_price, exp_incr, coins, mn):
+def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled):
+    num_mn = int(math.ceil(active_mn * 1.1)) + 1
     collateral_req = 1000
-    frozen = collateral_req * mn
+    frozen = collateral_req * active_mn
     remaining_coins = coins - frozen
     possible_mn = math.floor(int(remaining_coins // collateral_req))
-    percentage_master_nodes = str(float((possible_mn / mn) * 100))[0:4]
+    percentage_master_nodes = str(float((possible_mn / active_mn) * 100))[0:4]
 
-    print("\n    --  PROCEEDING TO THE PURCHASE OF", num, "MASTER NODES  --")
+    print("\n    --  ATTEMPTING TO PURCHASE", num_mn, "MASTER NODES  --")
     print("Dash Price before purchase: £" + str(coin_price))
-    print("Active Master Nodes before purchase:", mn)
+    print("Active Master Nodes before purchase:", active_mn)
     print("Coins in circulations before purchase:", coins)
     print("From which coins frozen for required collateral:", frozen)
     print("Therefore, coins remaining unfrozen:", remaining_coins)
@@ -162,15 +162,15 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
 
     cost = float(0)
     new_price = coin_price
-    for i in range(0, num * collateral_req):
+    for i in range(0, num_mn * collateral_req):
         cost += new_price
         new_price += exp_incr
-    new_num_frozen = frozen + num * collateral_req
+    new_num_frozen = frozen + num_mn * collateral_req
     new_remaining = coins - new_num_frozen
-    new_num_mn = mn + num
+    new_num_mn = active_mn + num_mn
     total_supply = 18900000
     new_possible_mn = math.floor(int(new_remaining // collateral_req))
-    percentage_malicious = str(float((num / new_num_mn) * 100))[0:4]
+    percentage_malicious = str(float((num_mn / new_num_mn) * 100))[0:4]
 
     p = "POSSIBLE!"
     im = "IMPOSSIBLE!"
@@ -178,38 +178,35 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
     print("\n    --  PURCHASE OUTCOME:", attack_outcome, " --")
     if attack_outcome == im:
         print(
-            "WHY: The reason is because the coins required for this purchase are not enough as\n     they exceed the "
-            "total available coin supply!")
+            "WHY: The reason is because the coins required for this purchase are not enough as\n     "
+            "they exceed the total available coin supply!")
     print("New Dash Price after this investment: £" + "{0:.2f}".format(new_price))
     print("Total Cost of Purchase (including dynamic price increase): £" + "{0:.3f}".format(cost))
     print("Coins in circulations after purchase:", coins)
     print("From which coins frozen for required collateral:", new_num_frozen) if attack_outcome == p else print(
         "From which coins frozen for required collateral:", new_num_frozen, "<------ (Problematic Result)")
-    print("Therefore, coins remaining unfrozen:", "{0:.3f}".format(new_remaining),
-          "<------ (Problematic Result)") if attack_outcome == im else print("Therefore, coins remaining unfrozen:",
-                                                                             new_remaining,
-                                                                             "\nWhich are enough to acquire more Master"
-                                                                             " Nodes, actually:",
-                                                                             new_possible_mn, "Master Nodes",
-                                                                             "\nWhich as a percentage, takes this "
-                                                                             "share from the total active Master Nodes:"
-                                                                             + " " + percentage_master_nodes + "%",
-                                                                             "\nThis percentage is high, but not "
-                                                                             "enough to achieve a net 10% over honest "
-                                                                             "Master Nodes")
-    print("Active Master Nodes after purchase:", new_num_mn, "\nFrom which malicious:", num, "(" + percentage_malicious
-          + "%)",
-          "\nTherefore, the honest nodes have the net majority!") if attack_outcome == p else print(
-        "The available coin supply was enough to buy this amount of Master Nodes:", possible_mn, "Master Nodes",
-        "<------ (Problematic Result)", "\nBut we requested the purchase of", num, "Master Nodes",
-        "<------ (Problematic Result)")
 
-    anti_dos_poss = math.floor(num * 1.1) + 1
+    print("Therefore, coins remaining unfrozen:", "{0:.3f}".format(new_remaining),
+          "<------ (Problematic Result)") if attack_outcome == im \
+        else print("Therefore, coins remaining unfrozen:", new_remaining,
+                   "\nWhich are enough to acquire more Master Nodes, actually:", new_possible_mn, "Master Nodes",
+                   "\nWhich as a percentage, takes this share from the total active Master Nodes: " +
+                   percentage_master_nodes + "%",
+                   "\nThis percentage is high, but not enough to achieve a net 10% over honest Master Nodes")
+
+    print("Active Master Nodes after purchase:", new_num_mn,
+          "\nFrom which malicious:", num_mn, "(" + percentage_malicious + "%)",
+          "\nTherefore, the honest nodes have the net majority!") if attack_outcome == p\
+        else print("The available coin supply was enough to buy this amount of Master Nodes:", possible_mn,
+                   "Master Nodes", "<------ (Problematic Result)", "\nBut we requested the purchase of", num_mn,
+                   "Master Nodes", "<------ (Problematic Result)")
+
+    anti_dos_poss = math.floor(num_mn * 1.1) + 1
     anti_dos_needed = math.ceil(possible_mn * 1.1) + 1
-    approved_anw = math.ceil(num / 1.1) - 1
-    avg_mn_votes = math.floor(mn * 0.6)
+    approved_anw = math.ceil(num_mn / 1.1) - 1
+    avg_mn_votes = math.floor(active_mn * 0.6)
     net_10_anw = math.floor(avg_mn_votes * 1.1) + 1
-    negligence_out = "YES!" if num >= net_10_anw or (num + new_possible_mn) >= net_10_anw else "NO!"
+    negligence_out = "YES!" if num_mn >= net_10_anw or (num_mn + new_possible_mn) >= net_10_anw else "NO!"
     total_rem = total_supply - coins
     total_rem_mn = math.floor(int(total_rem // collateral_req))
     percentage_total_master_nodes = str(float((coins / total_supply) * 100))[0:4]
@@ -225,7 +222,7 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
     print("Explanation: We vote 'no' for a proposal and we hope that net 10% can't be achieved!")
 
     if attack_outcome == p:
-        print("The number of Master Nodes we acquired above is:", num, "Master Nodes")
+        print("The number of Master Nodes we acquired above is:", num_mn, "Master Nodes")
         print("This means that for a proposal to get accepted, it would need this number of positive votes:",
               anti_dos_poss, "Master Nodes")
 
@@ -239,7 +236,7 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
     print("Explanation: We vote 'yes' for a proposal and we hope in a high % of voting abstention!")
 
     if attack_outcome == p:
-        print("With this amount of Master Nodes under our control, which is:", num, "Master Nodes")
+        print("With this amount of Master Nodes under our control, which is:", num_mn, "Master Nodes")
         print("A budget proposal will be approved even if this number of honest Master Node votes against:",
               approved_anw, "Master Nodes")
 
@@ -256,7 +253,7 @@ def buy_x_mn(num, coin_price, exp_incr, coins, mn):
         print("Remember that the remaining coins are enough to acquire more Master Nodes, actually:", new_possible_mn,
               "Master Nodes")
         print("OUTCOME: If we acquire them, then we achieve net 10% in case that 60% of honest Master Node vote.")
-        print("WHY: Total number of malicious Master Nodes will become:", num + new_possible_mn, "Master Nodes")
+        print("WHY: Total number of malicious Master Nodes will become:", num_mn + new_possible_mn, "Master Nodes")
         print("     and we previously needed at least this amount for majority:", net_10_anw, "Master Nodes")
 
     print("\n3) Maintain a stealthy future")
@@ -281,30 +278,31 @@ years would be needed to acquire further 1K Master Nodes!
 
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
-
     intro()
 
     while True:
-        price = input('Customised Price(£): (press enter for real time price) ')
-        exp = input('Price Increase Factor (1-10)(1: Aggressive, 10: Slow): (press enter for default factor) ')
-        mn = input('Number of Active Master Nodes:  (press enter for real time active Master Nodes) ')
-        coins = input('Coins in Circulation (in Millions):  (press enter for real time circulation) ')
-        num_mn = input('How many master nodes you want to control?:  (press enter for net 10% malicious Master Nodes) ')
+        budget = input('Attack Budget (£):  (press enter for enough budget to be successful)  ')
+        coin_price = input('Dash Price (£):  (press enter for real time price)  ')
+        exp = input('Price Increase Factor (1-10)(1: Aggressive, 10: Slow):  (press enter for default factor)  ')
+        active_mn = input('Total of Active Master Nodes:  (press enter for real time active Master Nodes)  ')
+        coins = input('Coins in Circulation (in Millions):  (press enter for real time circulation)  ')
+        mn_controlled = input('How many Master Nodes already under control or bribe?:  (press enter for none)  ')
 
         try:
-            price = float(price) if price else acquire_real_time_price()
+            budget = float(budget) if budget else 0
+            coin_price = float(coin_price) if coin_price else acquire_real_time_price()
             exp = float((int(exp) + 5) * -1) if exp and (0 < int(exp) < 11) else float(-11.4)
             exp_incr = math.pow(math.e, exp)
-            mn = int(mn) if mn else acquire_real_mn_number()
+            active_mn = int(active_mn) if active_mn else acquire_real_time_mn_number()
             coins = int(coins) if coins else acquire_real_time_circulation()
-            num_mn = int(num_mn) if num_mn else int(math.ceil(mn * 1.1)) + 1
+            mn_controlled = int(mn_controlled) if mn_controlled else 0
             break
         except ValueError:
             print()
             pass
 
-    report(price, exp_incr, mn, coins)
-    buy_x_mn(num_mn, price, exp_incr, coins, mn)
+    report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled)
+    buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled)
     print()
 
 
