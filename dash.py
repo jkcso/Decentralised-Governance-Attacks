@@ -113,17 +113,24 @@ def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_tar
     print("Number of Active Master Nodes:", active_mn)
     print("Coins in circulation:", coins)
     print("Master Nodes already under control or bribe:", mn_controlled)
+
     malicious_net_10 = int(math.ceil(active_mn * 1.1)) + 1
+    budget_mn = math.floor(int(budget // (coin_price * DASH_MN_COLLATERAL)))
+    mn_target = budget_mn if budget > 0 else malicious_net_10
+
     print("Target Total Master Nodes: Not specified therefore equals the Malicious Net 10%") \
         if mn_target == malicious_net_10 \
-        else print("Target Total Master Nodes:", mn_target)
+        else print("Target Total Master Nodes:", mn_target if budget == 0 else budget_mn, "due to budget specified")
 
-    num_mn_for_attack = mn_target - mn_controlled if budget == 0 else math.floor(int(budget // DASH_MN_COLLATERAL))
+    num_mn_for_attack = mn_target - mn_controlled if budget == 0 else budget_mn
 
     print()
     print("    --  ATTACK PHASE ZERO  --")
     print("Total Master Nodes needed for Malicious Net 10%:", malicious_net_10)
-    print("Target Total Master Nodes:", mn_target)
+    print("Attack Budget: Not specified therefore equals the total cost as estimated below") \
+        if budget == 0 \
+        else print("Attack Budget: £" + str(budget), "able to acquire:", budget_mn, "Master Nodes")
+    print("Target Total Master Nodes:", mn_target if budget == 0 else budget_mn)
     print("Master Nodes already under control or bribe:", mn_controlled)
     print("Therefore, Master Nodes to acquire:", num_mn_for_attack)
 
@@ -194,7 +201,7 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
 
     print("Active Master Nodes after purchase:", new_num_mn,
           "\nFrom which malicious:", num_mn_for_attack, "(" + percentage_malicious + "%)",
-          "\nTherefore, the honest nodes have the net majority!") if attack_outcome == p\
+          "\nTherefore, the honest nodes have the net majority!") if attack_outcome == p \
         else print("The available coin supply was enough to buy this amount of Master Nodes:", possible_mn,
                    "Master Nodes", "<------ (Problematic Result)", "\nBut we requested the purchase of",
                    num_mn_for_attack, "Master Nodes", "<------ (Problematic Result)")
