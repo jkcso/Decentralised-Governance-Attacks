@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/id_dash_error.py" beforeDir="false" afterPath="$PROJECT_DIR$/id_dash_error.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="271" lean-forward="true" selection-start-line="271" selection-end-line="271" />
+            <state relative-caret-position="826">
+              <caret line="244" column="44" lean-forward="true" selection-start-line="244" selection-start-column="44" selection-end-line="244" selection-end-column="44" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -73,6 +71,7 @@
       <find>collateral_req</find>
       <find>total_supply</find>
       <find>1.1</find>
+      <find>MIN_MN</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -136,7 +135,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.id_dash_error">
+  <component name="RunManager" selected="Python.dash">
     <configuration name="dash" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SIM" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -205,8 +204,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.id_dash_error" />
         <item itemvalue="Python.dash" />
+        <item itemvalue="Python.id_dash_error" />
         <item itemvalue="Python.mn_stats_error" />
       </list>
     </recent_temporary>
@@ -231,12 +230,12 @@
       <workItem from="1555241946628" duration="11044000" />
       <workItem from="1555281514194" duration="496000" />
       <workItem from="1555419446050" duration="17132000" />
-      <workItem from="1555445422623" duration="2017000" />
+      <workItem from="1555445422623" duration="4038000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="43556000" />
+    <option name="totallyTimeSpent" value="45577000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -263,7 +262,7 @@
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32953367" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3015544" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3006073" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32953367" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.32894737" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -273,14 +272,14 @@
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="SciView" order="5" />
       <window_info anchor="right" id="Database" order="6" />
-      <window_info anchor="right" id="Run" order="7" weight="0.5202343" />
+      <window_info active="true" anchor="right" id="Run" order="7" visible="true" weight="0.5202343" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1555447290332" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1555449697212" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$mn_stats_error.coverage" NAME="mn_stats_error Coverage Results" MODIFIED="1555192832414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$id_dash_error.coverage" NAME="id_dash_error Coverage Results" MODIFIED="1555447304380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
@@ -308,8 +307,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="271" lean-forward="true" selection-start-line="271" selection-end-line="271" />
+        <state relative-caret-position="826">
+          <caret line="244" column="44" lean-forward="true" selection-start-line="244" selection-start-column="44" selection-end-line="244" selection-end-column="44" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

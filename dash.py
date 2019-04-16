@@ -10,7 +10,7 @@ DASH_MN_COLLATERAL = 1000
 MIN_COINBASE_RANKING = ONE_MN = 1
 MAX_COINBASE_RANKING = 20
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
-MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_REMAINING = MIN_MN = 0
+MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_REMAINING = MIN_CONTROL = 0
 PERCENTAGE = 100
 TOTAL_SUPPLY = 18900000
 NET_10_PERCENT = 1.1
@@ -96,7 +96,7 @@ def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_tar
 
     print("Target Total Master Nodes: Not specified therefore equals the Malicious Net 10%") \
         if mn_target == malicious_net_10 \
-        else print("Target Total Master Nodes:", mn_target if budget == MIN_BUDGET else budget_mn, "due to budget")
+        else print("Target Total Master Nodes:", mn_target if budget == MIN_BUDGET else budget_mn, "(Due To Budget)")
 
     num_mn_for_attack = mn_target - mn_controlled if budget == MIN_BUDGET else budget_mn
 
@@ -105,7 +105,7 @@ def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_tar
     print("Total Master Nodes needed for Malicious Net 10%:", malicious_net_10)
     print("Attack Budget: Not specified therefore equals the total cost as estimated below") \
         if budget == MIN_BUDGET \
-        else print("Attack Budget: £" + str(budget), "able to acquire:", budget_mn, "Master Nodes")
+        else print("Attack Budget of £" + str(budget), "is able to acquire:", budget_mn, "Master Nodes")
     print("Target Total Master Nodes:", mn_target if budget == MIN_BUDGET else budget_mn)
     print("Master Nodes already under control or bribe:", mn_controlled)
     print("Therefore, Master Nodes to acquire:", num_mn_for_attack)
@@ -150,7 +150,8 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
     new_remaining = coins - new_num_frozen
     new_num_mn = active_mn + num_mn_for_attack
     new_possible_mn = math.floor(int(new_remaining // DASH_MN_COLLATERAL))
-    percentage_malicious = str(float((num_mn_for_attack / new_num_mn) * PERCENTAGE))[0:4]
+    total_malicious = num_mn_for_attack + mn_controlled
+    percentage_malicious = str(float((total_malicious / new_num_mn) * PERCENTAGE))[0:4]
 
     p = "POSSIBLE!"
     im = "IMPOSSIBLE!"
@@ -175,8 +176,11 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
                    "\nThis percentage is high, but not enough to achieve a net 10% over honest Master Nodes")
 
     print("Active Master Nodes after purchase:", new_num_mn,
-          "\nFrom which malicious:", num_mn_for_attack, "(" + percentage_malicious + "%)",
-          "\nTherefore, the honest nodes have the net majority!") if attack_outcome == p \
+          "\nFrom which malicious:",
+          num_mn_for_attack, "+ " + str(mn_controlled) + " = " + str(num_mn_for_attack + mn_controlled)
+          if mn_controlled > MIN_CONTROL else "", "(" + percentage_malicious + "% of Total)",
+          "\nTherefore, the honest nodes have the net majority!") \
+        if attack_outcome == p \
         else print("The available coin supply was enough to buy this amount of Master Nodes:", possible_mn,
                    "Master Nodes", "<------ (Problematic Result)", "\nBut we requested the purchase of",
                    num_mn_for_attack, "Master Nodes", "<------ (Problematic Result)")
@@ -238,7 +242,7 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
         print("     and we previously needed at least this amount for majority:", net_10_anw, "Master Nodes")
 
     print("\n3) Maintain a stealthy future")
-    print("Current supply (% against total): ", coins, "(" +
+    print("Current supply (% against total):", coins, "(" +
           percentage_total_master_nodes + "%)")
     print("Total (ever) coin supply:", TOTAL_SUPPLY)
     print("Remaining Supply/Possible new Master Nodes:", total_rem, "/", total_rem_mn)
@@ -280,7 +284,7 @@ def main():
             exp_incr = math.pow(math.e, exp)
             active_mn = int(active_mn) if active_mn else acquire_real_time_mn_number()
             coins = int(coins) if coins else real_time_circulation
-            mn_controlled = int(mn_controlled) if mn_controlled else MIN_MN
+            mn_controlled = int(mn_controlled) if mn_controlled else MIN_CONTROL
             number_of_possible_masternodes = math.floor(int(coins // DASH_MN_COLLATERAL))
             mn_target = int(mn_target) \
                 if mn_target and mn_controlled < int(mn_target) <= number_of_possible_masternodes \
