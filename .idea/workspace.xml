@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/jk.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/jk.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/csv_composition.py" beforeDir="false" afterPath="$PROJECT_DIR$/csv_composition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/test.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,20 +17,15 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/csv_composition.py">
+        <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+            <state relative-caret-position="652">
+              <caret line="354" column="80" lean-forward="true" selection-start-line="354" selection-start-column="80" selection-end-line="354" selection-end-column="80" />
+              <folding>
+                <element signature="e#0#28#0" expanded="true" />
+              </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test.csv">
-          <provider editor-type-id="csv-table-editor">
-            <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-          </provider>
-          <provider selected="true" editor-type-id="csv-text-editor" />
         </entry>
       </file>
     </leaf>
@@ -66,6 +64,7 @@
       <find>total_supply</find>
       <find>1.1</find>
       <find>MIN_MN</find>
+      <find>TOTAL_SUPPLY</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -77,15 +76,15 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/mn_stats_error.py" />
         <option value="$PROJECT_DIR$/id_dash_error.py" />
-        <option value="$PROJECT_DIR$/dash.py" />
         <option value="$PROJECT_DIR$/csv_composition.py" />
+        <option value="$PROJECT_DIR$/dash.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="818" />
+    <option name="x" value="274" />
     <option name="y" value="-1080" />
-    <option name="width" value="960" />
+    <option name="width" value="1504" />
     <option name="height" value="1080" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -96,6 +95,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -107,7 +107,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -130,7 +129,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.csv_composition">
+  <component name="RunManager" selected="Python.dash">
     <configuration name="csv_composition" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SIM" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -221,8 +220,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.csv_composition" />
         <item itemvalue="Python.dash" />
+        <item itemvalue="Python.csv_composition" />
         <item itemvalue="Python.id_dash_error" />
         <item itemvalue="Python.mn_stats_error" />
       </list>
@@ -250,12 +249,13 @@
       <workItem from="1555419446050" duration="17132000" />
       <workItem from="1555445422623" duration="5401000" />
       <workItem from="1555500409403" duration="96000" />
-      <workItem from="1555500620638" duration="2291000" />
+      <workItem from="1555500620638" duration="2337000" />
+      <workItem from="1555525653377" duration="13152000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="49327000" />
+    <option name="totallyTimeSpent" value="62525000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -270,7 +270,7 @@
     <frame x="-142" y="-1080" width="1920" height="1080" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.09211928" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18051118" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -292,16 +292,16 @@
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="SciView" order="5" />
       <window_info anchor="right" id="Database" order="6" />
-      <window_info anchor="right" id="Run" order="7" weight="0.51960784" />
+      <window_info anchor="right" id="Run" order="7" weight="0.5181044" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1555451283105" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1555541164570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$mn_stats_error.coverage" NAME="mn_stats_error Coverage Results" MODIFIED="1555192832414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$csv_composition.coverage" NAME="csv_composition Coverage Results" MODIFIED="1555512652821" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$csv_composition.coverage" NAME="csv_composition Coverage Results" MODIFIED="1555534334563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$id_dash_error.coverage" NAME="id_dash_error Coverage Results" MODIFIED="1555447304380" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
@@ -323,26 +323,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dash.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="275" selection-start-line="275" selection-end-line="275" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/test.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.csv">
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
-      <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/csv_composition.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        <state relative-caret-position="170">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ena.csv">
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="22" selection-start-line="1" selection-start-column="22" selection-end-line="1" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="652">
+          <caret line="354" column="80" lean-forward="true" selection-start-line="354" selection-start-column="80" selection-end-line="354" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
