@@ -23,6 +23,7 @@ MAX_EXP = 11
 SANITISE = 5
 SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
+ADAPTOR = 2
 
 # the dictionary that then becomes the .csv file for Kibana
 # initially has some global variables useful for the dashboard
@@ -110,17 +111,21 @@ def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_tar
     new_price = coin_price
     budget_mn = MIN_BUDGET
 
-    # when budget is set a reverse dynamic calculation should be performed to account for inflation
+    # if budget is set, exchange it from GBP to DASH and perform inflation estimation for the new price and cost
     if budget > MIN_BUDGET:
-        num_mn_for_attack = MIN_TARGET
-        while cost < budget:
-            for i in range(MIN_PRICE, num_mn_for_attack * DASH_MN_COLLATERAL):
-                cost += new_price
-                new_price += exp_incr
-            num_mn_for_attack += ONE_MN
-        cost = float("{0:.3f}".format(cost))
+        budget_to_dash = math.floor(budget / coin_price)  # amount of dash exchanged from budget
+        for i in range(MIN_PRICE, budget_to_dash):
+            new_price += exp_incr
+
+        budget_mn = math.floor(int(budget_to_dash // DASH_MN_COLLATERAL))
         new_price = float("{0:.2f}".format(new_price))
-        budget_mn = math.floor(int(budget // (coin_price * DASH_MN_COLLATERAL)))
+
+        # includes inflation as part of the cost, however if the third quartile is used as from experimenting it is
+        # closer to the predictions that this simulation makes when provided with a target number of master nodes
+        # from which a budget is calculated.  The initial form of the cost prediction without optimisation would be:
+        # cost = float("{0:.3f}".format(budget_mn * DASH_MN_COLLATERAL * new_price))
+        cost = float("{0:.3f}".format(
+            budget_mn * DASH_MN_COLLATERAL * (coin_price + (budget_to_dash / (budget_to_dash - budget_to_dash / ADAPTOR) * exp_incr))))
 
     # the amount of masternodes required to launch the infamous 55% governance attack
     malicious_net_10 = int(math.ceil(active_mn * NET_10_PERCENT)) + ONE_MN
