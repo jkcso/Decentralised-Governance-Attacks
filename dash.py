@@ -9,7 +9,7 @@ import math
 
 # global variables are defined here once for clarity and duplication-free coding
 DASH_MN_COLLATERAL = 1000
-MIN_COINBASE_RANKING = ONE_MN = 1
+MIN_COINBASE_RANKING = MIN_EXP = ONE_MN = 1
 MAX_COINBASE_RANKING = 20
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_REMAINING = MIN_CONTROL = MIN_TARGET = 0
@@ -18,7 +18,7 @@ MAX_SUPPLY = 18900000
 NET_10_PERCENT = 1.1
 MIN_10_PERCENT = 0.1
 INVERSE = -1
-DEF_EXP = -11.4
+DEF_EXP = -13  # corresponds to number 8 from 1-10 scale which is medium to slow exponential increase
 MAX_EXP = 11
 SANITISE = 5
 SIXTY_PERCENT = 0.6
@@ -257,7 +257,7 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
                    "\nWhich are enough to acquire more Master Nodes, actually:", new_possible_mn, "Master Nodes",
                    "\nWhich as a percentage, takes this share from the total possible to buy master nodes: " +
                    percentage_mn_left + "%",
-                   "\nThis percentage is high, but not enough to achieve a net 10% (by 55% total) over honest owners")
+                   "\nRemember that 55% is the perfect percentage which guarantees success in any governance attack")
 
     print("Active Master Nodes after purchase:", new_num_mn) if new_num_mn <= possible_mn \
         else print("Potential Active Master Nodes after purchase:", new_num_mn)
@@ -266,7 +266,7 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
           if mn_controlled > MIN_CONTROL else "", "(" + percentage_malicious + "% of Total)")
 
     print("The available coin supply was enough to buy this amount of Master Nodes:", possible_mn,
-          "\nAnd Purchase attempted was for: ", num_mn_for_attack, "Master Nodes", "<------ (Problematic Result)"
+          "\nThe purchase attempted was for: ", num_mn_for_attack, "Master Nodes", "<------ (Problematic Result)"
           if num_mn_for_attack > possible_mn else "")
 
     # The initial attack was not realised due to the high number of masternodes attempted to purchase, therefore
@@ -422,7 +422,7 @@ def main():
             real_time_circulation = real_time_data[1]
             budget = float(budget) if budget else MIN_BUDGET
             coin_price = float(coin_price) if coin_price else real_time_price
-            exp = float((int(exp) + SANITISE) * INVERSE) if exp and (MIN_PRICE < int(exp) < MAX_EXP) else float(DEF_EXP)
+            exp = float((int(exp) + SANITISE) * INVERSE) if exp and (MIN_EXP < int(exp) < MAX_EXP) else float(DEF_EXP)
             exp_incr = math.pow(math.e, exp)
             active_mn = int(active_mn) if active_mn else acquire_real_time_mn_number()
             coins = int(coins) if coins else real_time_circulation
