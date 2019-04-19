@@ -1,11 +1,16 @@
 import pdfkit
 
-s2 = """
-a
+# less than symbol, b, r, greater than symbol.
 
-b
-c
+s2 = """
+To break lines in text<br>
+use the br operator<br><br>
+
+This is a new paragraph followed by<br>
+a new line.
 """
+
+
 
 h1 = """<html>
 <head></head>
