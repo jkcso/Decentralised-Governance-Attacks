@@ -95,6 +95,43 @@ def create_csv(csv_filename):
         w.writerow(kibana_dict)
 
 
+def create_pdf():
+    import pdfkit
+
+    s2 = """
+    To break lines in text<br>
+    use the br operator<br><br>
+
+    This is a new paragraph followed by<br>
+    a new line.
+    """
+
+    h1 = """<html>
+    <head></head>
+    <body><p>"""
+
+    h2 = """</p></body>
+    </html>"""
+
+    content = h1 + s2 + h2
+
+    f = open('out.html', 'w')
+    f.write(content)
+    f.close()
+
+    options = {
+        'page-size': 'A4',
+        'margin-top': '0.75in',
+        'margin-right': '0.75in',
+        'margin-bottom': '0.75in',
+        'margin-left': '0.75in',
+        'encoding': 'UTF-8',
+        'quiet': ''
+    }
+
+    pdfkit.from_file('out.html', 'out.pdf')
+
+
 # Outputs the values we proceed during the simulation.
 def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
     print()

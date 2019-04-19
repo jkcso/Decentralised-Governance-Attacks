@@ -1,7 +1,5 @@
 import pdfkit
 
-# less than symbol, b, r, greater than symbol.
-
 s2 = """
 To break lines in text<br>
 use the br operator<br><br>
@@ -9,8 +7,6 @@ use the br operator<br><br>
 This is a new paragraph followed by<br>
 a new line.
 """
-
-
 
 h1 = """<html>
 <head></head>
@@ -21,7 +17,7 @@ h2 = """</p></body>
 
 content = h1 + s2 + h2
 
-f = open('out.html', 'w')
+f = open('default.html', 'w')
 f.write(content)
 f.close()
 
@@ -35,4 +31,4 @@ options = {
     'quiet': ''
 }
 
-pdfkit.from_file('out.html', 'out.pdf')
+pdfkit.from_file('default.html', 'default.pdf', options=options)
