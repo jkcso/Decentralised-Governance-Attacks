@@ -24,6 +24,7 @@ SANITISE = 5
 SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
 ADAPTOR = 2
+DEF_CSV_NAME = 'default'
 
 # the dictionary that then becomes the .csv file for Kibana
 # initially has some global variables useful for the dashboard
@@ -120,12 +121,14 @@ def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_tar
         budget_mn = math.floor(int(budget_to_dash // DASH_MN_COLLATERAL))
         new_price = float("{0:.2f}".format(new_price))
 
-        # includes inflation as part of the cost, however if the third quartile is used as from experimenting it is
-        # closer to the predictions that this simulation makes when provided with a target number of master nodes
-        # from which a budget is calculated.  The initial form of the cost prediction without optimisation would be:
+        # the global value of adaptor is used towards the median new coin price which is necessary for the inclusion
+        # of both low and high coin values for when inflated. The initial form (commented) of cost prediction without
+        # optimisation would be the following which is however over estimated due to only using the new coin price:
         # cost = float("{0:.3f}".format(budget_mn * DASH_MN_COLLATERAL * new_price))
         cost = float("{0:.3f}".format(
-            budget_mn * DASH_MN_COLLATERAL * (coin_price + (budget_to_dash / (budget_to_dash - budget_to_dash / ADAPTOR) * exp_incr))))
+            budget_mn * DASH_MN_COLLATERAL * (coin_price +
+                                              (budget_to_dash / (
+                                                      budget_to_dash - budget_to_dash / ADAPTOR) * exp_incr))))
 
     # the amount of masternodes required to launch the infamous 55% governance attack
     malicious_net_10 = int(math.ceil(active_mn * NET_10_PERCENT)) + ONE_MN
@@ -236,7 +239,8 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
     if attack_outcome == im:
         print(
             "WHY: Because the remaining coins in circulation are not enough for " + str(num_mn_for_attack) + " master\n"
-            "     nodes but for a maximum amount of", possible_mn, "still able to cause cyber sabotage")
+            "     nodes but for a maximum amount of",
+            possible_mn, "still able to cause cyber sabotage")
     print("New Dash Price after this investment: £" + str(new_price))
     print("Estimated cost of purchase (including dynamic price increase): £" + str(cost))
     # if budget was set then provide the remaining budget to the user
@@ -255,14 +259,15 @@ def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_
                    percentage_mn_left + "%",
                    "\nThis percentage is high, but not enough to achieve a net 10% (by 55% total) over honest owners")
 
-    print("Active Master Nodes after purchase:", new_num_mn,
-          "\nFrom which malicious:",
+    print("Active Master Nodes after purchase:", new_num_mn) if new_num_mn <= possible_mn \
+        else print("Potential Active Master Nodes after purchase:", new_num_mn)
+    print("From which malicious:",
           num_mn_for_attack, "+ " + str(mn_controlled) + " = " + str(num_mn_for_attack + mn_controlled)
-          if mn_controlled > MIN_CONTROL else "", "(" + percentage_malicious + "% of Total)",
-          "\nTherefore, the honest nodes have the net majority!") \
-        if attack_outcome == p and float(percentage_malicious) < MALICIOUS_NET_MAJORITY \
-        else print("The available coin supply was enough to buy this amount of Master Nodes:", possible_mn,
-                   "\nBut attempted was: ", num_mn_for_attack, "Master Nodes", "<------ (Problematic Result)")
+          if mn_controlled > MIN_CONTROL else "", "(" + percentage_malicious + "% of Total)")
+
+    print("The available coin supply was enough to buy this amount of Master Nodes:", possible_mn,
+          "\nAnd Purchase attempted was for: ", num_mn_for_attack, "Master Nodes", "<------ (Problematic Result)"
+          if num_mn_for_attack > possible_mn else "")
 
     # The initial attack was not realised due to the high number of masternodes attempted to purchase, therefore
     # a noisy and determined to succeed adversary can proceed to the purchase of the highest number possible
@@ -411,7 +416,7 @@ def main():
         mn_target = input('Target Total Master Nodes:  (press enter for enough to be successful)  ')
 
         try:
-            csv_filename = str(csv_filename) if csv_filename else 'default'
+            csv_filename = str(csv_filename) if csv_filename else DEF_CSV_NAME
             real_time_data = acquire_real_time_data()
             real_time_price = real_time_data[0]
             real_time_circulation = real_time_data[1]
@@ -428,6 +433,11 @@ def main():
             mn_target = int(mn_target) \
                 if mn_target and mn_controlled < int(mn_target) <= num_possible_masternodes \
                 else int(math.ceil(active_mn * NET_10_PERCENT)) + ONE_MN
+            # budget, coin price and master node numbers related number should be all greater than zero
+            if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and active_mn >= MIN_REMAINING
+                    and coins >= MIN_CIRCULATION and mn_controlled >= MIN_CONTROL and mn_target >= MIN_TARGET):
+                print('\nParameters should be greater all equal to zero, try again')
+                float(DEF_CSV_NAME)  # causes intentional exception and re-loop as values should be greater than zero
             break
         except ValueError:
             print()
