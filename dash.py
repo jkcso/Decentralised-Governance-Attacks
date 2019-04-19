@@ -6,6 +6,7 @@ import json
 import os
 import ssl
 import math
+import pdfkit
 
 # global variables are defined here once for clarity and duplication-free coding
 DASH_MN_COLLATERAL = 1000
@@ -25,6 +26,15 @@ SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
 ADAPTOR = 2
 DEF_CSV_NAME = 'default'
+PDF_REPORT_HEADER = """
+<html>
+<head></head>
+<body><p>
+"""
+PDF_REPORT_FOOTER = """
+</p></body>
+</html>
+"""
 
 # the dictionary that then becomes the .csv file for Kibana
 # initially has some global variables useful for the dashboard
@@ -33,6 +43,7 @@ kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
 
 
 def intro():
+
     print("""
     --  DASH CORRUPTED GOVERNANCE ATTACK SIMULATOR  --
     --  Please provide customised information for any parameter OR
@@ -41,6 +52,7 @@ def intro():
 
 
 def acquire_real_time_data():
+
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
@@ -77,6 +89,7 @@ def acquire_real_time_data():
 
 # Retrieves master nodes real time data.
 def acquire_real_time_mn_number():
+
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -88,37 +101,21 @@ def acquire_real_time_mn_number():
     return stats["raw"]["mn_count"]
 
 
-def create_csv(csv_filename):
-    with open(csv_filename + '.csv', 'w') as f:
+def create_csv(filename):
+
+    with open(filename + '.csv', 'w') as f:
         w = csv.DictWriter(f, kibana_dict.keys())
         w.writeheader()
         w.writerow(kibana_dict)
 
 
-def create_pdf():
-    import pdfkit
+def create_pdf(filename, final_report):
 
-    s2 = """
-    To break lines in text<br>
-    use the br operator<br><br>
-
-    This is a new paragraph followed by<br>
-    a new line.
-    """
-
-    h1 = """<html>
-    <head></head>
-    <body><p>"""
-
-    h2 = """</p></body>
-    </html>"""
-
-    content = h1 + s2 + h2
-
-    f = open('out.html', 'w')
-    f.write(content)
+    final_report += PDF_REPORT_FOOTER
+    html_file = filename + '.html'
+    f = open(html_file, 'w')
+    f.write(final_report)
     f.close()
-
     options = {
         'page-size': 'A4',
         'margin-top': '0.75in',
@@ -128,12 +125,17 @@ def create_pdf():
         'encoding': 'UTF-8',
         'quiet': ''
     }
-
-    pdfkit.from_file('out.html', 'out.pdf')
+    pdf_file = filename + '.pdf'
+    pdfkit.from_file(html_file, pdf_file, options=options)
 
 
 # Outputs the values we proceed during the simulation.
-def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
+def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report):
+
+    pdf_report += """
+    2<br>
+    """
+
     print()
     print("    --  INPUT VALUES PROCEEDING WITH  --")
     print("Attack Budget: Not specified therefore equals the total cost as estimated below") \
@@ -207,7 +209,10 @@ def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_tar
     print("Therefore, Master Nodes to acquire:", num_mn_for_attack)
 
     # calls the following method to proceed in attempting the purchase
-    buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price)
+    pdf_report = buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost,
+                          new_price, pdf_report)
+
+    return pdf_report
 
 
 """
@@ -224,7 +229,13 @@ Example:
 """
 
 
-def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price):
+def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
+             pdf_report):
+
+    pdf_report += """
+    3<br>
+    """
+
     frozen_coins = DASH_MN_COLLATERAL * active_mn
     unfrozen_coins = coins - frozen_coins
     possible_mn = math.floor(int(unfrozen_coins // DASH_MN_COLLATERAL))
@@ -436,14 +447,16 @@ use Proof-of-Service rewards able to purchase 25 new Master Nodes per existing M
 to be achieved and does not guarantee success! Notice that in the long term, more
 years would be needed to acquire further 1K Master Nodes!
 """)
+    return pdf_report
 
 
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
+
     intro()
 
     while True:
-        csv_filename = input('File name:  (press enter for default file name)  ')
+        filename = input('File name for report and dashboard:  (press enter for default file name)  ')
         budget = input('Attack Budget (£):  (press enter for enough budget to be successful)  ')
         coin_price = input('Dash Price (£):  (press enter for real time price)  ')
         exp = input('Price Increase Factor (1-10)(1: Aggressive, 10: Slow):  (press enter for default factor)  ')
@@ -453,7 +466,7 @@ def main():
         mn_target = input('Target Total Master Nodes:  (press enter for enough to be successful)  ')
 
         try:
-            csv_filename = str(csv_filename) if csv_filename else DEF_CSV_NAME
+            filename = str(filename) if filename else DEF_CSV_NAME
             real_time_data = acquire_real_time_data()
             real_time_price = real_time_data[0]
             real_time_circulation = real_time_data[1]
@@ -489,9 +502,17 @@ def main():
                         'Controlled': mn_controlled,
                         'Target': mn_target})
 
-    report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target)
-    create_csv(csv_filename)
-    print()
+    # variable holding the report, footer will be appended at the very end
+    pdf_report = ""
+    pdf_report += PDF_REPORT_HEADER
+
+    pdf_report += """
+    1<br>
+    """
+
+    pdf_report = report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report)
+    create_csv(filename)
+    create_pdf(filename, pdf_report)
 
 
 main()
