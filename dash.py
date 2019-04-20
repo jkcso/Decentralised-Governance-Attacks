@@ -126,7 +126,7 @@ def create_pdf(filename, final_report):
 
 
 # Outputs the values we proceed during the simulation.
-def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report):
+def attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report):
 
     # pdf_report += """
     # 2<br>
@@ -205,7 +205,7 @@ def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_tar
     print("Therefore, Master Nodes to acquire:", num_mn_for_attack)
 
     # calls the following method to proceed in attempting the purchase
-    pdf_report = buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost,
+    pdf_report = attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost,
                           new_price, pdf_report)
 
     return pdf_report
@@ -225,7 +225,7 @@ Example:
 """
 
 
-def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
+def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
              pdf_report):
 
     # pdf_report += """
@@ -500,17 +500,19 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
                         'Controlled': mn_controlled,
                         'Target': mn_target})
 
-    # variable holding the report, footer will be appended at the very end
+    # variable holding the report is maintained and updated as we proceed, footer will be appended at the very end
     pdf_report = ""
     pdf_report += PDF_REPORT_HEADER
     pdf_report += PDF_REPORT_INTRO
-
     pdf_report += 'Budget:' + str(budget) + NL
     pdf_report += 'PriceBef:' + str(coin_price) + NL
     pdf_report += 'ActiveBef:' + str(active_mn) + NL
     pdf_report += 'PossibleBef:' + str(num_possible_masternodes) + NL
+    pdf_report += 'Circulation:' + str(coins) + NL
+    pdf_report += 'Controlled:' + str(mn_controlled) + NL
+    pdf_report += 'Target:' + str(mn_target) + NL + NL
 
-    pdf_report = report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report)
+    pdf_report = attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report)
     create_csv(filename)
     create_pdf(filename, pdf_report)
 
