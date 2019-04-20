@@ -30,9 +30,9 @@ MALICIOUS_NET_MAJORITY = 55
 IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
 ADAPTOR = 2
 DEF_FILENAME = 'default'
-RT = '(Real time)'
-UD = '(User defined)'
-DEF = '(Default)'
+RT = '(real time value)'
+UD = '(user defined value)'
+DEF = '(default exponential)'
 NL = '<br>'  # new line character for html
 PDF_REPORT = ''  # global variable to hold the current state of pdf report; to be edited along the way
 PDF_REPORT_HEADER = '''
@@ -184,14 +184,14 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print(filename + '.csv,', filename + '.html,', filename + '.pdf', '\n', '\n')
 
     print('VALUES PROCEEDING WITH', '\n')
-    print('Attack budget: unspecified, total cost is estimated below') \
+    print('Attack budget (£): unspecified (cost estimated later)') \
         if budget == MIN_BUDGET \
-        else print('Attack budget: £' + str(budget), UD)
-    print('Dash price: £' + str(coin_price), RT if IS_COIN_PRICE_REAL else UD)
+        else print('Attack budget (£):', budget, UD)
+    print('Dash price (£):', coin_price, RT if IS_COIN_PRICE_REAL else UD)
     print('Inflation rate:', str(exp_incr)[OS:OE], DEF if exp_incr == DEF_INFLATION else UD)
-    print('Number of active -honest- master nodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
+    print('Total of honest masternodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
     print('Coins in circulation:', coins, RT if IS_CIRCULATION_REAL else UD)
-    print('Active master nodes already under control or bribe:', mn_controlled)
+    print('Honest masternodes already under control or bribe:', mn_controlled)
 
     cost = float(MIN_PRICE)
     new_price = coin_price
@@ -223,23 +223,23 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     # when both budget and a target number of mn is set, then the budget is what matters in estimation
     if budget > MIN_BUDGET and mn_target >= MIN_TARGET:
         mn_target = budget_mn
-        print('Target total master nodes:', mn_target, '(Capped due to budget)')
+        print('Target total masternodes:', mn_target, '(capped due to budget)')
 
     # when user provides budget and already controlled nodes, the target should be based on budget and the following
     # operation is there to erase the subtraction specifying that master nodes to buy are those not already controlled
     if budget > MIN_BUDGET and mn_target == budget_mn and mn_controlled > MIN_CONTROL:
         mn_target += mn_controlled
-        print('Total master nodes including already controlled or bribed:', mn_target)
+        print('Total masternodes including already controlled or bribed:', mn_target)
 
     # when the budget is not set but a target number of mn to acquire is provided
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
         mn_target = mn_target
-        print('Target total master nodes:', mn_target, UD)
+        print('Target total masternodes:', mn_target, UD)
 
     # when neither budget nor mn target is set, the metric defaults to a malicious net 10% majority
     elif budget == MIN_BUDGET and mn_target == MIN_TARGET:
         mn_target = malicious_net_10
-        print('Target total master nodes: unspecified, defaults to net 10% over active')
+        print('Target total masternodes: unspecified (defaults to net 10% over honest)')
 
     # based on the above conditions, the number of masternodes to purchase is determined here
     num_mn_for_attack = mn_target - mn_controlled
@@ -507,10 +507,10 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
         budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
         coin_price = input('Dash price (£): (press enter for real time price)  ')
         exp = input('Inflation rate (1-10)(1: Aggressive, 10: Slow): (press enter for default rate)  ')
-        active_mn = input('Total of active -honest- master nodes: (press enter for real time number)  ')
+        active_mn = input('Total of honest masternodes: (press enter for real time active masternodes)  ')
         coins = input('Coins in circulation: (press enter for real time circulation)  ')
-        mn_controlled = input('Active master nodes already under control or bribe?: (press enter for none)  ')
-        mn_target = input('Target total master nodes: (press enter for enough to be successful)  ')
+        mn_controlled = input('Honest masternodes already under control or bribe: (press enter for none)  ')
+        mn_target = input('Target total masternodes: (press enter for enough to be successful)  ')
 
         try:
             filename = str(filename) if filename else DEF_FILENAME
