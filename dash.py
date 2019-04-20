@@ -27,19 +27,19 @@ MALICIOUS_NET_MAJORITY = 55
 ADAPTOR = 2
 DEF_FILENAME = 'default'
 NL = '<br>'  # new line character for html
-PDF_REPORT_HEADER = """
+PDF_REPORT_HEADER = '''
 <html>
 <head></head>
 <body><p>
-"""
-PDF_REPORT_INTRO = """
+'''
+PDF_REPORT_INTRO = '''
 REPORT <br><br>
 Dash Decentralised Governance Attack Simulation <br><br>
-"""
-PDF_REPORT_FOOTER = """
+'''
+PDF_REPORT_FOOTER = '''
 </p></body>
 </html>
-"""
+'''
 
 # the dictionary that then becomes the .csv file for Kibana
 # initially has some global variables useful for the dashboard
@@ -75,7 +75,7 @@ def acquire_real_time_price_and_circulation():
                 if data['data'][i]['name'] == 'Dash':
                     real_time_price = data['data'][i]['quote']['GBP']['price']
                     real_time_circulation = data['data'][i]['circulating_supply']
-            return float("{0:.2f}".format(real_time_price)), int(real_time_circulation)
+            return float('{0:.2f}'.format(real_time_price)), int(real_time_circulation)
 
         except (ConnectionError, Timeout, TooManyRedirects) as e:
             print(e)
@@ -94,7 +94,7 @@ def acquire_real_time_mn_number():
     req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
     stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
 
-    return stats["raw"]["mn_count"]
+    return stats['raw']['mn_count']
 
 
 def create_csv(filename):
@@ -133,7 +133,7 @@ def attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     # """
 
     print()
-    print("    --  INPUT VALUES PROCEEDING WITH  --")
+    print('INPUT VALUES PROCEEDING WITH', '\n')
     print("Attack Budget: Not specified therefore equals the total cost as estimated below") \
         if budget == MIN_BUDGET \
         else print("Attack Budget: £" + str(budget))
@@ -160,7 +160,7 @@ def attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         # of both low and high coin values for when inflated. The initial form (commented) of cost prediction without
         # optimisation would be the following which is however over estimated due to only using the new coin price:
         # cost = float("{0:.3f}".format(budget_mn * DASH_MN_COLLATERAL * new_price))
-        cost = float("{0:.3f}".format(
+        cost = float('{0:.3f}'.format(
             budget_mn * DASH_MN_COLLATERAL * (coin_price +
                                               (budget_to_dash / (
                                                       budget_to_dash - budget_to_dash / ADAPTOR) * exp_incr))))
@@ -195,7 +195,7 @@ def attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     num_mn_for_attack = mn_target - mn_controlled
 
     print()
-    print("    --  ATTACK PHASE ZERO  --")
+    print('ATTACK PHASE ZERO', '\n')
     print("Total Master Nodes needed for Malicious Net 10%:", malicious_net_10)
     print("Attack Budget: Not specified therefore equals the total cost as estimated below") \
         if budget == MIN_BUDGET \
@@ -211,7 +211,7 @@ def attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     return pdf_report
 
 
-"""
+'''
 Proceeds to the purchase of X Master Nodes and then analyses the newly created situation,
 providing also possible scenarios on how attackers and defenders might proceed.
 Example:
@@ -222,7 +222,7 @@ Example:
     Then we generate statistics on how successful the attacker can be by controlling this
     X amount of Master Nodes and we provide further options on how to proceed that are able
     to help both attacking and defending parties for one step forward, always ethically.
-"""
+'''
 
 
 def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
@@ -242,7 +242,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                         'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
 
     # attempts to purchase initial required amount no matter if impossible as this number is later capped to possible
-    print("\n    --  FIRST PURCHASE ATTEMPT FOR", num_mn_for_attack, "MASTER NODES  --")
+    print()
+    print('FIRST PURCHASE ATTEMPT FOR', num_mn_for_attack, 'MASTER NODES', '\n')
     print("Dash Price before purchase: £" + str(coin_price))
     print("Active Master Nodes before purchase:", active_mn)
     print("Coins in circulations before purchase:", coins)
@@ -279,7 +280,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     p = 'POSSIBLE!'
     im = 'IMPOSSIBLE!'
     attack_outcome = p if new_remaining >= MIN_REMAINING else im
-    print("\n    --  PURCHASE OUTCOME:", attack_outcome, " --")
+    print()
+    print('PURCHASE OUTCOME:', attack_outcome, '\n')
     if attack_outcome == im:
         print(
             "WHY: Because the remaining coins in circulation are not enough for " + str(num_mn_for_attack) + " master\n"
@@ -320,7 +322,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     if attack_outcome == im:
         num_mn_for_attack = possible_mn
         attack_outcome = 'POSSIBLE!'
-        print("\n    --  SECOND PURCHASE ATTEMPT FOR", num_mn_for_attack, "MASTER NODES  --")
+        print()
+        print('SECOND PURCHASE ATTEMPT FOR', num_mn_for_attack, 'MASTER NODES', '\n')
         cost = float(MIN_PRICE)
         new_price = coin_price
         for i in range(MIN_PRICE, num_mn_for_attack * DASH_MN_COLLATERAL):
@@ -343,7 +346,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                             'ActiveAft': new_num_mn,  # new total masternodes including both honest and malicious
                             'Malicious': total_malicious})  # total malicious masternodes
 
-        print("    --  PURCHASE OUTCOME:", attack_outcome, " --")
+        print('PURCHASE OUTCOME:', attack_outcome, '\n')
         print("Dash Price before purchase: £" + str(coin_price))
         print("New Dash Price after this investment: £" + str(new_price))
         print("Estimated cost of purchase (including dynamic price increase): £" + str(cost))
@@ -386,7 +389,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                         'ExpVoters': avg_mn_votes,  # Expected to vote honestly to prevent a malicious action to occur
                         'ExpVotAtt': net_10_anw})  # Malicious Net 10% against the expected honest votes
 
-    print("\n    --  PROCEEDING TO PLAN B: WHAT PROBLEMS CAN WE CAUSE RIGHT NOW?  --")
+    print()
+    print('PROCEEDING TO PLAN B: WHAT PROBLEMS CAN WE CAUSE RIGHT NOW?', '\n')
     print("1) Prevent honest proposals to go through! (i.e: The salaries of Dash Core Developers)")
     print("Explanation: We vote 'no' for a proposal and we hope that net 10% can't be achieved!")
 
@@ -435,23 +439,23 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     print("Expected minted coins until 04/2020(%)/Possible new Master Nodes:", c2020, "(50.14%)", "/", mn2020)
     print("Expected minted coins until 04/2021(%)/Possible new Master Nodes:", c2021, "(53.7%)", "/", mn2021)
     print("Furthermore: 08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)")
-    print("""SUGGESTED APPROACH:
+    print('''SUGGESTED APPROACH:
 A stealthy attacker can slowly increase his/her army assuming a percentage gain of
 50% mined DASH => Master Nodes per year. Towards this DASH required, the attacker might
 use Proof-of-Service rewards able to purchase 25 new Master Nodes per existing Master Nodes per year
 (assuming 7.14% Return on Investment). An increase of 1K Master Nodes could take 4-5 years
 to be achieved and does not guarantee success! Notice that in the long term, more
 years would be needed to acquire further 1K Master Nodes!
-""")
+''')
     return pdf_report
 
 
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
 
-    print("""
+    print('''
 DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
-    """)
+    ''')
 
     while True:
         filename = input('File name for report and dashboard: (press enter for default file name)  ')
