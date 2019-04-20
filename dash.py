@@ -25,11 +25,16 @@ SANITISE = 5
 SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
 ADAPTOR = 2
-DEF_CSV_NAME = 'default'
+DEF_FILENAME = 'default'
+NL = '<br>'  # new line character for html
 PDF_REPORT_HEADER = """
 <html>
 <head></head>
 <body><p>
+"""
+PDF_REPORT_INTRO = """
+REPORT <br><br>
+Dash Decentralised Governance Attack Simulation <br><br>
 """
 PDF_REPORT_FOOTER = """
 </p></body>
@@ -42,16 +47,7 @@ kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
                'MaxSupply': MAX_SUPPLY}
 
 
-def intro():
-
-    print("""
-    --  DASH CORRUPTED GOVERNANCE ATTACK SIMULATOR  --
-    --  Please provide customised information for any parameter OR
-    --  Press enter to proceed with the real time values  --
-    """)
-
-
-def acquire_real_time_data():
+def acquire_real_time_price_and_circulation():
 
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
@@ -132,9 +128,9 @@ def create_pdf(filename, final_report):
 # Outputs the values we proceed during the simulation.
 def report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report):
 
-    pdf_report += """
-    2<br>
-    """
+    # pdf_report += """
+    # 2<br>
+    # """
 
     print()
     print("    --  INPUT VALUES PROCEEDING WITH  --")
@@ -232,9 +228,9 @@ Example:
 def buy_x_mn(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
              pdf_report):
 
-    pdf_report += """
-    3<br>
-    """
+    # pdf_report += """
+    # 3<br>
+    # """
 
     frozen_coins = DASH_MN_COLLATERAL * active_mn
     unfrozen_coins = coins - frozen_coins
@@ -453,21 +449,23 @@ years would be needed to acquire further 1K Master Nodes!
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
 
-    intro()
+    print("""
+DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
+    """)
 
     while True:
-        filename = input('File name for report and dashboard:  (press enter for default file name)  ')
-        budget = input('Attack Budget (£):  (press enter for enough budget to be successful)  ')
-        coin_price = input('Dash Price (£):  (press enter for real time price)  ')
-        exp = input('Price Increase Factor (1-10)(1: Aggressive, 10: Slow):  (press enter for default factor)  ')
-        active_mn = input('Total of Active Master Nodes:  (press enter for real time active Master Nodes)  ')
-        coins = input('Coins in Circulation:  (press enter for real time circulation)  ')
-        mn_controlled = input('Active Master Nodes already under control or bribe?:  (press enter for none)  ')
-        mn_target = input('Target Total Master Nodes:  (press enter for enough to be successful)  ')
+        filename = input('File name for report and dashboard: (press enter for default file name)  ')
+        budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
+        coin_price = input('Dash price (£): (press enter for real time price)  ')
+        exp = input('Price increase factor (1-10)(1: Aggressive, 10: Slow): (press enter for default factor)  ')
+        active_mn = input('Total of active (honest) master nodes: (press enter for real time number)  ')
+        coins = input('Coins in circulation: (press enter for real time circulation)  ')
+        mn_controlled = input('Active master nodes already under control or bribe?: (press enter for none)  ')
+        mn_target = input('Target total master nodes: (press enter for enough to be successful)  ')
 
         try:
-            filename = str(filename) if filename else DEF_CSV_NAME
-            real_time_data = acquire_real_time_data()
+            filename = str(filename) if filename else DEF_FILENAME
+            real_time_data = acquire_real_time_price_and_circulation()
             real_time_price = real_time_data[0]
             real_time_circulation = real_time_data[1]
             budget = float(budget) if budget else MIN_BUDGET
@@ -486,8 +484,8 @@ def main():
             # budget, coin price and master node numbers related number should be all greater than zero
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and active_mn >= MIN_REMAINING
                     and coins >= MIN_CIRCULATION and mn_controlled >= MIN_CONTROL and mn_target >= MIN_TARGET):
-                print('\nParameters should be greater all equal to zero, try again')
-                float(DEF_CSV_NAME)  # causes intentional exception and re-loop as values should be greater than zero
+                print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again')
+                float(DEF_FILENAME)  # causes intentional exception and re-loop as values should be greater than zero
             break
         except ValueError:
             print()
@@ -505,10 +503,12 @@ def main():
     # variable holding the report, footer will be appended at the very end
     pdf_report = ""
     pdf_report += PDF_REPORT_HEADER
+    pdf_report += PDF_REPORT_INTRO
 
-    pdf_report += """
-    1<br>
-    """
+    pdf_report += 'Budget:' + str(budget) + NL
+    pdf_report += 'PriceBef:' + str(coin_price) + NL
+    pdf_report += 'ActiveBef:' + str(active_mn) + NL
+    pdf_report += 'PossibleBef:' + str(num_possible_masternodes) + NL
 
     pdf_report = report(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report)
     create_csv(filename)
