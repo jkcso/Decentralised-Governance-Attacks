@@ -14,12 +14,15 @@ MIN_COINBASE_RANKING = MIN_EXP = ONE_MN = 1
 MAX_COINBASE_RANKING = 20
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_REMAINING = MIN_CONTROL = MIN_TARGET = 0
+OS = 0  # Output Start, used mostly for long floats, strings and percentages
+OE = 4  # Output End
 PERCENTAGE = 100
 MAX_SUPPLY = 18900000
 NET_10_PERCENT = 1.1
 MIN_10_PERCENT = 0.1
 INVERSE = -1
 DEF_EXP = -13  # corresponds to number 8 from 1-10 scale which is medium to slow exponential increase
+DEF_INFLATION = math.pow(math.e, DEF_EXP)
 MAX_EXP = 11
 SANITISE = 5
 SIXTY_PERCENT = 0.6
@@ -27,8 +30,9 @@ MALICIOUS_NET_MAJORITY = 55
 IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
 ADAPTOR = 2
 DEF_FILENAME = 'default'
-RT = '(Real Time)'
-UD = '(User Defined)'
+RT = '(Real time)'
+UD = '(User defined)'
+DEF = '(Default)'
 NL = '<br>'  # new line character for html
 PDF_REPORT = ''  # global variable to hold the current state of pdf report; to be edited along the way
 PDF_REPORT_HEADER = '''
@@ -175,15 +179,17 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     global PDF_REPORT
     PDF_REPORT += 'test for attack phase 1' + NL
 
-    print()
-    print('INPUT VALUES PROCEEDING WITH', '\n')
-    print('Files to be generated:', filename + '.csv,', filename + '.html,', filename + '.pdf')
+    print('\n')
+    print('FILES TO BE GENERATED:', '\n')
+    print(filename + '.csv,', filename + '.html,', filename + '.pdf', '\n', '\n')
+
+    print('VALUES PROCEEDING WITH', '\n')
     print('Attack budget: unspecified, total cost is estimated below') \
         if budget == MIN_BUDGET \
-        else print('Attack budget: £' + str(budget))
+        else print('Attack budget: £' + str(budget), UD)
     print('Dash price: £' + str(coin_price), RT if IS_COIN_PRICE_REAL else UD)
-    print('Inflation rate:', exp_incr)
-    print('Number of active master nodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
+    print('Inflation rate:', str(exp_incr)[OS:OE], DEF if exp_incr == DEF_INFLATION else UD)
+    print('Number of active -honest- master nodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
     print('Coins in circulation:', coins, RT if IS_CIRCULATION_REAL else UD)
     print('Active master nodes already under control or bribe:', mn_controlled)
 
@@ -217,36 +223,36 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     # when both budget and a target number of mn is set, then the budget is what matters in estimation
     if budget > MIN_BUDGET and mn_target >= MIN_TARGET:
         mn_target = budget_mn
-        print("Target Master Nodes to acquire is now capped based on provided budget:", mn_target, "(Due To Budget)")
+        print('Target total master nodes:', mn_target, '(Capped due to budget)')
 
     # when user provides budget and already controlled nodes, the target should be based on budget and the following
     # operation is there to erase the subtraction specifying that master nodes to buy are those not already controlled
     if budget > MIN_BUDGET and mn_target == budget_mn and mn_controlled > MIN_CONTROL:
         mn_target += mn_controlled
-        print("Total Master Nodes including those already controlled or bribed:", mn_target, "(Total of old and new)")
+        print('Total master nodes including already controlled or bribed:', mn_target)
 
     # when the budget is not set but a target number of mn to acquire is provided
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
         mn_target = mn_target
-        print("Target Total Master Nodes:", mn_target, "(Due To Preference)")
+        print('Target total master nodes:', mn_target, UD)
 
     # when neither budget nor mn target is set, the metric defaults to a malicious net 10% majority
     elif budget == MIN_BUDGET and mn_target == MIN_TARGET:
         mn_target = malicious_net_10
-        print("Target Total Master Nodes: Not specified therefore equals the Malicious Net 10% of", malicious_net_10)
+        print('Target total master nodes: unspecified, defaults to net 10% over active')
 
     # based on the above conditions, the number of masternodes to purchase is determined here
     num_mn_for_attack = mn_target - mn_controlled
 
-    print()
-    print('ATTACK PHASE ZERO', '\n')
-    print("Total Master Nodes needed for Malicious Net 10%:", malicious_net_10)
-    print("Attack Budget: Not specified therefore equals the total cost as estimated below") \
+    print('\n')
+    print('ATTACK PHASE ONE: PLANNING AND REASONING', '\n')
+    print('Net 10% over active -honest- master nodes:', malicious_net_10)
+    print("Attack budget: will equal net 10% masternodes") \
         if budget == MIN_BUDGET \
-        else print("Attack Budget of £" + str(budget), "is able to acquire:", budget_mn, "Master Nodes")
-    print("Target Total Master Nodes:", mn_target if budget == MIN_BUDGET else budget_mn)
-    print("Active Master Nodes already under control or bribe:", mn_controlled)
-    print("Therefore, Master Nodes to acquire:", num_mn_for_attack)
+        else print("Attack budget of £" + str(budget), "is enough to acquire:", budget_mn, "masternodes")
+    print("Target total masternodes:", mn_target if budget == MIN_BUDGET else budget_mn)
+    print("Active masternodes already under control or bribe:", mn_controlled)
+    print("Therefore, masternodes to acquire:", num_mn_for_attack)
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price)
@@ -281,7 +287,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                         'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
 
     # attempts to purchase initial required amount no matter if impossible as this number is later capped to possible
-    print()
+    print('\n')
+    print('ATTACK PHASE TWO: EXECUTION', '\n')
     print('FIRST PURCHASE ATTEMPT FOR', num_mn_for_attack, 'MASTER NODES', '\n')
     print("Dash Price before purchase: £" + str(coin_price))
     print("Active Master Nodes before purchase:", active_mn)
@@ -500,7 +507,7 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
         budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
         coin_price = input('Dash price (£): (press enter for real time price)  ')
         exp = input('Inflation rate (1-10)(1: Aggressive, 10: Slow): (press enter for default rate)  ')
-        active_mn = input('Total of active (honest) master nodes: (press enter for real time number)  ')
+        active_mn = input('Total of active -honest- master nodes: (press enter for real time number)  ')
         coins = input('Coins in circulation: (press enter for real time circulation)  ')
         mn_controlled = input('Active master nodes already under control or bribe?: (press enter for none)  ')
         mn_target = input('Target total master nodes: (press enter for enough to be successful)  ')
@@ -518,8 +525,7 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             num_possible_masternodes = math.floor(int((coins - (active_mn * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
             # ensures target masternodes are greater than those already controlled and smaller than those possible
             mn_target = int(mn_target) \
-                if mn_target and mn_controlled < int(mn_target) <= num_possible_masternodes \
-                else int(math.ceil(active_mn * NET_10_PERCENT)) + ONE_MN
+                if mn_target and mn_controlled < int(mn_target) <= num_possible_masternodes else MIN_TARGET
             # budget, coin price and master node numbers related number should be all greater than zero
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and active_mn >= MIN_REMAINING
                     and coins >= MIN_CIRCULATION and mn_controlled >= MIN_CONTROL and mn_target >= MIN_TARGET):
