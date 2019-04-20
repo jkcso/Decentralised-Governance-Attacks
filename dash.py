@@ -24,9 +24,13 @@ MAX_EXP = 11
 SANITISE = 5
 SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
+IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
 ADAPTOR = 2
 DEF_FILENAME = 'default'
+RT = '(Real Time)'
+UD = '(User Defined)'
 NL = '<br>'  # new line character for html
+PDF_REPORT = ''  # global variable to hold the current state of pdf report; to be edited along the way
 PDF_REPORT_HEADER = '''
 <html>
 <head></head>
@@ -47,7 +51,22 @@ kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
                'MaxSupply': MAX_SUPPLY}
 
 
-def acquire_real_time_price_and_circulation():
+def acquire_real_time_masternodes():
+
+    if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+            getattr(ssl, '_create_unverified_context', None)):
+        ssl._create_default_https_context = ssl._create_unverified_context
+
+    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
+    req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
+    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+
+    global IS_MASTERNODES_NUMBER_REAL
+    IS_MASTERNODES_NUMBER_REAL = True
+    return stats['raw']['mn_count']
+
+
+def acquire_real_time_price():
 
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
@@ -69,13 +88,14 @@ def acquire_real_time_price_and_circulation():
             data = json.loads(response.text)
 
             real_time_price = MIN_PRICE
-            real_time_circulation = MIN_CIRCULATION
 
             for i in range(MIN_COINBASE_RANKING, MAX_COINBASE_RANKING):
                 if data['data'][i]['name'] == 'Dash':
                     real_time_price = data['data'][i]['quote']['GBP']['price']
-                    real_time_circulation = data['data'][i]['circulating_supply']
-            return float('{0:.2f}'.format(real_time_price)), int(real_time_circulation)
+
+            global IS_COIN_PRICE_REAL
+            IS_COIN_PRICE_REAL = True
+            return float('{0:.2f}'.format(real_time_price))
 
         except (ConnectionError, Timeout, TooManyRedirects) as e:
             print(e)
@@ -83,18 +103,41 @@ def acquire_real_time_price_and_circulation():
         pass
 
 
-# Retrieves master nodes real time data.
-def acquire_real_time_mn_number():
+def acquire_real_time_circulation():
 
-    if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
-            getattr(ssl, '_create_unverified_context', None)):
-        ssl._create_default_https_context = ssl._create_unverified_context
+    try:
+        url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+        parameters = {
+            'start': str(MIN_COINBASE_RANKING),
+            'limit': str(MAX_COINBASE_RANKING),
+            'convert': 'GBP'
+        }
+        headers = {
+            'Accepts': 'application/json',
+            'X-CMC_PRO_API_KEY': COINBASE_API_KEY
+        }
 
-    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
-    req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
-    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+        session = Session()
+        session.headers.update(headers)
 
-    return stats['raw']['mn_count']
+        try:
+            response = session.get(url, params=parameters)
+            data = json.loads(response.text)
+
+            real_time_circulation = MIN_CIRCULATION
+
+            for i in range(MIN_COINBASE_RANKING, MAX_COINBASE_RANKING):
+                if data['data'][i]['name'] == 'Dash':
+                    real_time_circulation = data['data'][i]['circulating_supply']
+
+            global IS_CIRCULATION_REAL
+            IS_CIRCULATION_REAL = True
+            return int(real_time_circulation)
+
+        except (ConnectionError, Timeout, TooManyRedirects) as e:
+            print(e)
+    except ValueError:
+        pass
 
 
 def create_csv(filename):
@@ -105,12 +148,13 @@ def create_csv(filename):
         w.writerow(kibana_dict)
 
 
-def create_pdf(filename, final_report):
+def create_pdf(filename):
 
-    final_report += PDF_REPORT_FOOTER
+    global PDF_REPORT
+    PDF_REPORT += PDF_REPORT_FOOTER
     html_file = filename + '.html'
     f = open(html_file, 'w')
-    f.write(final_report)
+    f.write(PDF_REPORT)
     f.close()
     options = {
         'page-size': 'A4',
@@ -126,22 +170,22 @@ def create_pdf(filename, final_report):
 
 
 # Outputs the values we proceed during the simulation.
-def attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report):
+def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
 
-    # pdf_report += """
-    # 2<br>
-    # """
+    global PDF_REPORT
+    PDF_REPORT += 'test for attack phase 1' + NL
 
     print()
     print('INPUT VALUES PROCEEDING WITH', '\n')
-    print("Attack Budget: Not specified therefore equals the total cost as estimated below") \
+    print('Files to be generated:', filename + '.csv,', filename + '.html,', filename + '.pdf')
+    print('Attack budget: unspecified, total cost is estimated below') \
         if budget == MIN_BUDGET \
-        else print("Attack Budget: £" + str(budget))
-    print("Dash Price: £" + str(coin_price))
-    print("Dash Price Increase Factor (Exponential):", exp_incr)
-    print("Number of Active Master Nodes:", active_mn)
-    print("Coins in circulation:", coins)
-    print("Active Master Nodes already under control or bribe:", mn_controlled)
+        else print('Attack budget: £' + str(budget))
+    print('Dash price: £' + str(coin_price), RT if IS_COIN_PRICE_REAL else UD)
+    print('Inflation rate:', exp_incr)
+    print('Number of active master nodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
+    print('Coins in circulation:', coins, RT if IS_CIRCULATION_REAL else UD)
+    print('Active master nodes already under control or bribe:', mn_controlled)
 
     cost = float(MIN_PRICE)
     new_price = coin_price
@@ -205,10 +249,7 @@ def attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     print("Therefore, Master Nodes to acquire:", num_mn_for_attack)
 
     # calls the following method to proceed in attempting the purchase
-    pdf_report = attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost,
-                          new_price, pdf_report)
-
-    return pdf_report
+    attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price)
 
 
 '''
@@ -225,12 +266,10 @@ Example:
 '''
 
 
-def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
-             pdf_report):
+def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price):
 
-    # pdf_report += """
-    # 3<br>
-    # """
+    global PDF_REPORT
+    PDF_REPORT += 'test for attack phase 2' + NL
 
     frozen_coins = DASH_MN_COLLATERAL * active_mn
     unfrozen_coins = coins - frozen_coins
@@ -447,7 +486,6 @@ use Proof-of-Service rewards able to purchase 25 new Master Nodes per existing M
 to be achieved and does not guarantee success! Notice that in the long term, more
 years would be needed to acquire further 1K Master Nodes!
 ''')
-    return pdf_report
 
 
 # This is the main method of the program, responsible for IO using the above methods.
@@ -461,7 +499,7 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
         filename = input('File name for report and dashboard: (press enter for default file name)  ')
         budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
         coin_price = input('Dash price (£): (press enter for real time price)  ')
-        exp = input('Price increase factor (1-10)(1: Aggressive, 10: Slow): (press enter for default factor)  ')
+        exp = input('Inflation rate (1-10)(1: Aggressive, 10: Slow): (press enter for default rate)  ')
         active_mn = input('Total of active (honest) master nodes: (press enter for real time number)  ')
         coins = input('Coins in circulation: (press enter for real time circulation)  ')
         mn_controlled = input('Active master nodes already under control or bribe?: (press enter for none)  ')
@@ -469,15 +507,12 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
 
         try:
             filename = str(filename) if filename else DEF_FILENAME
-            real_time_data = acquire_real_time_price_and_circulation()
-            real_time_price = real_time_data[0]
-            real_time_circulation = real_time_data[1]
             budget = float(budget) if budget else MIN_BUDGET
-            coin_price = float(coin_price) if coin_price else real_time_price
+            coin_price = float(coin_price) if coin_price else acquire_real_time_price()
             exp = float((int(exp) + SANITISE) * INVERSE) if exp and (MIN_EXP < int(exp) < MAX_EXP) else float(DEF_EXP)
             exp_incr = math.pow(math.e, exp)
-            active_mn = int(active_mn) if active_mn else acquire_real_time_mn_number()
-            coins = int(coins) if coins else real_time_circulation
+            active_mn = int(active_mn) if active_mn else acquire_real_time_masternodes()
+            coins = int(coins) if coins else acquire_real_time_circulation()
             mn_controlled = int(mn_controlled) if mn_controlled else MIN_CONTROL
             # number of masternodes possible for an adversary to control should equal the unfrozen coins in collateral
             num_possible_masternodes = math.floor(int((coins - (active_mn * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
@@ -500,25 +535,26 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
                         'PriceBef': coin_price,
                         'ActiveBef': active_mn,  # total honest masternodes
                         'PossibleBef': num_possible_masternodes,  # possible man based on total remaining unfrozen coins
+                        'Inflation': exp,
                         'Circulation': coins,
                         'Controlled': mn_controlled,
                         'Target': mn_target})
 
-    # variable holding the report is maintained and updated as we proceed, footer will be appended at the very end
-    pdf_report = ""
-    pdf_report += PDF_REPORT_HEADER
-    pdf_report += PDF_REPORT_INTRO
-    pdf_report += 'Budget:' + str(budget) + NL
-    pdf_report += 'PriceBef:' + str(coin_price) + NL
-    pdf_report += 'ActiveBef:' + str(active_mn) + NL
-    pdf_report += 'PossibleBef:' + str(num_possible_masternodes) + NL
-    pdf_report += 'Circulation:' + str(coins) + NL
-    pdf_report += 'Controlled:' + str(mn_controlled) + NL
-    pdf_report += 'Target:' + str(mn_target) + NL + NL
+    global PDF_REPORT
+    PDF_REPORT += PDF_REPORT_HEADER
+    PDF_REPORT += PDF_REPORT_INTRO
+    PDF_REPORT += 'Budget: ' + str(budget) + NL
+    PDF_REPORT += 'PriceBef: ' + str(coin_price) + NL
+    PDF_REPORT += 'ActiveBef: ' + str(active_mn) + NL
+    PDF_REPORT += 'PossibleBef: ' + str(num_possible_masternodes) + NL
+    PDF_REPORT += 'Inflation: ' + str(exp) + NL
+    PDF_REPORT += 'Circulation: ' + str(coins) + NL
+    PDF_REPORT += 'Controlled: ' + str(mn_controlled) + NL
+    PDF_REPORT += 'Target: ' + str(mn_target) + NL + NL
 
-    pdf_report = attack_phase_1(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, pdf_report)
+    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target)
     create_csv(filename)
-    create_pdf(filename, pdf_report)
+    create_pdf(filename)
 
 
 main()
