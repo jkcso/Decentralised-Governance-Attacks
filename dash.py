@@ -184,7 +184,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print(filename + '.csv,', filename + '.html,', filename + '.pdf', '\n', '\n')
 
     print('VALUES PROCEEDING WITH', '\n')
-    print('Attack budget (£): unspecified (cost estimated later)') \
+    print('Attack budget (£): unspecified (cost estimated in phase two)') \
         if budget == MIN_BUDGET \
         else print('Attack budget (£):', budget, UD)
     print('Dash price (£):', coin_price, RT if IS_COIN_PRICE_REAL else UD)
@@ -246,13 +246,22 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
 
     print('\n')
     print('ATTACK PHASE ONE: PLANNING AND REASONING', '\n')
-    print('Net 10% over active -honest- master nodes:', malicious_net_10)
-    print("Attack budget: will equal net 10% masternodes") \
-        if budget == MIN_BUDGET \
-        else print("Attack budget of £" + str(budget), "is enough to acquire:", budget_mn, "masternodes")
-    print("Target total masternodes:", mn_target if budget == MIN_BUDGET else budget_mn)
-    print("Active masternodes already under control or bribe:", mn_controlled)
-    print("Therefore, masternodes to acquire:", num_mn_for_attack)
+    print('Masternodes required for net 10% over honest:', malicious_net_10)
+    # budget defaults to malicious net 10%
+    if budget == MIN_BUDGET and mn_target == MIN_TARGET:
+        print('Attack budget: cost of purchase net 10%')
+    # budget is set but target dominates
+    elif budget > MIN_BUDGET and mn_target > MIN_TARGET:
+        print('Attack budget (£):', budget, '(enough to acquire:', budget_mn,
+              'masternodes)' if budget_mn > ONE_MN else 'masternode)')
+    # budget is set to enough to accommodate the target
+    # TODO ensure that an impossible value is behaving well
+    elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
+        print('Attack budget (£): cost of realise target of', mn_target,
+              'masternodes)' if mn_target > ONE_MN else 'masternode')
+    print('Therefore, target total masternodes:', mn_target if budget == MIN_BUDGET else budget_mn)
+    print('Excluding those already under control or bribe, total:', mn_controlled)
+    print('Finalised total of masternodes to acquire:', num_mn_for_attack)
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price)
