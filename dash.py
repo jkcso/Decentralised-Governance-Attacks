@@ -56,7 +56,6 @@ kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
 
 
 def acquire_real_time_masternodes():
-
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -71,7 +70,6 @@ def acquire_real_time_masternodes():
 
 
 def acquire_real_time_price():
-
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
@@ -108,7 +106,6 @@ def acquire_real_time_price():
 
 
 def acquire_real_time_circulation():
-
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
@@ -145,7 +142,6 @@ def acquire_real_time_circulation():
 
 
 def create_csv(filename):
-
     with open(filename + '.csv', 'w') as f:
         w = csv.DictWriter(f, kibana_dict.keys())
         w.writeheader()
@@ -153,7 +149,6 @@ def create_csv(filename):
 
 
 def create_pdf(filename):
-
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_FOOTER
     html_file = filename + '.html'
@@ -175,12 +170,11 @@ def create_pdf(filename):
 
 # Outputs the values we proceed during the simulation.
 def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
-
     global PDF_REPORT
     PDF_REPORT += 'test for attack phase 1' + NL
 
     print('\n')
-    print('FILES TO BE GENERATED:', '\n')
+    print('FILES TO BE GENERATED', '\n')
     print(filename + '.csv,', filename + '.html,', filename + '.pdf', '\n', '\n')
 
     print('VALUES PROCEEDING WITH', '\n')
@@ -291,7 +285,6 @@ Example:
 
 
 def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price):
-
     global PDF_REPORT
     PDF_REPORT += 'test for attack phase 2' + NL
 
@@ -303,18 +296,6 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     kibana_dict.update({'FrozenBef': frozen_coins,
                         'PurchaseBef': num_mn_for_attack,
                         'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
-
-    # attempts to purchase initial required amount no matter if impossible as this number is later capped to possible
-    print('\n')
-    print('ATTACK PHASE TWO: EXECUTION', '\n')
-    print('FIRST PURCHASE ATTEMPT FOR', num_mn_for_attack, 'MASTER NODES', '\n')
-    print("Dash Price before purchase: £" + str(coin_price))
-    print("Active Master Nodes before purchase:", active_mn)
-    print("Coins in circulations before purchase:", coins)
-    print("From which coins frozen for required collateral:", frozen_coins)
-    print("Therefore, coins remaining unfrozen:", unfrozen_coins)
-    print("These are enough to get us more Master Nodes, actually up to this number:", possible_mn)
-    print("Which as percentage out of the total possible Master Nodes is:", str(percentage_poss_total) + '%')
 
     # when budget is not set it means that what is required is to a dynamic cost for purchasing masternodes only.
     if budget == MIN_BUDGET:
@@ -341,16 +322,30 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                         'ActiveAft': new_num_mn,  # new total masternodes including both honest and malicious
                         'Malicious': total_malicious})  # total malicious masternodes
 
-    p = 'POSSIBLE!'
-    im = 'IMPOSSIBLE!'
+    # attempts to purchase initial required amount no matter if impossible as this number is later capped to possible
+    print('\n')
+    print('ATTACK PHASE TWO: EXECUTION', '\n')
+    print('FIRST PURCHASE ATTEMPT FOR', num_mn_for_attack,
+          'MASTERNODES' if num_mn_for_attack > ONE_MN else 'MASTERNODE', '\n')
+
+    p = 'POSSIBLE'
+    im = 'IMPOSSIBLE'
     attack_outcome = p if new_remaining >= MIN_REMAINING else im
-    print()
     print('PURCHASE OUTCOME:', attack_outcome, '\n')
     if attack_outcome == im:
-        print(
-            "WHY: Because the remaining coins in circulation are not enough for " + str(num_mn_for_attack) + " master\n"
-            "     nodes but for a maximum amount of",
-            possible_mn, "still able to cause cyber sabotage")
+        print('REASON', '\n')
+        print('Because the remaining coins in circulation are not enough for', num_mn_for_attack, 'masternodes')
+        print('but for a maximum amount of', possible_mn, 'still capable of effective cyber sabotage', '\n')
+
+    print('ANALYSIS', '\n')
+    print("Dash price before purchase: £" + str(coin_price))
+    print("Active masternodes before purchase:", active_mn)
+    print("Coins in circulations before purchase:", coins)
+    print("From which coins frozen for required collateral:", frozen_coins)
+    print("Therefore, coins remaining unfrozen to acquire:", unfrozen_coins)
+    print("These are enough to get us more Master Nodes, actually up to this number:", possible_mn)
+    print("Which as percentage out of the total possible Master Nodes is:", str(percentage_poss_total) + '%')
+
     print("New Dash Price after this investment: £" + str(new_price))
     print("Estimated cost of purchase (including dynamic price increase): £" + str(cost))
     # if budget was set then provide the remaining budget to the user
@@ -385,8 +380,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     # achievable that is constrained from the unfrozen circulation
     if attack_outcome == im:
         num_mn_for_attack = possible_mn
-        attack_outcome = 'POSSIBLE!'
-        print()
+        attack_outcome = 'POSSIBLE'
+        print('\n')
         print('SECOND PURCHASE ATTEMPT FOR', num_mn_for_attack, 'MASTER NODES', '\n')
         cost = float(MIN_PRICE)
         new_price = coin_price
@@ -411,6 +406,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                             'Malicious': total_malicious})  # total malicious masternodes
 
         print('PURCHASE OUTCOME:', attack_outcome, '\n')
+        print('ANALYSIS', '\n')
         print("Dash Price before purchase: £" + str(coin_price))
         print("New Dash Price after this investment: £" + str(new_price))
         print("Estimated cost of purchase (including dynamic price increase): £" + str(cost))
@@ -453,7 +449,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                         'ExpVoters': avg_mn_votes,  # Expected to vote honestly to prevent a malicious action to occur
                         'ExpVotAtt': net_10_anw})  # Malicious Net 10% against the expected honest votes
 
-    print()
+    print('\n')
     print('PROCEEDING TO PLAN B: WHAT PROBLEMS CAN WE CAUSE RIGHT NOW?', '\n')
     print("1) Prevent honest proposals to go through! (i.e: The salaries of Dash Core Developers)")
     print("Explanation: We vote 'no' for a proposal and we hope that net 10% can't be achieved!")
@@ -515,7 +511,6 @@ years would be needed to acquire further 1K Master Nodes!
 
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
-
     print('''
 DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     ''')
