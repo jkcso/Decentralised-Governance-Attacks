@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/jk.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/jk.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/default.csv" beforeDir="false" afterPath="$PROJECT_DIR$/default.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/default.html" afterDir="false" />
@@ -19,7 +19,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="768">
+            <state relative-caret-position="627">
               <caret line="264" lean-forward="true" selection-start-line="264" selection-end-line="264" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
@@ -89,7 +89,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
     <option name="width" value="1004" />
     <option name="height" value="1027" />
@@ -287,12 +287,13 @@
       <workItem from="1555573470541" duration="16621000" />
       <workItem from="1555611795612" duration="7697000" />
       <workItem from="1555662568794" duration="18836000" />
-      <workItem from="1555751728217" duration="22980000" />
+      <workItem from="1555751728217" duration="23111000" />
+      <workItem from="1555854838474" duration="2436000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="132609000" />
+    <option name="totallyTimeSpent" value="135176000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -304,7 +305,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1004" height="1027" extended-state="0" />
+    <frame x="43" y="23" width="1637" height="1027" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.21184371" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -321,7 +323,6 @@
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.29839572" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32941177" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.32834226" />
-      <window_info anchor="right" id="Coverage" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -329,7 +330,8 @@
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="SciView" order="5" />
       <window_info anchor="right" id="Database" order="6" />
-      <window_info active="true" anchor="right" id="Run" order="7" visible="true" weight="0.93762994" />
+      <window_info anchor="right" id="Run" order="7" weight="0.55047023" />
+      <window_info anchor="right" id="Coverage" order="8" side_tool="true" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -337,7 +339,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SAADG$python_pdf.coverage" NAME="python_pdf Coverage Results" MODIFIED="1555697766325" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1555788309687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1555857526073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$mn_stats_error.coverage" NAME="mn_stats_error Coverage Results" MODIFIED="1555757807516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$budget_inflated.coverage" NAME="budget_inflated Coverage Results" MODIFIED="1555612798244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$csv_composition.coverage" NAME="csv_composition Coverage Results" MODIFIED="1555534334563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -395,7 +397,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="768">
+        <state relative-caret-position="627">
           <caret line="264" lean-forward="true" selection-start-line="264" selection-end-line="264" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />

@@ -247,18 +247,27 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print('\n')
     print('ATTACK PHASE ONE: PLANNING AND REASONING', '\n')
     print('Masternodes required for net 10% over honest:', malicious_net_10)
+
     # budget defaults to malicious net 10%
     if budget == MIN_BUDGET and mn_target == MIN_TARGET:
         print('Attack budget: cost of purchase net 10%')
+
     # budget is set but target dominates
     elif budget > MIN_BUDGET and mn_target > MIN_TARGET:
         print('Attack budget (£):', budget, '(enough to acquire:', budget_mn,
               'masternodes)' if budget_mn > ONE_MN else 'masternode)')
+        # even if the budget is enough to acquire much more of what is needed to be sucessful, cap it to just enough
+        # to save budget
+        if budget_mn >= malicious_net_10:
+            budget_mn = malicious_net_10
+            mn_target = budget_mn
+            num_mn_for_attack = mn_target - mn_controlled
+
     # budget is set to enough to accommodate the target
-    # TODO ensure that an impossible value is behaving well
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
         print('Attack budget (£): cost of realise target of', mn_target,
-              'masternodes)' if mn_target > ONE_MN else 'masternode')
+              'masternodes' if mn_target > ONE_MN else 'masternode')
+
     print('Therefore, target total masternodes:', mn_target if budget == MIN_BUDGET else budget_mn)
     print('Excluding those already under control or bribe, total:', mn_controlled)
     print('Finalised total of masternodes to acquire:', num_mn_for_attack)
