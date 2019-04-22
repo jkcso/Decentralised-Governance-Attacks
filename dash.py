@@ -557,28 +557,26 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     mn2020 = math.floor(int((c2020 - coins) // DASH_MN_COLLATERAL))
     mn2021 = math.floor(int((c2021 - coins) // DASH_MN_COLLATERAL))
 
-    print("\n3) Maintain a stealthy future")
-    print("Current supply (% against total):", coins, "(" +
-          percentage_total_master_nodes + "%)")
-    print("Total (ever) coin supply:", MAX_SUPPLY)
-    print("Remaining Supply/Possible new Master Nodes:", total_rem, "/", total_rem_mn)
-    print("Below is the minimum number of coins expected per year along with (%) against total coin supply:")
-    print("Expected minted coins until 04/2019(%)/Possible new Master Nodes:", c2019, "(46.3%)", "/", mn2019)
-    print("Expected minted coins until 04/2020(%)/Possible new Master Nodes:", c2020, "(50.14%)", "/", mn2020)
-    print("Expected minted coins until 04/2021(%)/Possible new Master Nodes:", c2021, "(53.7%)", "/", mn2021)
-    print("Furthermore: 08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)")
-    print('''SUGGESTED APPROACH:
-A stealthy attacker can slowly increase his/her army assuming a percentage gain of
-50% mined DASH => Master Nodes per year. Towards this DASH required, the attacker might
-use Proof-of-Service rewards able to purchase 25 new Master Nodes per existing Master Nodes per year
-(assuming 7.14% Return on Investment). An increase of 1K Master Nodes could take 4-5 years
-to be achieved and does not guarantee success! Notice that in the long term, more
-years would be needed to acquire further 1K Master Nodes!
-''')
+    print('\n')
+    print('INFORMATION FOR THE FUTURE', '\n')
+
+    print('Percentage of current circulation against total ever:', str(percentage_total_master_nodes) + '%')
+    print('Total ever coin supply:', MAX_SUPPLY)
+    print('Remaining ever coin supply:', total_rem)
+    print('Corresponding masternodes:', total_rem_mn, '\n')
+
+    # TODO correct those numbers
+    print('EXPECTED CIRCULATION PER YEAR', '\n')
+
+    print('09/2020:', c2020, '(50.14% of total ever)')
+    print('Available masternodes:', mn2020)
+    print('09/2021:', c2021, '(53.7% of total ever)')
+    print('Available masternodes:', mn2021)
+    print('08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)')
 
     kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,  # downvote proposal hoping honest majority
                         # not achieved, variable holds the number of honest positive votes required to pass
-                        'MalUpvote': approved_anw_for_less_than_possible, # upvote proposal hoping honest nodes will
+                        'MalUpvote': approved_anw_for_less_than_possible,  # upvote proposal hoping honest nodes will
                         # not achieve denial via honest negative vote; variable holds the upper bound needed for denial
                         'ExpVoters': avg_mn_votes,  # Expected to vote honestly to prevent a malicious action to occur
                         'ExpVotAtt': net_10_anw})  # Malicious Net 10% against the expected honest votes
