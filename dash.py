@@ -29,6 +29,8 @@ SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
 IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
 ADAPTOR = 2
+C2020 = 9486800
+C2021 = 10160671
 DEF_FILENAME = 'default'
 RT = '(real time value)'
 UD = '(user defined value)'
@@ -174,10 +176,8 @@ def create_pdf(filename):
 
 
 # Outputs the values we proceed during the simulation.
-def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
-
-    global PDF_REPORT
-    PDF_REPORT += 'test for attack phase 1' + NL
+def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target,
+                   num_possible_masternodes, exp):
 
     print('\n')
     print('FILES TO BE GENERATED', '\n')
@@ -194,6 +194,18 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print('Coins in circulation:', coins, RT if IS_CIRCULATION_REAL else UD)
     print('Total of honest masternodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
     print('Honest masternodes already under control or bribe:', mn_controlled)
+
+    global PDF_REPORT
+    PDF_REPORT += PDF_REPORT_HEADER
+    PDF_REPORT += PDF_REPORT_INTRO
+    PDF_REPORT += 'Budget: ' + str(budget) + NL
+    PDF_REPORT += 'PriceBef: ' + str(coin_price) + NL
+    PDF_REPORT += 'ActiveBef: ' + str(active_mn) + NL
+    PDF_REPORT += 'PossibleBef: ' + str(num_possible_masternodes) + NL
+    PDF_REPORT += 'Inflation: ' + str(exp) + NL
+    PDF_REPORT += 'Circulation: ' + str(coins) + NL
+    PDF_REPORT += 'Controlled: ' + str(mn_controlled) + NL
+    PDF_REPORT += 'Target: ' + str(mn_target) + NL + NL
 
     cost = float(MIN_PRICE)
     new_price = coin_price
@@ -291,6 +303,9 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print('Therefore, coins remaining available to acquire:', unfrozen_coins)
     print('These are enough for this number of masternodes:', possible_mn)
     print('Which as percentage out of the total possible masternodes is:', percentage_poss_total + '%')
+
+    global PDF_REPORT
+    PDF_REPORT += 'ATTACK PHASE ONE' + NL + NL
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
@@ -427,7 +442,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         new_num_mn = active_mn + num_mn_for_attack
         new_possible_mn = math.floor(int(new_remaining // DASH_MN_COLLATERAL))
         total_malicious = num_mn_for_attack + mn_controlled
-        percentage_malicious = str(float((total_malicious / new_num_mn) * PERCENTAGE))[0:4]
+        percentage_malicious = str(float((total_malicious / new_num_mn) * PERCENTAGE))[OS:OE]
 
         kibana_dict.update({'PurchaseAft': num_mn_for_attack,
                             'Cost': cost,
@@ -549,13 +564,9 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
     total_rem = MAX_SUPPLY - coins
     total_rem_mn = math.floor(int(total_rem // DASH_MN_COLLATERAL))
-    percentage_total_master_nodes = str(float((coins / MAX_SUPPLY) * PERCENTAGE))[0:4]
-    c2019 = 8761092
-    c2020 = 9486800
-    c2021 = 10160671
-    mn2019 = math.floor(int((c2019 - coins) // DASH_MN_COLLATERAL))
-    mn2020 = math.floor(int((c2020 - coins) // DASH_MN_COLLATERAL))
-    mn2021 = math.floor(int((c2021 - coins) // DASH_MN_COLLATERAL))
+    percentage_total_master_nodes = str(float((coins / MAX_SUPPLY) * PERCENTAGE))[OS:OE]
+    mn2020 = math.floor(int((C2020 - coins) // DASH_MN_COLLATERAL))
+    mn2021 = math.floor(int((C2021 - coins) // DASH_MN_COLLATERAL))
 
     print('\n')
     print('INFORMATION FOR THE FUTURE', '\n')
@@ -568,9 +579,9 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     # TODO correct those numbers
     print('EXPECTED CIRCULATION PER YEAR', '\n')
 
-    print('09/2020:', c2020, '(50.14% of total ever)')
+    print('09/2020:', C2020, '(50.14% of total ever)')
     print('Available masternodes:', mn2020)
-    print('09/2021:', c2021, '(53.7% of total ever)')
+    print('09/2021:', C2021, '(53.7% of total ever)')
     print('Available masternodes:', mn2021)
     print('08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)')
 
@@ -633,19 +644,8 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
                         'Controlled': mn_controlled,
                         'Target': mn_target})
 
-    global PDF_REPORT
-    PDF_REPORT += PDF_REPORT_HEADER
-    PDF_REPORT += PDF_REPORT_INTRO
-    PDF_REPORT += 'Budget: ' + str(budget) + NL
-    PDF_REPORT += 'PriceBef: ' + str(coin_price) + NL
-    PDF_REPORT += 'ActiveBef: ' + str(active_mn) + NL
-    PDF_REPORT += 'PossibleBef: ' + str(num_possible_masternodes) + NL
-    PDF_REPORT += 'Inflation: ' + str(exp) + NL
-    PDF_REPORT += 'Circulation: ' + str(coins) + NL
-    PDF_REPORT += 'Controlled: ' + str(mn_controlled) + NL
-    PDF_REPORT += 'Target: ' + str(mn_target) + NL + NL
-
-    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target)
+    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target,
+                   num_possible_masternodes, exp)
     create_csv(filename)
     create_pdf(filename)
 

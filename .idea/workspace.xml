@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/default.csv" beforeDir="false" afterPath="$PROJECT_DIR$/default.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/default.html" beforeDir="false" afterPath="$PROJECT_DIR$/default.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/default.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/default.pdf" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="633">
-              <caret line="575" selection-start-line="575" selection-end-line="575" />
+            <state relative-caret-position="12826">
+              <caret line="583" column="27" selection-start-line="583" selection-start-column="27" selection-end-line="583" selection-end-column="27" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -89,10 +86,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-304" />
-    <option name="y" value="-1080" />
-    <option name="width" value="1065" />
-    <option name="height" value="1080" />
+    <option name="x" value="549" />
+    <option name="y" value="23" />
+    <option name="width" value="1371" />
+    <option name="height" value="1057" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -288,12 +285,12 @@
       <workItem from="1555611795612" duration="7697000" />
       <workItem from="1555662568794" duration="18836000" />
       <workItem from="1555751728217" duration="23111000" />
-      <workItem from="1555854838474" duration="33445000" />
+      <workItem from="1555854838474" duration="34747000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="166185000" />
+    <option name="totallyTimeSpent" value="167487000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -305,7 +302,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-304" y="-1080" width="1065" height="1080" extended-state="0" />
+    <frame x="549" y="23" width="1371" height="1057" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.21184371" />
@@ -330,7 +327,7 @@
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="SciView" order="5" />
       <window_info anchor="right" id="Database" order="6" />
-      <window_info active="true" anchor="right" x="709" y="-1058" width="907" height="1058" id="Run" order="7" type="WINDOWED" visible="true" weight="0.71306473" />
+      <window_info anchor="right" x="709" y="-1058" width="907" height="1058" id="Run" order="7" type="WINDOWED" weight="0.71306473" />
       <window_info anchor="right" id="Coverage" order="8" side_tool="true" />
     </layout>
   </component>
@@ -397,8 +394,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="633">
-          <caret line="575" selection-start-line="575" selection-end-line="575" />
+        <state relative-caret-position="12826">
+          <caret line="583" column="27" selection-start-line="583" selection-start-column="27" selection-end-line="583" selection-end-column="27" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
