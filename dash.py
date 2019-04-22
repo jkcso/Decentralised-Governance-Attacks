@@ -247,7 +247,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     num_mn_for_attack = mn_target - mn_controlled
 
     print('\n')
-    print('ATTACK PHASE ONE: PLANNING AND REASONING', '\n')
+    print('ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS', '\n')
 
     print('Masternodes required for net 10% over honest:', malicious_net_10)
 
@@ -257,7 +257,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
 
     # budget is set but target dominates
     elif budget > MIN_BUDGET and mn_target > MIN_TARGET:
-        print('Attack budget (£):', budget, '(enough to acquire:', budget_mn,
+        print('Attack budget (£):', budget, '(enough to acquire', budget_mn,
               'masternodes)' if budget_mn > ONE_MN else 'masternode)')
         # even if the budget is enough to acquire much more of what is needed to be sucessful, cap it to just enough
         # to save budget
@@ -275,9 +275,26 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print('Excluding those already under control or bribe, total:', mn_controlled)
     print('Finalised total of masternodes to acquire:', num_mn_for_attack)
 
+    frozen_coins = DASH_MN_COLLATERAL * active_mn
+    unfrozen_coins = coins - frozen_coins
+    possible_mn = math.floor(int(unfrozen_coins // DASH_MN_COLLATERAL))
+    percentage_poss_total = str(float((possible_mn / math.floor(int(coins // DASH_MN_COLLATERAL))) * PERCENTAGE))[OS:OE]
+
+    kibana_dict.update({'FrozenBef': frozen_coins,
+                        'PurchaseBef': num_mn_for_attack,
+                        'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
+
+    print()
+    print('Active masternodes before purchase:', active_mn)
+    print('Coins in circulation before purchase:', coins)
+    print('From which coins frozen for required collateral:', frozen_coins)
+    print('Therefore, coins remaining available to acquire:', unfrozen_coins)
+    print('These are enough for this number of masternodes:', possible_mn)
+    print('Which as percentage out of the total possible masternodes is:', percentage_poss_total + '%')
+
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
-                   malicious_net_10)
+                   malicious_net_10, frozen_coins, possible_mn)
 
 
 '''
@@ -295,19 +312,10 @@ Example:
 
 
 def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
-                   malicious_net_10):
+                   malicious_net_10, frozen_coins, possible_mn):
 
     global PDF_REPORT
     PDF_REPORT += 'test for attack phase 2' + NL
-
-    frozen_coins = DASH_MN_COLLATERAL * active_mn
-    unfrozen_coins = coins - frozen_coins
-    possible_mn = math.floor(int(unfrozen_coins // DASH_MN_COLLATERAL))
-    percentage_poss_total = str(float((possible_mn / math.floor(int(coins // DASH_MN_COLLATERAL))) * PERCENTAGE))[OS:OE]
-
-    kibana_dict.update({'FrozenBef': frozen_coins,
-                        'PurchaseBef': num_mn_for_attack,
-                        'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
 
     # when budget is not set it means that what is required is to a dynamic cost for purchasing masternodes only.
     if budget == MIN_BUDGET:
@@ -350,18 +358,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     if attack_outcome == im:
         print('REASON', '\n')
         print('Because the remaining coins in circulation are not enough for', num_mn_for_attack, 'masternodes')
-        print('but for a maximum amount of', str(possible_mn) + ',', 'still capable for an effective cyber sabotage', '\n')
+        print('but for a maximum of', str(possible_mn) + ',', 'still capable for an effective cyber sabotage', '\n')
 
-    print('ANALYSIS', '\n')
-
-    print('Active masternodes before purchase:', active_mn)
-    print('Coins in circulations before purchase:', coins)
-    print('From which coins frozen for required collateral:', frozen_coins)
-    print('Therefore, coins remaining unfrozen to acquire:', unfrozen_coins)
-    print('These are enough for this number of masternodes:', possible_mn)
-    print('Which as percentage out of the total possible masternodes is:', percentage_poss_total + '%')
-
-    print()
     print('HYPOTHETICAL REALISATION', '\n')
 
     print('Dash price before attack initiation (£):', coin_price)
@@ -395,8 +393,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     print()
     print('CONCLUSION', '\n')
 
-    print('The available coin supply was enough to buy this amount of masternodes:', possible_mn)
     print('Number of masternodes required for malicious majority:', malicious_net_10)
+    print('The available coin supply was enough to buy this amount of masternodes:', possible_mn)
     print('The attempted purchase was for:', num_mn_for_attack, 'masternodes', '<-- (Problematic metric)'
           if num_mn_for_attack > possible_mn else '')
 
@@ -446,6 +444,13 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         print('From which malicious:',
               num_mn_for_attack, '+ ' + str(mn_controlled) + ' = ' + str(num_mn_for_attack + mn_controlled)
               if mn_controlled > MIN_CONTROL else '', '(' + percentage_malicious + '% of total masternodes)')
+
+        print()
+        print('CONCLUSION', '\n')
+
+        print('Number of masternodes required for malicious majority:', malicious_net_10)
+        print('Available supply was enough for this amount of masternodes:', possible_mn)
+        print('For which a hypothetical purchase was simulated to assess new intricacies')
 
     # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
     # should hold: positive votes - negative votes >= 10% of active masternodes
