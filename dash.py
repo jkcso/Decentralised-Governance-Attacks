@@ -191,8 +191,8 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         else print('Attack budget (£):', budget, UD)
     print('Dash price (£):', coin_price, RT if IS_COIN_PRICE_REAL else UD)
     print('Inflation rate:', str(exp_incr)[OS:OE], DEF if exp_incr == DEF_INFLATION else UD)
-    print('Total of honest masternodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
     print('Coins in circulation:', coins, RT if IS_CIRCULATION_REAL else UD)
+    print('Total of honest masternodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
     print('Honest masternodes already under control or bribe:', mn_controlled)
 
     cost = float(MIN_PRICE)
@@ -249,6 +249,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print('\n')
     print('ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS', '\n')
 
+    print('Active masternodes before purchase:', active_mn)
     print('Masternodes required for net 10% over honest:', malicious_net_10)
 
     # budget defaults to malicious net 10%
@@ -285,7 +286,6 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
                         'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
 
     print()
-    print('Active masternodes before purchase:', active_mn)
     print('Coins in circulation before purchase:', coins)
     print('From which coins frozen for required collateral:', frozen_coins)
     print('Therefore, coins remaining available to acquire:', unfrozen_coins)
@@ -370,6 +370,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     if budget > MIN_BUDGET:
         remaining_budget = float('{0:.3f}'.format(budget - cost))
         print('Therefore remaining budget equals (£):', remaining_budget)
+
+    print()
     print('Coins in circulation after purchase:', coins)
 
     print('From which coins frozen for required collateral:', new_num_frozen,
@@ -397,6 +399,10 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     print('The available coin supply was enough to buy this amount of masternodes:', possible_mn)
     print('The attempted purchase was for:', num_mn_for_attack, 'masternodes', '<-- (Problematic metric)'
           if num_mn_for_attack > possible_mn else '')
+    if attack_outcome == p:
+        print('Estimated total cost with inflation (£):', cost)
+        print('Total active masternodes after purchase:', new_num_mn)
+        print('From which malicious:', total_malicious, '(' + percentage_malicious + '% of total masternodes)')
 
     # The initial attack was not realised due to the high number of masternodes attempted to purchase, therefore
     # a noisy and determined to succeed adversary can proceed to the purchase of the highest number possible
@@ -437,6 +443,8 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         print('Dash price before attack initiation (£):', coin_price)
         print('Estimated Dash price after purchase (£):', new_price)
         print('Estimated total cost with inflation (£):', cost)
+
+        print()
         print('Coins in circulation after purchase:', coins)
         print('From which coins frozen for required collateral:', new_num_frozen)
         print('Therefore, coins remaining available to acquire:', new_remaining)
@@ -450,7 +458,9 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
         print('Number of masternodes required for malicious majority:', malicious_net_10)
         print('Available supply was enough for this amount of masternodes:', possible_mn)
-        print('For which a hypothetical purchase was simulated to assess new intricacies')
+        print('Estimated total cost with inflation (£):', cost)
+        print('Total active masternodes after purchase:', new_num_mn)
+        print('From which malicious:', total_malicious, '(' + percentage_malicious + '% of total masternodes)')
 
     # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
     # should hold: positive votes - negative votes >= 10% of active masternodes
@@ -554,8 +564,8 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
         budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
         coin_price = input('Dash price (£): (press enter for real time price)  ')
         exp = input('Inflation rate (1-10)(1: Aggressive, 10: Slow): (press enter for default rate)  ')
-        active_mn = input('Total of honest masternodes: (press enter for real time active masternodes)  ')
         coins = input('Coins in circulation: (press enter for real time circulation)  ')
+        active_mn = input('Total of honest masternodes: (press enter for real time active masternodes)  ')
         mn_controlled = input('Honest masternodes already under control or bribe: (press enter for none)  ')
         mn_target = input('Target total masternodes: (press enter for enough to be successful)  ')
 
@@ -565,8 +575,8 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             coin_price = float(coin_price) if coin_price else acquire_real_time_price()
             exp = float((int(exp) + SANITISE) * INVERSE) if exp and (MIN_EXP < int(exp) < MAX_EXP) else float(DEF_EXP)
             exp_incr = math.pow(math.e, exp)
-            active_mn = int(active_mn) if active_mn else acquire_real_time_masternodes()
             coins = int(coins) if coins else acquire_real_time_circulation()
+            active_mn = int(active_mn) if active_mn else acquire_real_time_masternodes()
             mn_controlled = int(mn_controlled) if mn_controlled else MIN_CONTROL
             # number of masternodes possible for an adversary to control should equal the unfrozen coins in collateral
             num_possible_masternodes = math.floor(int((coins - (active_mn * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
