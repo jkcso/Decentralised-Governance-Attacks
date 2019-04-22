@@ -383,7 +383,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     if attack_outcome == p:
         print('These are enough to acquire more masternodes, specifically:', new_possible_mn)
         print('Which as percentage takes this share from total possible masternodes:', percentage_mn_left + '%')
-        print('However, 55% is the perfect percentage which guarantees success in any governance attack')
+        print('However, 55% guarantees success in any governance attack')
 
     print('Total active masternodes after purchase:', new_num_mn) if new_num_mn <= possible_mn \
         else print('Theoretical total active masternodes after purchase:', new_num_mn)
@@ -393,7 +393,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
           if mn_controlled > MIN_CONTROL else '', '(' + percentage_malicious + '% of total masternodes)')
 
     print()
-    print('CONCLUSION', '\n')
+    print('SUMMARY', '\n')
 
     print('Number of masternodes required for malicious majority:', malicious_net_10)
     print('The available coin supply was enough to buy this amount of masternodes:', possible_mn)
@@ -402,7 +402,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     if attack_outcome == p:
         print('Estimated total cost with inflation (£):', cost)
         print('Total active masternodes after purchase:', new_num_mn)
-        print('From which malicious:', total_malicious, '(' + percentage_malicious + '% of total masternodes)')
+        print('From which malicious:', str(total_malicious) + '(' + percentage_malicious + '% of total masternodes)')
 
     # The initial attack was not realised due to the high number of masternodes attempted to purchase, therefore
     # a noisy and determined to succeed adversary can proceed to the purchase of the highest number possible
@@ -410,7 +410,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     # achievable that is constrained from the unfrozen circulation
     if attack_outcome == im:
         num_mn_for_attack = possible_mn
-        attack_outcome = 'POSSIBLE'
+        attack_outcome = p
         print('\n')
 
         print('SECOND PURCHASE ATTEMPT FOR', num_mn_for_attack, 'MASTER NODES', '\n')
@@ -454,27 +454,99 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
               if mn_controlled > MIN_CONTROL else '', '(' + percentage_malicious + '% of total masternodes)')
 
         print()
-        print('CONCLUSION', '\n')
+        print('SUMMARY', '\n')
 
         print('Number of masternodes required for malicious majority:', malicious_net_10)
         print('Available supply was enough for this amount of masternodes:', possible_mn)
         print('Estimated total cost with inflation (£):', cost)
         print('Total active masternodes after purchase:', new_num_mn)
-        print('From which malicious:', total_malicious, '(' + percentage_malicious + '% of total masternodes)')
+        print('From which malicious:', str(total_malicious) + '(' + percentage_malicious + '% of total masternodes)')
+
+        attack_outcome = im  # switches back to impossible for better insights later
 
     # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
     # should hold: positive votes - negative votes >= 10% of active masternodes
-    anti_dos_poss = math.floor(num_mn_for_attack * NET_10_PERCENT) + ONE_MN \
-        if num_mn_for_attack > new_num_mn * MIN_10_PERCENT \
+    anti_dos_for_less_than_possible = math.ceil(num_mn_for_attack * NET_10_PERCENT) + ONE_MN \
+        if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
         else math.ceil(new_num_mn * MIN_10_PERCENT + num_mn_for_attack)
-    anti_dos_needed = math.ceil(possible_mn * NET_10_PERCENT) + ONE_MN
-    approved_anw = math.ceil(num_mn_for_attack / NET_10_PERCENT) - ONE_MN \
-        if num_mn_for_attack > new_num_mn * MIN_10_PERCENT \
-        else math.floor(new_num_mn * MIN_10_PERCENT)
-    avg_mn_votes = math.floor(active_mn * SIXTY_PERCENT)
-    net_10_anw = math.floor(avg_mn_votes * NET_10_PERCENT) + ONE_MN
-    negligence_out = "YES!" if num_mn_for_attack >= net_10_anw or (num_mn_for_attack + new_possible_mn) >= net_10_anw \
-        else "NO!"
+
+    anti_dos_for_possible = math.ceil(possible_mn * NET_10_PERCENT) + ONE_MN \
+        if possible_mn > (new_num_mn * MIN_10_PERCENT) \
+        else math.ceil(possible_mn * MIN_10_PERCENT)
+
+    print('\n')
+    print('INSIGHTS: WHAT PROBLEMS CAN WE CAUSE RIGHT NOW?', '\n')
+
+    print('(1) PREVENT HONEST PROPOSALS TO GO THROUGH', '\n')
+
+    print('EXAMPLE', '\n')
+    print('Monthly salary of Dash Core Developers or other beneficial investments', '\n')
+
+    print('DESIGN VULNERABILITY', '\n')
+    print('Proposals are not partially funded and remaining governance funds are burnt.')
+    print('Therefore, if attacked proposal is not in top rankings, it will be rejected.', '\n')
+
+    print('SUCCESS LIKELIHOOD: HIGH', '\n')
+    print('Because even if net 10% is achieved there is no funding guarantee.')
+    print('Funding is granted to the top X proposals based on net percentage.', '\n')
+
+    print('METHODOLOGY', '\n')
+    print('By down-voting proposals so that the net 10% margin is not achieved', '\n')
+
+    print('EXPLOITATION', '\n')
+    if attack_outcome == p:
+        print('Total votes of malicious masternodes:', num_mn_for_attack)
+        print('Least honest votes required for net majority:', anti_dos_for_less_than_possible)
+
+    print('Maximum malicious masternodes based on available circulation:', possible_mn)
+    print('Least honest votes required for net majority:', anti_dos_for_possible)
+    print('\n')
+
+    # it is assumed that if malicious masternodes controlled are not more than 10% of total, then 0 honest are needed
+    approved_anw_for_less_than_possible = math.floor(num_mn_for_attack / NET_10_PERCENT) - ONE_MN \
+        if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
+        else MIN_REMAINING
+
+    # same here as above
+    approved_anw_for_possible = math.floor(possible_mn / NET_10_PERCENT) - ONE_MN \
+        if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
+        else MIN_REMAINING
+
+    # calculates 60% of honest masternodes, therefore malicious are excluded from calculation
+    avg_mn_votes = math.ceil((new_num_mn - num_mn_for_attack) * SIXTY_PERCENT)
+    net_10_anw = math.ceil(avg_mn_votes * NET_10_PERCENT) + ONE_MN
+
+    print('(2) MALICIOUS PROPOSAL PASSES BY NEGLIGENCE', '\n')
+
+    print('EXAMPLE', '\n')
+    print('Malicious proposal up-voted from malicious masternodes and abstention is high', '\n')
+
+    print('DESIGN VULNERABILITY', '\n')
+    print('Votes are never questioned therefore if a proposal is accepted, no censorship exists', '\n')
+
+    print('SUCCESS LIKELIHOOD: MEDIUM', '\n')
+    print('The controversy of a malicious proposal is expected to unite honest owners', '\n')
+
+    print('METHODOLOGY', '\n')
+    print('Malicious proposal starts to be up-voted as close as possible to the closing window', '\n')
+
+    print('EXPLOITATION', '\n')
+    if attack_outcome == p:
+        # vice-versa case of malicious denial of service
+        print('Total votes of malicious masternodes:', num_mn_for_attack)
+        print('Least honest votes required for rejection:', approved_anw_for_less_than_possible)
+
+    print('Maximum malicious masternodes based on available circulation:', possible_mn)
+    print('Least votes required for net majority against maximum malicious:', approved_anw_for_possible, '\n')
+
+    print('HISTORIC DATA', '\n')
+
+    print('Maximum votes ever recorded for funding a proposal is: 2147')
+    print('At the time, this as percentage towards total masternodes was: 44.44%')
+    print('Assuming a higher percentage this time due to unity from controversy: 60%')
+    print('Which equals this number of honest masternodes:', avg_mn_votes)
+    print('Therefore, total malicious masternodes needed for net majority:', net_10_anw)
+
     total_rem = MAX_SUPPLY - coins
     total_rem_mn = math.floor(int(total_rem // DASH_MN_COLLATERAL))
     percentage_total_master_nodes = str(float((coins / MAX_SUPPLY) * PERCENTAGE))[0:4]
@@ -484,53 +556,6 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     mn2019 = math.floor(int((c2019 - coins) // DASH_MN_COLLATERAL))
     mn2020 = math.floor(int((c2020 - coins) // DASH_MN_COLLATERAL))
     mn2021 = math.floor(int((c2021 - coins) // DASH_MN_COLLATERAL))
-
-    kibana_dict.update({'MalDownvote': anti_dos_poss,  # downvote proposal hoping honest majority not achieved
-                        # however note that anti_dos_poss hold the number of honest positive votes required to pass
-                        'MalUpvote': approved_anw,  # upvote proposal hoping honest nodes will not manage to deny it
-                        # via their honest negative voting; approved_anw holds the upper bound needed to achieve denial
-                        'ExpVoters': avg_mn_votes,  # Expected to vote honestly to prevent a malicious action to occur
-                        'ExpVotAtt': net_10_anw})  # Malicious Net 10% against the expected honest votes
-
-    print('\n')
-    print('PROCEEDING TO PLAN B: WHAT PROBLEMS CAN WE CAUSE RIGHT NOW?', '\n')
-    print("1) Prevent honest proposals to go through! (i.e: The salaries of Dash Core Developers)")
-    print("Explanation: We vote 'no' for a proposal and we hope that net 10% can't be achieved!")
-
-    if attack_outcome == p:
-        print("The number of Master Nodes we acquired above is:", num_mn_for_attack, "Master Nodes")
-        print("This means that for a proposal to get accepted, it would need this number of positive votes:",
-              anti_dos_poss, "Master Nodes")
-
-    print("Maximum possible amount of Master Nodes we can acquire due to coins in circulation is:", possible_mn,
-          "Master Nodes")
-    print("It means that for a proposal to get accepted, it would need these positive votes:", anti_dos_needed,
-          "Master Nodes")
-    print("WHY: Anything below the required amount of votes will cause a proposal rejection.")
-
-    print("\n2) Acts of Negligence -- Achievable?", negligence_out)
-    print("Explanation: We vote 'yes' for a proposal and we hope in a high % of voting abstention!")
-
-    if attack_outcome == p:
-        print("With this amount of Master Nodes under our control, which is:", num_mn_for_attack, "Master Nodes")
-        print("A budget proposal will be approved even if this number of honest Master Node votes against:",
-              approved_anw, "Master Nodes")
-
-    print("Given that the maximum votes ever recorded for funding a proposal is: 2147 Master Nodes (44.47%)")
-    print(
-        "Assuming that a controversial proposal will drastically increase this,\nwe will consider a higher percentage "
-        "of 60% voters, this means: ",
-        avg_mn_votes, "Master Nodes")
-    print("Which means that we would need this amount of Master Nodes to achieve net 10%:", net_10_anw, "Master Nodes")
-    print("Maximum possible amount of Master Nodes we can acquire due to coins in circulation is:", possible_mn,
-          "Master Nodes")
-
-    if attack_outcome == p:
-        print("Remember that the remaining coins are enough to acquire more Master Nodes, actually:", new_possible_mn,
-              "Master Nodes")
-        print("OUTCOME: If we acquire them, then we achieve net 10% in case that 60% of honest Master Node vote.")
-        print("WHY: Total number of malicious Master Nodes will become:", num_mn_for_attack + new_possible_mn)
-        print("     and we previously needed at least this amount for majority:", net_10_anw, "Master Nodes")
 
     print("\n3) Maintain a stealthy future")
     print("Current supply (% against total):", coins, "(" +
@@ -550,6 +575,13 @@ use Proof-of-Service rewards able to purchase 25 new Master Nodes per existing M
 to be achieved and does not guarantee success! Notice that in the long term, more
 years would be needed to acquire further 1K Master Nodes!
 ''')
+
+    kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,  # downvote proposal hoping honest majority
+                        # not achieved, variable holds the number of honest positive votes required to pass
+                        'MalUpvote': approved_anw_for_less_than_possible, # upvote proposal hoping honest nodes will
+                        # not achieve denial via honest negative vote; variable holds the upper bound needed for denial
+                        'ExpVoters': avg_mn_votes,  # Expected to vote honestly to prevent a malicious action to occur
+                        'ExpVotAtt': net_10_anw})  # Malicious Net 10% against the expected honest votes
 
 
 # This is the main method of the program, responsible for IO using the above methods.
