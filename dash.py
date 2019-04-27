@@ -179,10 +179,17 @@ def create_pdf(filename):
 def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target,
                    num_possible_masternodes, exp):
 
+    global PDF_REPORT
+    PDF_REPORT += PDF_REPORT_HEADER
+    PDF_REPORT += PDF_REPORT_INTRO
+
     print('\n')
-    print('FILES TO BE GENERATED', '\n')
+    s1 = 'FILES TO BE GENERATED'
+    print(s1, '\n')
+    PDF_REPORT += s1 + NL + NL
 
     print(filename + '.csv,', filename + '.html,', filename + '.pdf', '\n', '\n')
+    PDF_REPORT += filename + '.csv, ' + filename + '.html, ' + filename + '.pdf' + NL + NL
 
     print('VALUES PROCEEDING WITH', '\n')
 
@@ -195,10 +202,6 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print('Total of honest masternodes:', active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
     print('Honest masternodes already under control or bribe:', mn_controlled)
 
-    global PDF_REPORT
-    PDF_REPORT += PDF_REPORT_HEADER
-    PDF_REPORT += PDF_REPORT_INTRO
-    PDF_REPORT += 'Budget: ' + str(budget) + NL
     PDF_REPORT += 'PriceBef: ' + str(coin_price) + NL
     PDF_REPORT += 'ActiveBef: ' + str(active_mn) + NL
     PDF_REPORT += 'PossibleBef: ' + str(num_possible_masternodes) + NL
@@ -303,9 +306,6 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print('Therefore, coins remaining available to acquire:', unfrozen_coins)
     print('These are enough for this number of masternodes:', possible_mn)
     print('Which as percentage out of the total possible masternodes is:', percentage_poss_total + '%')
-
-    global PDF_REPORT
-    PDF_REPORT += 'ATTACK PHASE ONE' + NL + NL
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
