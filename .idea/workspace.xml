@@ -15,7 +15,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="764">
+            <state relative-caret-position="670">
               <caret line="359" lean-forward="true" selection-start-line="359" selection-end-line="359" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
@@ -35,8 +35,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>freezed</find>
-      <find>perc_mn</find>
       <find>perc_total_mn</find>
       <find>dash</find>
       <find>real_time_price</find>
@@ -65,6 +63,8 @@
       <find>RETURN</find>
       <find>target</find>
       <find>kibana_dict</find>
+      <find>attack_phase</find>
+      <find>mn_contro</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -85,7 +85,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="x" value="43" />
     <option name="y" value="23" />
     <option name="width" value="1877" />
@@ -119,7 +119,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -287,12 +287,12 @@
       <workItem from="1555751728217" duration="23111000" />
       <workItem from="1555854838474" duration="34871000" />
       <workItem from="1556008281985" duration="591000" />
-      <workItem from="1556376778169" duration="4049000" />
+      <workItem from="1556376778169" duration="7667000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="172251000" />
+    <option name="totallyTimeSpent" value="175869000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -304,10 +304,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="43" y="23" width="1877" height="1057" extended-state="6" />
+    <frame x="43" y="23" width="1877" height="1057" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.28610355" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23923706" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -319,7 +319,7 @@
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32953367" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.2973262" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.29637307" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32941177" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.32834226" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -396,7 +396,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="764">
+        <state relative-caret-position="670">
           <caret line="359" lean-forward="true" selection-start-line="359" selection-end-line="359" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />

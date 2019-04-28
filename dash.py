@@ -176,8 +176,7 @@ def create_pdf(filename):
 
 
 # Outputs the values we proceed during the simulation.
-def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target,
-                   num_possible_masternodes, exp):
+def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
 
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_HEADER
@@ -203,22 +202,23 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     s8 = 'Total of honest masternodes:'
     s9 = 'Total of honest masternodes:'
 
-    print(s3) \
-        if budget == MIN_BUDGET \
-        else print(s4, budget, UD)
-    print(s5, coin_price, RT if IS_COIN_PRICE_REAL else UD)
-    print(s6, str(exp_incr)[OS:OE], DEF if exp_incr == DEF_INFLATION else UD)
-    print(s7, coins, RT if IS_CIRCULATION_REAL else UD)
-    print(s8, active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
-    print(s9, mn_controlled)
+    print(s3) if budget == MIN_BUDGET else print(s4, budget, UD)
+    PDF_REPORT += s3 + NL if budget == MIN_BUDGET else s4 + budget + UD + NL
 
-    PDF_REPORT += s3 + NL
-    PDF_REPORT += s4 + NL
-    PDF_REPORT += s5 + NL
-    PDF_REPORT += s6 + NL
-    PDF_REPORT += s7 + NL
-    PDF_REPORT += s8 + NL
-    PDF_REPORT += s9 + NL + NL
+    print(s5, coin_price, RT if IS_COIN_PRICE_REAL else UD)
+    PDF_REPORT += s5, coin_price, RT + NL if IS_COIN_PRICE_REAL else UD + NL
+
+    print(s6, str(exp_incr)[OS:OE], DEF if exp_incr == DEF_INFLATION else UD)
+    PDF_REPORT += s6, str(exp_incr)[OS:OE], DEF + NL if exp_incr == DEF_INFLATION else UD + NL
+
+    print(s7, coins, RT if IS_CIRCULATION_REAL else UD)
+    PDF_REPORT += s7, coins, RT + NL if IS_CIRCULATION_REAL else UD + NL
+
+    print(s8, active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
+    PDF_REPORT += s8, active_mn, RT + NL if IS_MASTERNODES_NUMBER_REAL else UD + NL
+
+    print(s9, mn_controlled)
+    PDF_REPORT += s9, mn_controlled + NL + NL
 
     cost = float(MIN_PRICE)
     new_price = coin_price
@@ -253,7 +253,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         s10 = 'Target total masternodes:'
         s11 = '(capped due to budget)'
         print(s10, mn_target, s11)
-        PDF_REPORT += s10, mn_target, s11 + NL
+        PDF_REPORT += s10, mn_target, s11 + NL + NL
 
     # when user provides budget and already controlled nodes, the target should be based on budget and the following
     # operation is there to erase the subtraction specifying that master nodes to buy are those not already controlled
@@ -261,21 +261,21 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         mn_target += mn_controlled
         s12 = 'Total masternodes including already controlled or bribed:'
         print(s12, mn_target)
-        PDF_REPORT += s12, mn_target, NL
+        PDF_REPORT += s12, mn_target, NL + NL
 
     # when the budget is not set but a target number of mn to acquire is provided
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
         mn_target = mn_target
         s13 = 'Target total masternodes:'
         print(s13, mn_target, UD)
-        PDF_REPORT += s13, mn_target, UD + NL
+        PDF_REPORT += s13, mn_target, UD + NL + NL
 
     # when neither budget nor mn target is set, the metric defaults to a malicious net 10% majority
     elif budget == MIN_BUDGET and mn_target == MIN_TARGET:
         mn_target = malicious_net_10
         s14 = 'Target total masternodes: unspecified (defaults to net 10% over honest)'
         print(s14)
-        PDF_REPORT += s14 + NL
+        PDF_REPORT += s14 + NL + NL
 
     # based on the above conditions, the number of masternodes to purchase is determined here
     num_mn_for_attack = mn_target - mn_controlled
@@ -283,7 +283,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     s15 = 'ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS'
     print('\n')
     print(s15, '\n')
-    PDF_REPORT += s15 + NL
+    PDF_REPORT += s15 + NL + NL
 
     s16 = 'Active masternodes before purchase:'
     s17 = 'Masternodes required for net 10% over honest:'
@@ -303,9 +303,9 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         print('Attack budget (£):', budget, '(enough to acquire', budget_mn,
               'masternodes)' if budget_mn > ONE_MN else 'masternode)')
         PDF_REPORT += 'Attack budget (£):', budget, '(enough to acquire', budget_mn, \
-                      'masternodes)' if budget_mn > ONE_MN else 'masternode)', NL
+                      'masternodes)' + NL if budget_mn > ONE_MN else 'masternode)' + NL
 
-        # even if the budget is enough to acquire much more of what is needed to be sucessful, cap it to just enough
+        # even if the budget is enough to acquire much more of what is needed to be successful, cap it to just enough
         # to save budget
         if budget_mn >= malicious_net_10:
             budget_mn = malicious_net_10
@@ -317,10 +317,10 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         print('Attack budget (£): cost of realise target of', mn_target,
               'masternodes' if mn_target > ONE_MN else 'masternode')
         PDF_REPORT += 'Attack budget (£): cost of realise target of', mn_target, \
-                      'masternodes' if mn_target > ONE_MN else 'masternode' + NL
+                      'masternodes' + NL if mn_target > ONE_MN else 'masternode' + NL
 
     print('Therefore, target total masternodes:', mn_target if budget == MIN_BUDGET else budget_mn)
-    PDF_REPORT += 'Therefore, target total masternodes:', mn_target if budget == MIN_BUDGET else budget_mn, NL
+    PDF_REPORT += 'Therefore, target total masternodes:', mn_target, NL if budget == MIN_BUDGET else budget_mn, NL
 
     s19 = 'Excluding those already under control or bribe, total:'
     print(s19, mn_controlled)
@@ -356,7 +356,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     PDF_REPORT += s22, frozen_coins, NL
     PDF_REPORT += s23, unfrozen_coins, NL
     PDF_REPORT += s24, possible_mn, NL
-    PDF_REPORT += s25, percentage_poss_total, '%', NL, NL
+    PDF_REPORT += s25, percentage_poss_total, '%' + NL + NL
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
@@ -695,8 +695,7 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
                         'Controlled': mn_controlled,
                         'Target': mn_target})
 
-    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target,
-                   num_possible_masternodes, exp)
+    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target)
     create_csv(filename)
     create_pdf(filename)
 
