@@ -260,7 +260,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         s10 = 'Target total masternodes:'
         s11 = '(capped due to budget)'
         print(s10, mn_target, s11)
-        PDF_REPORT += s10 + ' ' + str(mn_target) + ' ' + s11 + NL + NL
+        PDF_REPORT += s10 + ' ' + str(mn_target) + ' ' + s11 + NL
 
     # when user provides budget and already controlled nodes, the target should be based on budget and the following
     # operation is there to erase the subtraction specifying that master nodes to buy are those not already controlled
@@ -268,21 +268,21 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         mn_target += mn_controlled
         s12 = 'Total masternodes including already controlled or bribed:'
         print(s12, mn_target)
-        PDF_REPORT += s12 + ' ' + str(mn_target) + NL + NL
+        PDF_REPORT += s12 + ' ' + str(mn_target) + NL
 
     # when the budget is not set but a target number of mn to acquire is provided
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
         mn_target = mn_target
         s13 = 'Target total masternodes:'
         print(s13, mn_target, UD)
-        PDF_REPORT += s13 + ' ' + str(mn_target) + ' ' + UD + NL + NL
+        PDF_REPORT += s13 + ' ' + str(mn_target) + ' ' + UD + NL
 
     # when neither budget nor mn target is set, the metric defaults to a malicious net 10% majority
     elif budget == MIN_BUDGET and mn_target == MIN_TARGET:
         mn_target = malicious_net_10
         s14 = 'Target total masternodes: unspecified (defaults to net 10% over honest)'
         print(s14)
-        PDF_REPORT += s14 + NL + NL
+        PDF_REPORT += s14 + NL
 
     # based on the above conditions, the number of masternodes to purchase is determined here
     num_mn_for_attack = mn_target - mn_controlled
@@ -290,6 +290,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     s15 = 'ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS'
     print('\n')
     print(s15, '\n')
+    PDF_REPORT += NL
     PDF_REPORT += s15 + NL + NL
 
     s16 = 'Active masternodes before purchase:'
@@ -472,24 +473,25 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         s32 = 'Therefore remaining budget equals (£):'
         remaining_budget = float('{0:.3f}'.format(budget - cost))
         print(s32, remaining_budget)
-        PDF_REPORT += s32 + ' ' + str(remaining_budget) + NL + NL
+        PDF_REPORT += s32 + ' ' + str(remaining_budget) + NL
 
     print()
     s33 = 'Coins in circulation after purchase:'
     print(s33, coins)
+    PDF_REPORT += NL
     PDF_REPORT += s33 + ' ' + str(coins) + NL
 
     print('From which coins frozen for required collateral:', new_num_frozen,
           '<-- (Problematic metric)' if attack_outcome == im else '')
     PDF_REPORT += 'From which coins frozen for required collateral: ' + str(new_num_frozen) + \
-                  ' <-- (Problematic metric)' + NL \
+                  '  <---  (Problematic metric)' + NL \
         if attack_outcome == im \
         else 'From which coins frozen for required collateral: ' + str(new_num_frozen) + NL
 
     print('Therefore, coins remaining available to acquire:', new_remaining,
           '<-- (Problematic metric)' if attack_outcome == im else '')
     PDF_REPORT += 'Therefore, coins remaining available to acquire: ' + str(new_remaining) \
-                  + ' <-- (Problematic metric)' + NL \
+                  + '  <---  (Problematic metric)' + NL \
         if attack_outcome == im \
         else 'Therefore, coins remaining available to acquire: ' + str(new_remaining) + NL
 
@@ -538,7 +540,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     print('The attempted purchase was for:', num_mn_for_attack, 'masternodes', '<-- (Problematic metric)'
           if num_mn_for_attack > possible_mn else '')
     PDF_REPORT += 'The attempted purchase was for: ' + str(num_mn_for_attack) \
-                  + ' masternodes <-- (Problematic metric)' + NL if num_mn_for_attack > possible_mn \
+                  + ' masternodes  <---  (Problematic metric)' + NL + NL if num_mn_for_attack > possible_mn \
         else 'The attempted purchase was for: ' + str(num_mn_for_attack) + ' masternodes' + NL
 
     if attack_outcome == p:
@@ -592,7 +594,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         PDF_REPORT += 'PURCHASE OUTCOME ' + str(attack_outcome) + NL + NL
         PDF_REPORT += 'ANALYSIS' + NL + NL
 
-        s41 = 'Dash price before attack initiation (£):',
+        s41 = 'Dash price before attack initiation (£):'
         s42 = 'Estimated Dash price after purchase (£):'
         s43 = 'Estimated total cost with inflation (£):'
 
@@ -602,7 +604,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
         PDF_REPORT += s41 + ' ' + str(coin_price) + NL
         PDF_REPORT += s42 + ' ' + str(new_price) + NL
-        PDF_REPORT += s43 + ' ' + str(cost) + NL
+        PDF_REPORT += s43 + ' ' + str(cost) + NL + NL
 
         s44 = 'Coins in circulation after purchase:'
         s45 = 'From which coins frozen for required collateral:'
