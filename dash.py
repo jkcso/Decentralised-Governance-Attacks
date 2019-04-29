@@ -896,7 +896,7 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     kibana_dict.update({'Budget': budget,
                         'PriceBef': coin_price,
                         'ActiveBef': active_mn,  # total honest masternodes
-                        'PossibleBef': num_possible_masternodes,  # possible man based on total remaining unfrozen coins
+                        'PossibleBef': num_possible_masternodes,  # possible mn based on total remaining unfrozen coins
                         'Inflation': exp,
                         'Circulation': coins,
                         'Controlled': mn_controlled,

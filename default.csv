@@ -1,2 +1,2 @@
 Collateral,MaxSupply,Budget,PriceBef,ActiveBef,PossibleBef,Inflation,Circulation,Controlled,Target,MaliciousNet,FrozenBef,PurchaseBef,PurchaseAft,Cost,PriceAft,FrozenAft,PossibleAft,ActiveAft,Malicious,MalDownvote,MalUpvote,ExpVoters,ExpVotAtt
-1000,18900000,700000000.0,84.22,4500,4275,-13.0,8775963,0,0,4951,4500000,4951,4275,380694961.504,93.88,8775000,0,8775,4275,4704,3885,2700,2972
+1000,18900000,25000000.0,84.03,4500,4276,-13.0,8776305,100,0,4951,4500000,297,0,24956911.343,84.7,4797000,3979,4797,397,777,0,2700,2972
