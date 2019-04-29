@@ -428,16 +428,16 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
     print('FIRST PURCHASE ATTEMPT FOR', num_mn_for_attack,
           'MASTERNODES' if num_mn_for_attack > ONE_MN else 'MASTERNODE', '\n')
-    PDF_REPORT += 'FIRST PURCHASE ATTEMPT FOR ' + str(num_mn_for_attack) + 'MASTERNODES' + NL + NL \
+    PDF_REPORT += 'FIRST PURCHASE ATTEMPT FOR ' + str(num_mn_for_attack) + ' MASTERNODES' + NL + NL \
         if num_mn_for_attack > ONE_MN \
-        else 'FIRST PURCHASE ATTEMPT FOR ' + str(num_mn_for_attack) + 'MASTERNODE' + NL + NL
+        else 'FIRST PURCHASE ATTEMPT FOR ' + str(num_mn_for_attack) + ' MASTERNODE' + NL + NL
 
     p, im = 'POSSIBLE', 'IMPOSSIBLE'
     attack_outcome = p if new_remaining >= MIN_REMAINING else im
 
     s27 = 'PURCHASE OUTCOME:'
     print(s27, attack_outcome, '\n')
-    PDF_REPORT += s27 + NL + NL
+    PDF_REPORT += s27 + ' ' + attack_outcome + NL + NL
 
     if attack_outcome == im:
         print('REASON', '\n')
@@ -463,21 +463,21 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
     PDF_REPORT += s28 + NL + NL
 
-    PDF_REPORT += s29 + str(coin_price) + NL
-    PDF_REPORT += s30 + str(new_price) + NL
-    PDF_REPORT += s31 + str(cost) + NL
+    PDF_REPORT += s29 + ' ' + str(coin_price) + NL
+    PDF_REPORT += s30 + ' ' + str(new_price) + NL
+    PDF_REPORT += s31 + ' ' + str(cost) + NL
 
     # if budget was set then provide the remaining budget to the user
     if budget > MIN_BUDGET:
         s32 = 'Therefore remaining budget equals (£):'
         remaining_budget = float('{0:.3f}'.format(budget - cost))
         print(s32, remaining_budget)
-        PDF_REPORT += s32 + str(remaining_budget) + NL
+        PDF_REPORT += s32 + ' ' + str(remaining_budget) + NL + NL
 
     print()
     s33 = 'Coins in circulation after purchase:'
     print(s33, coins)
-    PDF_REPORT += s33 + str(coins) + NL
+    PDF_REPORT += s33 + ' ' + str(coins) + NL
 
     print('From which coins frozen for required collateral:', new_num_frozen,
           '<-- (Problematic metric)' if attack_outcome == im else '')
@@ -713,7 +713,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         print(s60, num_mn_for_attack)
         print(s61, anti_dos_for_less_than_possible)
         PDF_REPORT += s60 + ' ' + str(num_mn_for_attack) + NL
-        PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + NL + NL
+        PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + NL
 
     s62 = 'Maximum malicious masternodes based on available circulation:'
     s63 = 'Least honest votes required for net majority:'
@@ -774,7 +774,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         print(s69, num_mn_for_attack)
         print(s70, approved_anw_for_less_than_possible)
         PDF_REPORT += s69 + ' ' + str(num_mn_for_attack) + NL
-        PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL + NL
+        PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL
 
     s71 = 'Maximum malicious masternodes based on available circulation:'
     s72 = 'Least votes required for net majority against maximum malicious:'
@@ -822,7 +822,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     print(s81, total_rem_mn, '\n')
     PDF_REPORT += s78 + ' ' + percentage_total_master_nodes + '%' + NL
     PDF_REPORT += s79 + ' ' + str(MAX_SUPPLY) + NL
-    PDF_REPORT += s80 + ' ' + total_rem + NL
+    PDF_REPORT += s80 + ' ' + str(total_rem) + NL
     PDF_REPORT += s81 + ' ' + str(total_rem_mn) + NL + NL
 
     # TODO correct those numbers
@@ -830,15 +830,15 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     PDF_REPORT += 'EXPECTED CIRCULATION PER YEAR' + NL + NL
 
     print('09/2020:', C2020, '(50.14% of total ever)')
-    print('Available masternodes:', mn2020)
+    print('Available masternodes:', mn2020, '\n')
     print('09/2021:', C2021, '(53.7% of total ever)')
-    print('Available masternodes:', mn2021)
+    print('Available masternodes:', mn2021, '\n')
     print('08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)')
 
-    PDF_REPORT += '09/2020:' + str(C2020) + '(50.14% of total ever)' + NL
-    PDF_REPORT += 'Available masternodes:' + str(mn2020) + NL
-    PDF_REPORT += '09/2021:' + str(C2021) + '(53.7% of total ever)' + NL
-    PDF_REPORT += 'Available masternodes:' + str(mn2021) + NL
+    PDF_REPORT += '09/2020: ' + str(C2020) + ' (50.14% of total ever)' + NL
+    PDF_REPORT += 'Available masternodes: ' + str(mn2020) + NL + NL
+    PDF_REPORT += '09/2021:' + str(C2021) + ' (53.7% of total ever)' + NL
+    PDF_REPORT += 'Available masternodes: ' + str(mn2021) + NL + NL
     PDF_REPORT += '08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)' + NL + NL
 
     kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,  # downvote proposal hoping honest majority
