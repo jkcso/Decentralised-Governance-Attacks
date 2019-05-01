@@ -31,7 +31,7 @@ IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
 ADAPTOR = 2
 C2020 = 9486800
 C2021 = 10160671
-DEF_FILENAME = 'default'
+DEF_FILENAME = 'dash-default'
 RT = '(real time value)'
 UD = '(user defined value)'
 DEF = '(default exponential)'
