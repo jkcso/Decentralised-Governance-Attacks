@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/decred.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="604">
-              <caret line="917" column="82" selection-start-line="917" selection-start-column="82" selection-end-line="917" selection-end-column="82" />
+            <state relative-caret-position="308">
+              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -315,12 +315,12 @@
       <workItem from="1556527629969" duration="10284000" />
       <workItem from="1556574308251" duration="508000" />
       <workItem from="1556576443258" duration="6382000" />
-      <workItem from="1556736869580" duration="11877000" />
+      <workItem from="1556736869580" duration="12113000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="218312000" />
+    <option name="totallyTimeSpent" value="218548000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -483,8 +483,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/decred.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="604">
-          <caret line="917" column="82" selection-start-line="917" selection-start-column="82" selection-end-line="917" selection-end-column="82" />
+        <state relative-caret-position="308">
+          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

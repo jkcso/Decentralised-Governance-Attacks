@@ -10,6 +10,9 @@ import pdfkit
 
 # global variables are defined here once for clarity and duplication-free coding
 MAX_TICKETS = 40960  # default max number of Decred ticket_pool_size ideal to be active for voting
+BIDDABLE_TICKETS_PER_DAY = 5760
+WORST_CASE_NEW_POOL_TICKETS_PER_DAY = 1440
+
 DASH_MN_COLLATERAL = 1000
 MIN_COINBASE_RANKING = MIN_EXP = ONE_MN = 1
 MAX_COINBASE_RANKING = 60
