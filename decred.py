@@ -882,18 +882,18 @@ def attack_phase_2(budget, coin_price, exp_incr, ticket_pool_size, coins, ticket
 def main():
 
     print('''
-DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
+DECRED DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     ''')
 
     while True:
         filename = input('File name for report and dashboard: (press enter for default file name)  ')
         budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
-        coin_price = input('Decred price (£): (press enter for real time price)  ')
-        ticket_price = input('Decred ticket price (£): (press enter for real time price)  ')
+        coin_price = input('Decred coin price (£): (press enter for real time coin price)  ')
+        ticket_price = input('Decred ticket price (£): (press enter for real time ticket price)  ')
         exp = input('Inflation rate (1-10)(1: Aggressive, 10: Slow): (press enter for default rate)  ')
         coins = input('Coins in circulation: (press enter for real time circulation)  ')
         ticket_pool_size = input('Ticket pool size: (press enter for real time ticket pool size)  ')
-        tickets_controlled = input('Tickets already under ownership or bribe: (press enter for none)  ')
+        tickets_controlled = input('Tickets already under control or bribe: (press enter for none)  ')
         tickets_target = input('Target total tickets: (press enter for enough to be successful)  ')
 
         try:
@@ -906,7 +906,16 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             coins = int(coins) if coins else acquire_real_time_circulation()
             ticket_pool_size = int(ticket_pool_size) if ticket_pool_size else acquire_real_time_ticket_pool_size()
             tickets_controlled = int(tickets_controlled) if tickets_controlled else MIN_CONTROL
-            # number of masternodes possible for an adversary to control should equal the unfrozen coins in collateral
+
+            # number of remaining possible tickets for someone to control equals the difference between the maximum
+            # ticket pool size which is 40,960 and the current ticket pool size, however, it is often noticed that
+            # the pool size is bigger than the maximum because the maximum is not strictly defined, rather it is an
+            # ideal indication/metric provided necessary to represent the whole coin holders.  Therefore, in the usual
+            # case where current pool is bigger than 40,960, the adversary needs to constantly bid for the 20 tickets
+            # per block. Blocks are found in the rate of 5 minutes each, the amount of 5 minutes (therefore blocks per
+            # day are 288. This means that there exist 288 * 20 = 5,760 new biddable tickets per day while the pool is
+            # throwing away 5 tickets every block therefore every 5 minutes. This means that the pool is throwing away
+            # 288 * 5 = 1,440 per day to accept this number out of 5,760 possible.
             num_possible_masternodes = math.floor(int((coins - (ticket_pool_size * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
             # ensures target masternodes are greater than those already controlled and smaller than those possible
             tickets_target = int(tickets_target) \
