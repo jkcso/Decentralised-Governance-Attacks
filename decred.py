@@ -9,6 +9,7 @@ import math
 import pdfkit
 
 # global variables are defined here once for clarity and duplication-free coding
+MAX_TICKETS = 40960  # default max number of Decred tickets ideal to be active for voting
 DASH_MN_COLLATERAL = 1000
 MIN_COINBASE_RANKING = MIN_EXP = ONE_MN = 1
 MAX_COINBASE_RANKING = 60
@@ -31,7 +32,7 @@ IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
 ADAPTOR = 2
 C2020 = 9486800
 C2021 = 10160671
-DEF_FILENAME = 'default'
+DEF_FILENAME = 'decred-default'
 RT = '(real time value)'
 UD = '(user defined value)'
 DEF = '(default exponential)'
@@ -56,19 +57,24 @@ kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
                'MaxSupply': MAX_SUPPLY}
 
 
-def acquire_real_time_masternodes():
+def acquire_real_time_ticket_price():
 
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
         ssl._create_default_https_context = ssl._create_unverified_context
 
-    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
-    req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
-    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+    decred_stats = 'https://explorer.dcrdata.org'
+    req = Request(decred_stats, headers={'User-Agent': 'Mozilla/5.0'})
+    scrap_stats = urlopen(req).read().decode("utf-8")
 
-    global IS_MASTERNODES_NUMBER_REAL
-    IS_MASTERNODES_NUMBER_REAL = True
-    return stats['raw']['mn_count']
+    start_index = scrap_stats.find('Ticket Price')
+    SCRAP_END_INDEX = 332
+    ticket_string = scrap_stats[start_index:start_index+SCRAP_END_INDEX]
+    TPB = ticket_string.find('int">')
+    TPE = ticket_string.find('</span>')
+    ticket_price = ticket_string[TPB:TPE]
+
+    return float(ticket_price[len('int">'):ticket_price.find('</span')])
 
 
 def acquire_real_time_price():
@@ -175,7 +181,7 @@ def create_pdf(filename):
 
 
 # Outputs the values we proceed during the simulation.
-def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
+def attack_phase_1(filename, budget, coin_price, exp_incr, tickets, coins, mn_controlled, mn_target):
 
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_HEADER
@@ -219,10 +225,10 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         if IS_CIRCULATION_REAL \
         else s7 + ' ' + str(coins) + ' ' + UD + NL
 
-    print(s8, active_mn, RT if IS_MASTERNODES_NUMBER_REAL else UD)
-    PDF_REPORT += s8 + ' ' + str(active_mn) + ' ' + RT + NL \
+    print(s8, tickets, RT if IS_MASTERNODES_NUMBER_REAL else UD)
+    PDF_REPORT += s8 + ' ' + str(tickets) + ' ' + RT + NL \
         if IS_MASTERNODES_NUMBER_REAL \
-        else s8 + ' ' + str(active_mn) + ' ' + UD + NL
+        else s8 + ' ' + str(tickets) + ' ' + UD + NL
 
     print(s9, mn_controlled)
     PDF_REPORT += s9 + ' ' + str(mn_controlled) + NL
@@ -250,7 +256,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
                                                       budget_to_dash - budget_to_dash / ADAPTOR) * exp_incr))))
 
     # the amount of masternodes required to launch the infamous 55% governance attack
-    malicious_net_10 = int(math.ceil(active_mn * NET_10_PERCENT)) + ONE_MN
+    malicious_net_10 = int(math.ceil(tickets * NET_10_PERCENT)) + ONE_MN
     kibana_dict.update({'MaliciousNet': malicious_net_10})
 
     # when budget is set, the number of mn to acquire should correspond to the budget but also
@@ -295,9 +301,9 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
 
     s16 = 'Active masternodes before purchase:'
     s17 = 'Masternodes required for net 10% over honest:'
-    print(s16, active_mn)
+    print(s16, tickets)
     print(s17, malicious_net_10)
-    PDF_REPORT += s16 + ' ' + str(active_mn) + NL
+    PDF_REPORT += s16 + ' ' + str(tickets) + NL
     PDF_REPORT += s17 + ' ' + str(malicious_net_10) + NL
 
     # budget defaults to malicious net 10%
@@ -343,7 +349,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print(s20, num_mn_for_attack)
     PDF_REPORT += s20 + ' ' + str(num_mn_for_attack) + NL + NL
 
-    frozen_coins = DASH_MN_COLLATERAL * active_mn
+    frozen_coins = DASH_MN_COLLATERAL * tickets
     unfrozen_coins = coins - frozen_coins
     possible_mn = math.floor(int(unfrozen_coins // DASH_MN_COLLATERAL))
     percentage_poss_total = str(float((possible_mn / math.floor(int(coins // DASH_MN_COLLATERAL))) * PERCENTAGE))[OS:OE]
@@ -372,7 +378,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     PDF_REPORT += s25 + ' ' + percentage_poss_total + '%' + NL + NL
 
     # calls the following method to proceed in attempting the purchase
-    attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
+    attack_phase_2(budget, coin_price, exp_incr, tickets, coins, mn_controlled, num_mn_for_attack, cost, new_price,
                    malicious_net_10, frozen_coins, possible_mn)
 
 
@@ -390,7 +396,7 @@ Example:
 '''
 
 
-def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
+def attack_phase_2(budget, coin_price, exp_incr, tickets, coins, mn_controlled, num_mn_for_attack, cost, new_price,
                    malicious_net_10, frozen_coins, possible_mn):
 
     global PDF_REPORT
@@ -407,7 +413,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
     new_num_frozen = frozen_coins + num_mn_for_attack * DASH_MN_COLLATERAL
     new_remaining = coins - new_num_frozen
-    new_num_mn = active_mn + num_mn_for_attack
+    new_num_mn = tickets + num_mn_for_attack
     new_possible_mn = math.floor(int(new_remaining // DASH_MN_COLLATERAL))
     total_malicious = num_mn_for_attack + mn_controlled
     percentage_malicious = str(float((total_malicious / new_num_mn) * PERCENTAGE))[OS:OE]
@@ -575,7 +581,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         new_price = float("{0:.2f}".format(new_price))
         new_num_frozen = frozen_coins + num_mn_for_attack * DASH_MN_COLLATERAL
         new_remaining = coins - new_num_frozen
-        new_num_mn = active_mn + num_mn_for_attack
+        new_num_mn = tickets + num_mn_for_attack
         new_possible_mn = math.floor(int(new_remaining // DASH_MN_COLLATERAL))
         total_malicious = num_mn_for_attack + mn_controlled
         percentage_malicious = str(float((total_malicious / new_num_mn) * PERCENTAGE))[OS:OE]
@@ -861,10 +867,11 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     while True:
         filename = input('File name for report and dashboard: (press enter for default file name)  ')
         budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
-        coin_price = input('Dash price (£): (press enter for real time price)  ')
+        coin_price = input('Decred price (£): (press enter for real time price)  ')
+        ticket_price = input('Decred ticket price (£): (press enter for real time price)  ')
         exp = input('Inflation rate (1-10)(1: Aggressive, 10: Slow): (press enter for default rate)  ')
         coins = input('Coins in circulation: (press enter for real time circulation)  ')
-        active_mn = input('Total of honest masternodes: (press enter for real time active masternodes)  ')
+        tickets = input('Total of honest masternodes: (press enter for real time active masternodes)  ')
         mn_controlled = input('Honest masternodes already under control or bribe: (press enter for none)  ')
         mn_target = input('Target total masternodes: (press enter for enough to be successful)  ')
 
@@ -872,18 +879,19 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             filename = str(filename) if filename else DEF_FILENAME
             budget = float(budget) if budget else MIN_BUDGET
             coin_price = float(coin_price) if coin_price else acquire_real_time_price()
+            ticket_price = float(ticket_price) if ticket_price else acquire_real_time_ticket_price()
             exp = float((int(exp) + SANITISE) * INVERSE) if exp and (MIN_EXP < int(exp) < MAX_EXP) else float(DEF_EXP)
             exp_incr = math.pow(math.e, exp)
             coins = int(coins) if coins else acquire_real_time_circulation()
-            active_mn = int(active_mn) if active_mn else acquire_real_time_masternodes()
+            tickets = int(tickets) if tickets else MAX_TICKETS
             mn_controlled = int(mn_controlled) if mn_controlled else MIN_CONTROL
             # number of masternodes possible for an adversary to control should equal the unfrozen coins in collateral
-            num_possible_masternodes = math.floor(int((coins - (active_mn * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
+            num_possible_masternodes = math.floor(int((coins - (tickets * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
             # ensures target masternodes are greater than those already controlled and smaller than those possible
             mn_target = int(mn_target) \
                 if mn_target and mn_controlled < int(mn_target) <= num_possible_masternodes else MIN_TARGET
             # budget, coin price and master node numbers related number should be all greater than zero
-            if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and active_mn >= MIN_REMAINING
+            if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and tickets >= MIN_REMAINING
                     and coins >= MIN_CIRCULATION and mn_controlled >= MIN_CONTROL and mn_target >= MIN_TARGET):
                 print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again')
                 float(DEF_FILENAME)  # causes intentional exception and re-loop as values should be greater than zero
@@ -895,14 +903,14 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     # dictionary is updated based on user choices
     kibana_dict.update({'Budget': budget,
                         'PriceBef': coin_price,
-                        'ActiveBef': active_mn,  # total honest masternodes
+                        'ActiveBef': tickets,  # total honest masternodes
                         'PossibleBef': num_possible_masternodes,  # possible mn based on total remaining unfrozen coins
                         'Inflation': exp,
                         'Circulation': coins,
                         'Controlled': mn_controlled,
                         'Target': mn_target})
 
-    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target)
+    attack_phase_1(filename, budget, coin_price, exp_incr, tickets, coins, mn_controlled, mn_target)
     create_csv(filename)
     create_pdf(filename)
 
