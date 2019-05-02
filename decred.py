@@ -259,7 +259,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     print(s2, '\n')
     PDF_REPORT += s2 + NL + NL
 
-    s3 = 'Attack budget (£): unspecified (cost estimated in phase two)'
+    s3 = 'Attack budget (£): unspecified (cost estimated in attack phase two)'
     s4 = 'Attack budget (£):'
     s5 = 'Decred price (£):'
     s26 = 'Decred ticket price (£):'
@@ -306,7 +306,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
 
     # if budget is set, exchange it from GBP to Decred and perform inflation estimation for the new price and cost
     if budget > MIN_BUDGET:
-        budget_to_decred = math.floor(budget / coin_price)  # amount of dash exchanged from budget
+        budget_to_decred = math.floor(budget / coin_price)  # amount of decred exchanged from budget
         for i in range(MIN_PRICE, budget_to_decred):
             new_coin_price += exp_incr
             new_ticket_price += exp_incr
@@ -352,6 +352,11 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         PDF_REPORT += s13 + ' ' + str(tickets_target) + ' ' + UD + NL
 
     # when neither budget nor ticket target is set, the metric defaults to a malicious 60% of ticket pool size
+    #
+
+
+
+
     elif budget == MIN_BUDGET and tickets_target == MIN_TARGET:
         tickets_target = malicious_60
         s14 = 'Target total tickets: unspecified (defaults to 60% over honest tickets)'

@@ -193,7 +193,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     print(s2, '\n')
     PDF_REPORT += s2 + NL + NL
 
-    s3 = 'Attack budget (£): unspecified (cost estimated in phase two)'
+    s3 = 'Attack budget (£): unspecified (cost estimated in attack phase two)'
     s4 = 'Attack budget (£):'
     s5 = 'Dash price (£):'
     s6 = 'Inflation rate:'
