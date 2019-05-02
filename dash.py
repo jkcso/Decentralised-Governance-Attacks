@@ -827,7 +827,6 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     PDF_REPORT += s80 + ' ' + str(total_rem) + NL
     PDF_REPORT += s81 + ' ' + str(total_rem_mn) + NL + NL
 
-    # TODO correct those numbers
     print('EXPECTED CIRCULATION PER YEAR', '\n')
     PDF_REPORT += 'EXPECTED CIRCULATION PER YEAR' + NL + NL
 

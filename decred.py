@@ -301,6 +301,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
 
     cost = float(MIN_PRICE)
     new_coin_price = coin_price
+    new_ticket_price = ticket_price
     budget_tickets = MIN_BUDGET
 
     # if budget is set, exchange it from GBP to Decred and perform inflation estimation for the new price and cost
@@ -308,9 +309,11 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         budget_to_decred = math.floor(budget / coin_price)  # amount of dash exchanged from budget
         for i in range(MIN_PRICE, budget_to_decred):
             new_coin_price += exp_incr
+            new_ticket_price += exp_incr
 
         budget_tickets = math.floor(int(budget_to_decred // ticket_price))
         new_coin_price = float('{0:.2f}'.format(new_coin_price))
+        new_ticket_price = float('{0:.2f}'.format(new_ticket_price))
 
         # the global value of adaptor is used towards the median new coin price which is necessary for the inclusion
         # of both low and high coin values for when inflated. The initial form (commented) of cost prediction without
@@ -435,11 +438,8 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     s22 = 'From which coins frozen for tickets:'
     s23 = 'Therefore, coins remaining available to acquire and freeze:'
     s24 = 'These are enough for this number of tickets:'
-    s27 = 'However, 5 tickets vote and expire per block which leads to 5 new'
-    s28 = 'openings per block. Decred blocks are solved every five minutes'
-    s29 = 'which equals 288 blocks per day, therefore 1,440 expired tickets'
-    s30 = 'that should be replaced by 20 biddable tickets per block that'
-    s31 = 'equals 5,760 tickets as candidates to replace those 1,440.'
+    s27 = 'However, this amount is high to be purchased straight away'
+    s28 = 'as there exist constraints in tickets supply analysed below'
 
     print()
     print(s21, coins)
@@ -448,23 +448,22 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     print(s24, possible_tickets)
     print(s27)
     print(s28)
-    print(s29)
-    print(s30)
-    print(s31)
 
     PDF_REPORT += s21 + ' ' + str(coins) + NL
     PDF_REPORT += s22 + ' ' + str(frozen_coins) + NL
     PDF_REPORT += s23 + ' ' + str(unfrozen_coins) + NL
     PDF_REPORT += s24 + ' ' + str(possible_tickets) + NL
-    PDF_REPORT += s27 + ' ' + s28 + ' ' + s29 + ' ' + s30 + ' ' + s31 + NL + NL
+    PDF_REPORT += s27 + ' ' + s28 + NL + NL
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   num_tickets_for_attack, cost, new_coin_price, malicious_60, frozen_coins, possible_tickets)
+                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, frozen_coins,
+                   possible_tickets)
 
 
 def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   num_tickets_for_attack, cost, new_coin_price, malicious_60, frozen_coins, possible_tickets):
+                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, frozen_coins,
+                   possible_tickets):
 
     global PDF_REPORT
 
@@ -493,9 +492,10 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     percentage_malicious = str(float((total_malicious / new_num_tickets) * PERCENTAGE))[OS:OE]
 
     kibana_dict.update({'Cost': cost,
-                        'PriceAft': new_coin_price,
+                        'CoinPriceAft': new_coin_price,
+                        'TicketPriceAft': new_ticket_price,
                         'FrozenAft': new_num_frozen,
-                        'PossibleAft': new_possible_tickets,  # possible masternodes based on remaining unfrozen coins
+                        'PossibleAft': new_possible_tickets,  # possible tickets based on remaining pool
                         'ActiveAft': new_num_tickets,  # new total masternodes including both honest and malicious
                         'Malicious': total_malicious})  # total malicious masternodes
 
@@ -505,45 +505,65 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s26, '\n')
     PDF_REPORT += s26 + NL + NL
 
-    print('FIRST PURCHASE ATTEMPT FOR', num_tickets_for_attack,
-          'MASTERNODES' if num_tickets_for_attack > ONE_TICKET else 'MASTERNODE', '\n')
-    PDF_REPORT += 'FIRST PURCHASE ATTEMPT FOR ' + str(num_tickets_for_attack) + ' MASTERNODES' + NL + NL \
+    print('PURCHASE ATTEMPT FOR', num_tickets_for_attack,
+          'TICKETS' if num_tickets_for_attack > ONE_TICKET else 'TICKET', '\n')
+    PDF_REPORT += 'PURCHASE ATTEMPT FOR ' + str(num_tickets_for_attack) + ' TICKETS' + NL + NL \
         if num_tickets_for_attack > ONE_TICKET \
-        else 'FIRST PURCHASE ATTEMPT FOR ' + str(num_tickets_for_attack) + ' MASTERNODE' + NL + NL
+        else 'PURCHASE ATTEMPT FOR ' + str(num_tickets_for_attack) + ' TICKET' + NL + NL
 
-    p, im = 'POSSIBLE', 'IMPOSSIBLE'
-    attack_outcome = p if new_remaining >= MIN_POOL_SIZE else im
+    attack_overhead_in_days = str(int(num_tickets_for_attack // MIN_NEW_POOL_TICKETS_PER_DAY)) + ' ' + 'DAYS'
 
-    s27 = 'PURCHASE OUTCOME:'
-    print(s27, attack_outcome, '\n')
-    PDF_REPORT += s27 + ' ' + attack_outcome + NL + NL
+    s27 = 'PURCHASE OVERHEAD ESTIMATION:'
+    print(s27, attack_overhead_in_days, '\n')
+    PDF_REPORT += s27 + ' ' + attack_overhead_in_days + NL + NL
 
-    if attack_outcome == im:
-        print('REASON', '\n')
-        print('Because the remaining coins in circulation are not enough for', num_tickets_for_attack, 'masternodes')
-        print('but for a maximum of', str(possible_tickets) + ',', 'still capable for an effective cyber sabotage', '\n')
+    s82 = 'Because 5 (honest) tickets per block will be used to vote and immediately expire which leads to 5 new spots'
+    s83 = 'for malicious tickets to take over. While this is the case for on-chain votes that vote towards PoW block'
+    s84 = 'validity, this is not to be confused with off-chain votes for proposals and consensus rules which is our'
+    s85 = 'focus in this simulation. Luckily, the right to vote for governance proposals remains valid during the'
+    s86 = 'entire voting window as long as tickets were part of the initial proposal quorum (contextually: snapshot of'
+    s87 = 'ticket pool at the time where the voting started.'
+    s88 = 'The number of days required is because Decred blocks are solved every five minutes which equals 288 blocks'
+    s89 = 'per day, therefore 1,440 expired tickets per day able to be replaced by 20 biddable tickets per block that'
+    s90 = 'equals 5,760 tickets as candidates to replace those 1,440'
 
-        PDF_REPORT += 'REASON' + NL + NL
-        PDF_REPORT += 'Because the remaining coins in circulation are not enough for ' + str(num_tickets_for_attack) + \
-                      ' masternodes but for a maximum of ' + str(possible_tickets) + ', still capable for an effective ' \
-                                                                                'cyber sabotage' + NL + NL
+    print('REASON', '\n')
+    print(s82)
+    print(s83)
+    print(s84)
+    print(s85)
+    print(s86)
+    print(s87, '\n')
+    print(s88)
+    print(s89)
+    print(s90, '\n')
+
+    PDF_REPORT += 'REASON' + NL + NL
+    PDF_REPORT += s82 + ' ' + s83 + ' ' + s84 + ' ' + s85 + ' ' + s86 + ' ' + s87 + NL + NL
+    PDF_REPORT += s88 + ' ' + s89 + ' ' + s90 + NL + NL
 
     s28 = 'HYPOTHETICAL REALISATION'
 
-    s29 = 'Dash price before attack initiation (£):'
-    s30 = 'Estimated Dash price after purchase (£):'
+    s29 = 'Decred coin price before attack initiation (£):'
+    s30 = 'Estimated coin price after purchase (£):'
+    s91 = 'Decred ticket price before attack initiaton (£):'
+    s92 = 'Estimated ticket price after purchase (£):'
     s31 = 'Estimated total cost with inflation (£):'
 
     print(s28, '\n')
 
     print(s29, coin_price)
     print(s30, new_coin_price)
+    print(s91, ticket_price)
+    print(s92, new_ticket_price)
     print(s31, cost)
 
     PDF_REPORT += s28 + NL + NL
 
     PDF_REPORT += s29 + ' ' + str(coin_price) + NL
     PDF_REPORT += s30 + ' ' + str(new_coin_price) + NL
+    PDF_REPORT += s91 + ' ' + str(ticket_price) + NL
+    PDF_REPORT += s92 + ' ' + str(new_ticket_price) + NL
     PDF_REPORT += s31 + ' ' + str(cost) + NL
 
     # if budget was set then provide the remaining budget to the user
@@ -559,179 +579,61 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += NL
     PDF_REPORT += s33 + ' ' + str(coins) + NL
 
-    print('From which coins frozen for required collateral:', new_num_frozen,
-          '<-- (Problematic metric)' if attack_outcome == im else '')
-    PDF_REPORT += 'From which coins frozen for required collateral: ' + str(new_num_frozen) + \
-                  '  <---  (Problematic metric)' + NL \
-        if attack_outcome == im \
-        else 'From which coins frozen for required collateral: ' + str(new_num_frozen) + NL
+    s93 = 'From which coins frozen for tickets:'
+    print(s93, new_num_frozen)
+    PDF_REPORT += s93 + ' ' + str(new_num_frozen) + NL
 
-    print('Therefore, coins remaining available to acquire:', new_remaining,
-          '<-- (Problematic metric)' if attack_outcome == im else '')
-    PDF_REPORT += 'Therefore, coins remaining available to acquire: ' + str(new_remaining) \
-                  + '  <---  (Problematic metric)' + NL \
-        if attack_outcome == im \
-        else 'Therefore, coins remaining available to acquire: ' + str(new_remaining) + NL
+    s94 = 'Therefore, coins remaining available to acquire:'
+    print(s94, new_remaining)
+    PDF_REPORT += s94 + ' ' + str(new_remaining) + NL
 
-    if attack_outcome == p:
-        s34 = 'These are enough to acquire more masternodes, specifically:'
-        s35 = 'Which as percentage takes this share from total possible masternodes:'
-        s36 = 'However, 55% guarantees success in any governance attack'
+    s34 = 'These are enough to acquire more tickets, specifically:'
+    s35 = 'However, the same constraints for ticket supply hold here too'
 
-        print(s34, new_possible_tickets)
-        print(s36)
+    print(s34, new_possible_tickets)
+    print(s35)
 
-        PDF_REPORT += s34 + ' ' + str(new_possible_tickets) + NL
-        PDF_REPORT += s36 + NL
+    PDF_REPORT += s34 + ' ' + str(new_possible_tickets) + NL
+    PDF_REPORT += s35 + NL
 
-    print('Total active masternodes after purchase:', new_num_tickets) if new_num_tickets <= possible_tickets \
-        else print('Theoretical total active masternodes after purchase:', new_num_tickets)
-    PDF_REPORT += 'Total active masternodes after purchase: ' + str(new_num_tickets) + NL if new_num_tickets <= possible_tickets \
-        else 'Theoretical total active masternodes after purchase: ' + str(new_num_tickets) + NL
+    s95 = 'Ticket pool size after purchase:'
+    print(s95, new_num_tickets)
+    PDF_REPORT += s95 + ' ' + str(new_num_tickets) + NL
 
     print('From which malicious:',
           num_tickets_for_attack, '+ ' + str(tickets_controlled) + ' = ' + str(num_tickets_for_attack + tickets_controlled)
-          if tickets_controlled > MIN_CONTROL else '', '(' + percentage_malicious + '% of total masternodes)')
+          if tickets_controlled > MIN_CONTROL else '', '(' + percentage_malicious + '% of total tickets)')
     PDF_REPORT += 'From which malicious: ' + str(num_tickets_for_attack) + ' + ' + str(tickets_controlled) + ' = ' \
                   + str(num_tickets_for_attack + tickets_controlled) + ' (' + percentage_malicious \
-                  + '% of total masternodes)' + NL + NL if tickets_controlled > MIN_CONTROL \
+                  + '% of total tickets)' + NL + NL if tickets_controlled > MIN_CONTROL \
         else 'From which malicious: ' + str(num_tickets_for_attack) + ' (' + percentage_malicious \
-             + '% of total masternodes)' + NL + NL
+             + '% of total tickets)' + NL + NL
 
     print()
     print('SUMMARY', '\n')
     PDF_REPORT += 'SUMMARY' + NL + NL
 
-    s37 = 'Number of masternodes required for malicious majority:'
-    s38 = 'The available coin supply was enough to buy this amount of masternodes:'
+    s37 = 'Number of tickets required for malicious majority:'
+    s38 = 'This will take this number of days to be realised:'
     s39 = 'Estimated total cost with inflation (£):'
-    s40 = 'Total active masternodes after purchase:'
+    s40 = 'Ticket pool size after purchase:'
 
     print(s37, malicious_60)
     PDF_REPORT += s37 + ' ' + str(malicious_60) + NL
 
-    print(s38, possible_tickets)
-    PDF_REPORT += s38 + ' ' + str(possible_tickets) + NL
+    print(s38, attack_overhead_in_days)
+    PDF_REPORT += s38 + ' ' + str(attack_overhead_in_days) + NL
 
-    print('The attempted purchase was for:', num_tickets_for_attack, 'masternodes', '<-- (Problematic metric)'
-          if num_tickets_for_attack > possible_tickets else '')
-    PDF_REPORT += 'The attempted purchase was for: ' + str(num_tickets_for_attack) \
-                  + ' masternodes  <---  (Problematic metric)' + NL + NL if num_tickets_for_attack > possible_tickets \
-        else 'The attempted purchase was for: ' + str(num_tickets_for_attack) + ' masternodes' + NL
+    print(s39, cost)
+    PDF_REPORT += s39 + ' ' + str(cost) + NL
 
-    if attack_outcome == p:
-        print(s39, cost)
-        PDF_REPORT += s39 + ' ' + str(cost) + NL
+    print(s40, new_num_tickets)
+    PDF_REPORT += s40 + ' ' + str(new_num_tickets) + NL
 
-        print(s40, new_num_tickets)
-        PDF_REPORT += s40 + ' ' + str(new_num_tickets) + NL
+    print('From which malicious:', str(total_malicious) + '(' + percentage_malicious + '% of total tickets)')
+    PDF_REPORT += 'From which malicious: ' + str(total_malicious) + ' (' + percentage_malicious \
+                      + '% of total tickets)' + NL + NL
 
-        print('From which malicious:', str(total_malicious) + '(' + percentage_malicious + '% of total masternodes)')
-        PDF_REPORT += 'From which malicious: ' + str(total_malicious) + ' (' + percentage_malicious \
-                      + '% of total masternodes)' + NL + NL
-
-    # The initial attack was not realised due to the high number of masternodes attempted to purchase, therefore
-    # a noisy and determined to succeed adversary can proceed to the purchase of the highest number possible
-    # Impossibility of purchase occurs when the number of masternodes to acquire is greater than the possible amount
-    # achievable that is constrained from the unfrozen circulation
-    if attack_outcome == im:
-        num_tickets_for_attack = possible_tickets
-        attack_outcome = p
-        print('\n')
-
-        print('SECOND PURCHASE ATTEMPT FOR', num_tickets_for_attack, 'MASTER NODES', '\n')
-        PDF_REPORT += 'SECOND PURCHASE ATTEMPT FOR ' + str(num_tickets_for_attack) + ' MASTER NODES' + NL + NL
-
-        cost = float(MIN_PRICE)
-        new_coin_price = coin_price
-        for i in range(MIN_PRICE, num_tickets_for_attack * DASH_MN_COLLATERAL):
-            cost += new_coin_price
-            new_coin_price += exp_incr
-        cost = float("{0:.3f}".format(cost))
-        new_coin_price = float("{0:.2f}".format(new_coin_price))
-        new_num_frozen = frozen_coins + num_tickets_for_attack * DASH_MN_COLLATERAL
-        new_remaining = coins - new_num_frozen
-        new_num_tickets = ticket_pool_size + num_tickets_for_attack
-        new_possible_tickets = math.floor(int(new_remaining // DASH_MN_COLLATERAL))
-        total_malicious = num_tickets_for_attack + tickets_controlled
-        percentage_malicious = str(float((total_malicious / new_num_tickets) * PERCENTAGE))[OS:OE]
-
-        kibana_dict.update({'PurchaseAft': num_tickets_for_attack,
-                            'Cost': cost,
-                            'PriceAft': new_coin_price,
-                            'FrozenAft': new_num_frozen,
-                            'PossibleAft': new_possible_tickets,  # possible masternodes based on remaining unfrozen coins
-                            'ActiveAft': new_num_tickets,  # new total masternodes including both honest and malicious
-                            'Malicious': total_malicious})  # total malicious masternodes
-
-        print('PURCHASE OUTCOME:', attack_outcome, '\n')
-        print('ANALYSIS', '\n')
-
-        PDF_REPORT += 'PURCHASE OUTCOME ' + str(attack_outcome) + NL + NL
-        PDF_REPORT += 'ANALYSIS' + NL + NL
-
-        s41 = 'Dash price before attack initiation (£):'
-        s42 = 'Estimated Dash price after purchase (£):'
-        s43 = 'Estimated total cost with inflation (£):'
-
-        print(s41, coin_price)
-        print(s42, new_coin_price)
-        print(s43, cost)
-
-        PDF_REPORT += s41 + ' ' + str(coin_price) + NL
-        PDF_REPORT += s42 + ' ' + str(new_coin_price) + NL
-        PDF_REPORT += s43 + ' ' + str(cost) + NL + NL
-
-        s44 = 'Coins in circulation after purchase:'
-        s45 = 'From which coins frozen for required collateral:'
-        s46 = 'Therefore, coins remaining available to acquire:'
-        s47 = 'Total active masternodes after purchase:'
-
-        print()
-        print(s44, coins)
-        PDF_REPORT += s44 + ' ' + str(coins) + NL
-
-        print(s45, new_num_frozen)
-        PDF_REPORT += s45 + ' ' + str(new_num_frozen) + NL
-
-        print(s46, new_remaining)
-        PDF_REPORT += s46 + ' ' + str(new_remaining) + NL
-
-        print(s47, new_num_tickets)
-        PDF_REPORT += s47 + ' ' + str(new_num_tickets) + NL
-
-        print('From which malicious:',
-              num_tickets_for_attack, '+ ' + str(tickets_controlled) + ' = ' + str(num_tickets_for_attack + tickets_controlled)
-              if tickets_controlled > MIN_CONTROL else '', '(' + percentage_malicious + '% of total masternodes)')
-        PDF_REPORT += 'From which malicious: ' + str(num_tickets_for_attack) + ' + ' + str(tickets_controlled) + ' = ' \
-                      + str(num_tickets_for_attack + tickets_controlled) + ' (' + percentage_malicious \
-                      + '% of total masternodes)' + NL + NL if tickets_controlled > MIN_CONTROL \
-            else 'From which malicious: ' + str(num_tickets_for_attack) + ' (' + percentage_malicious \
-                 + '% of total masternodes)' + NL + NL
-
-        print()
-        print('SUMMARY', '\n')
-        PDF_REPORT += 'SUMMARY' + NL + NL
-
-        s48 = 'Number of masternodes required for malicious majority:'
-        s49 = 'Available supply was enough for this amount of masternodes:'
-        s50 = 'Estimated total cost with inflation (£):'
-        s51 = 'Total active masternodes after purchase:'
-
-        print(s48, malicious_60)
-        print(s49, possible_tickets)
-        print(s50, cost)
-        print(s51, new_num_tickets)
-        print('From which malicious:', str(total_malicious) + '(' + percentage_malicious + '% of total masternodes)')
-
-        PDF_REPORT += s48 + ' ' + str(malicious_60) + NL
-        PDF_REPORT += s49 + ' ' + str(possible_tickets) + NL
-        PDF_REPORT += s50 + ' ' + str(cost) + NL
-        PDF_REPORT += s51 + ' ' + str(new_num_tickets) + NL
-        PDF_REPORT += 'From which malicious: ' + str(total_malicious) + \
-                      ' (' + percentage_malicious + '% of total masternodes)' + NL + NL
-
-        attack_outcome = im  # switches back to impossible for better insights later
 
     # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
     # should hold: positive votes - negative votes >= 10% of active masternodes
@@ -785,13 +687,13 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     print('EXPLOITATION', '\n')
     PDF_REPORT += 'EXPLOITATION' + NL + NL
-    if attack_outcome == p:
-        s60 = 'Total votes of malicious masternodes:'
-        s61 = 'Least honest votes required for net majority:'
-        print(s60, num_tickets_for_attack)
-        print(s61, anti_dos_for_less_than_possible)
-        PDF_REPORT += s60 + ' ' + str(num_tickets_for_attack) + NL
-        PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + NL
+
+    s60 = 'Total votes of malicious masternodes:'
+    s61 = 'Least honest votes required for net majority:'
+    print(s60, num_tickets_for_attack)
+    print(s61, anti_dos_for_less_than_possible)
+    PDF_REPORT += s60 + ' ' + str(num_tickets_for_attack) + NL
+    PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + NL
 
     s62 = 'Maximum malicious masternodes based on available circulation:'
     s63 = 'Least honest votes required for net majority:'
@@ -845,14 +747,14 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     print('EXPLOITATION', '\n')
     PDF_REPORT += 'EXPLOITATION' + NL + NL
-    if attack_outcome == p:
-        # vice-versa case of malicious denial of service
-        s69 = 'Total votes of malicious masternodes:'
-        s70 = 'Least honest votes required for rejection:'
-        print(s69, num_tickets_for_attack)
-        print(s70, approved_anw_for_less_than_possible)
-        PDF_REPORT += s69 + ' ' + str(num_tickets_for_attack) + NL
-        PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL
+
+    # vice-versa case of malicious denial of service
+    s69 = 'Total votes of malicious masternodes:'
+    s70 = 'Least honest votes required for rejection:'
+    print(s69, num_tickets_for_attack)
+    print(s70, approved_anw_for_less_than_possible)
+    PDF_REPORT += s69 + ' ' + str(num_tickets_for_attack) + NL
+    PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL
 
     s71 = 'Maximum malicious masternodes based on available circulation:'
     s72 = 'Least votes required for net majority against maximum malicious:'
