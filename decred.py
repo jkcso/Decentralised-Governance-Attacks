@@ -8,16 +8,46 @@ import ssl
 import math
 import pdfkit
 
+# number of remaining possible tickets for someone to control equals the difference between the maximum
+# ticket pool size which is 40,960 and the current ticket pool size, however, it is often noticed that
+# the pool size is bigger than the maximum because the maximum is not strictly defined, rather it is an
+# ideal indication/metric provided necessary to represent the whole coin holders.  Therefore, in the usual
+# case where current pool is bigger than 40,960, the adversary needs to constantly bid for the 20 tickets
+# per block. Blocks are found in the rate of 5 minutes each, the amount of 5 minutes (therefore blocks per
+# day are 288. This means that there exist 288 * 20 = 5,760 new biddable tickets per day while the pool is
+# throwing away 5 tickets every block therefore every 5 minutes. This means that the pool is throwing away
+# 288 * 5 = 1,440 per day to accept this number out of 5,760 possible.
+# For this purpose, our tactic will be to bid high enough for at least 1,440 new tickets per day to ensure
+# that new tickets will be ours and once a good amount of ticket gets mature and concentrated in the pool
+# then we can initiate malicious actions against the governance proposals and particularly those related to
+# consensus rules.
+
 # global variables are defined here once for clarity and duplication-free coding
 MAX_TICKETS = 40960  # default max number of Decred ticket_pool_size ideal to be active for voting
-BIDDABLE_TICKETS_PER_DAY = 5760
-WORST_CASE_NEW_POOL_TICKETS_PER_DAY = 1440
+EXPIRED_TICKETS_PER_BLOCK = 5
+BIDDABLE_TICKETS_PER_BLOCK = 20
+BLOCKS_PER_DAY = 288
+BIDDABLE_TICKETS_PER_DAY = BLOCKS_PER_DAY * BIDDABLE_TICKETS_PER_BLOCK
+MIN_NEW_POOL_TICKETS_PER_DAY = BLOCKS_PER_DAY * EXPIRED_TICKETS_PER_BLOCK
 
+# Do not confuse the 28 days of 50% expiration chance with the proposal voting window because tickets holders have
+# still the right to vote given that ticket was in the initial ticket snapshot. What is crucial in this case is the
+# amount of time that a proposal can be voted when actively receiving votes. I think this is one week.
+# Official:
+# The ticket-voting interval of 2,016 blocks (~1 week) begins. A snapshot of the live ticket pool is taken at 256 blocks
+# prior to the start of voting. Every ticket in the pool when this snapshot was taken can vote ‘Yes’ or ‘No’ on the
+# proposal. Tickets bought after the snapshot cannot vote on the proposal. If a ticket is called to vote on-chain during
+# the ticket-voting interval (to validate blocks or vote on consensus rule changes), it still has until the end of the
+# ticket-voting interval to vote on the proposal.
+# When the ticket-voting period ends, the proposal is formally approved or rejected. There is a quorum requirement for a
+# vote to be considered valid: 20% of the eligible tickets must vote ‘Yes’ or ‘No’. The threshold for a proposal to be
+# approved is 60% ‘Yes’ votes.
+VOTING_WINDOW_DAYS = 7
 DASH_MN_COLLATERAL = 1000
 MIN_COINBASE_RANKING = MIN_EXP = ONE_MN = 1
 MAX_COINBASE_RANKING = 60
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
-MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_REMAINING = MIN_CONTROL = MIN_TARGET = 0
+MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_POOL_SIZE = MIN_CONTROL = MIN_TARGET = 0
 OS = 0  # Output Start, used mostly for long floats, strings and percentages
 OE = 4  # Output End
 PERCENTAGE = 100
@@ -31,7 +61,7 @@ MAX_EXP = 11
 SANITISE = 5
 SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
-IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
+IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = IS_TICKET_PRICE_REAL = IS_TICKET_POOL_REAL = False
 ADAPTOR = 2
 C2020 = 9486800
 C2021 = 10160671
@@ -47,7 +77,7 @@ PDF_REPORT_HEADER = '''
 <body><p>
 '''
 PDF_REPORT_INTRO = '''
-REPORT FOR DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR<br><br>
+REPORT FOR DECRED DECENTRALISED GOVERNANCE ATTACK SIMULATOR<br><br>
 '''
 PDF_REPORT_FOOTER = '''
 </p></body>
@@ -77,6 +107,8 @@ def acquire_real_time_ticket_price():
     TPE = ticket_string.find('</span>')
     ticket_price = ticket_string[TPB:TPE]
 
+    global IS_TICKET_PRICE_REAL
+    IS_TICKET_PRICE_REAL = True
     return float(ticket_price[len('int">'):ticket_price.find('</span')])
 
 
@@ -97,6 +129,8 @@ def acquire_real_time_ticket_pool_size():
     TPE = ticket_string.find('</span>')
     ticket_price = ticket_string[TPB:TPE]
 
+    global IS_TICKET_POOL_REAL
+    IS_TICKET_POOL_REAL = True
     return int(' '.join(ticket_price[len('.poolSize">'):ticket_price.find('</span>')].splitlines()[1].split()).
                replace(',', ''))
 
@@ -205,7 +239,8 @@ def create_pdf(filename):
 
 
 # Outputs the values we proceed during the simulation.
-def attack_phase_1(filename, budget, coin_price, exp_incr, ticket_pool_size, coins, tickets_controlled, tickets_target):
+def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
+                   tickets_target):
 
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_HEADER
@@ -225,11 +260,12 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, ticket_pool_size, coi
 
     s3 = 'Attack budget (£): unspecified (cost estimated in phase two)'
     s4 = 'Attack budget (£):'
-    s5 = 'Dash price (£):'
+    s5 = 'Decred price (£):'
+    s26 = 'Decred ticket price (£):'
     s6 = 'Inflation rate:'
     s7 = 'Coins in circulation:'
-    s8 = 'Total of honest masternodes:'
-    s9 = 'Honest masternodes already under control or bribe:'
+    s8 = 'Ticket pool size:'
+    s9 = 'Tickets already under control or bribe:'
 
     print(s3) if budget == MIN_BUDGET else print(s4, budget, UD)
     PDF_REPORT += s3 + NL if budget == MIN_BUDGET else s4 + ' ' + str(budget) + ' ' + UD + NL
@@ -238,6 +274,11 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, ticket_pool_size, coi
     PDF_REPORT += s5 + ' ' + str(coin_price) + ' ' + RT + NL \
         if IS_COIN_PRICE_REAL \
         else s5 + ' ' + str(coin_price) + ' ' + UD + NL
+
+    print(s26, ticket_price, RT if IS_TICKET_PRICE_REAL else UD)
+    PDF_REPORT += s26 + ' ' + str(ticket_price) + ' ' + RT + NL \
+        if IS_TICKET_PRICE_REAL \
+        else s26 + ' ' + str(ticket_price) + ' ' + UD + NL
 
     print(s6, str(exp_incr)[OS:OE], DEF if exp_incr == DEF_INFLATION else UD)
     PDF_REPORT += s6 + ' ' + str(exp_incr)[OS:OE] + ' ' + DEF + NL \
@@ -249,9 +290,9 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, ticket_pool_size, coi
         if IS_CIRCULATION_REAL \
         else s7 + ' ' + str(coins) + ' ' + UD + NL
 
-    print(s8, ticket_pool_size, RT if IS_MASTERNODES_NUMBER_REAL else UD)
+    print(s8, ticket_pool_size, RT if IS_TICKET_POOL_REAL else UD)
     PDF_REPORT += s8 + ' ' + str(ticket_pool_size) + ' ' + RT + NL \
-        if IS_MASTERNODES_NUMBER_REAL \
+        if IS_TICKET_POOL_REAL \
         else s8 + ' ' + str(ticket_pool_size) + ' ' + UD + NL
 
     print(s9, tickets_controlled)
@@ -280,6 +321,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, ticket_pool_size, coi
                                                       budget_to_dash - budget_to_dash / ADAPTOR) * exp_incr))))
 
     # the amount of masternodes required to launch the infamous 55% governance attack
+    immediate_possible_tickets = MAX_TICKETS - ticket_pool_size if ticket_pool_size < MAX_TICKETS else 0
     malicious_net_10 = int(math.ceil(ticket_pool_size * NET_10_PERCENT)) + ONE_MN
     kibana_dict.update({'MaliciousNet': malicious_net_10})
 
@@ -464,7 +506,7 @@ def attack_phase_2(budget, coin_price, exp_incr, ticket_pool_size, coins, ticket
         else 'FIRST PURCHASE ATTEMPT FOR ' + str(num_mn_for_attack) + ' MASTERNODE' + NL + NL
 
     p, im = 'POSSIBLE', 'IMPOSSIBLE'
-    attack_outcome = p if new_remaining >= MIN_REMAINING else im
+    attack_outcome = p if new_remaining >= MIN_POOL_SIZE else im
 
     s27 = 'PURCHASE OUTCOME:'
     print(s27, attack_outcome, '\n')
@@ -758,12 +800,12 @@ def attack_phase_2(budget, coin_price, exp_incr, ticket_pool_size, coins, ticket
     # it is assumed that if malicious masternodes controlled are not more than 10% of total, then 0 honest are needed
     approved_anw_for_less_than_possible = math.floor(num_mn_for_attack / NET_10_PERCENT) - ONE_MN \
         if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
-        else MIN_REMAINING
+        else MIN_POOL_SIZE
 
     # same here as above
     approved_anw_for_possible = math.floor(possible_mn / NET_10_PERCENT) - ONE_MN \
         if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
-        else MIN_REMAINING
+        else MIN_POOL_SIZE
 
     # calculates 60% of honest masternodes, therefore malicious are excluded from calculation
     avg_mn_votes = math.ceil((new_num_mn - num_mn_for_attack) * SIXTY_PERCENT)
@@ -909,22 +951,11 @@ DECRED DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             coins = int(coins) if coins else acquire_real_time_circulation()
             ticket_pool_size = int(ticket_pool_size) if ticket_pool_size else acquire_real_time_ticket_pool_size()
             tickets_controlled = int(tickets_controlled) if tickets_controlled else MIN_CONTROL
-
-            # number of remaining possible tickets for someone to control equals the difference between the maximum
-            # ticket pool size which is 40,960 and the current ticket pool size, however, it is often noticed that
-            # the pool size is bigger than the maximum because the maximum is not strictly defined, rather it is an
-            # ideal indication/metric provided necessary to represent the whole coin holders.  Therefore, in the usual
-            # case where current pool is bigger than 40,960, the adversary needs to constantly bid for the 20 tickets
-            # per block. Blocks are found in the rate of 5 minutes each, the amount of 5 minutes (therefore blocks per
-            # day are 288. This means that there exist 288 * 20 = 5,760 new biddable tickets per day while the pool is
-            # throwing away 5 tickets every block therefore every 5 minutes. This means that the pool is throwing away
-            # 288 * 5 = 1,440 per day to accept this number out of 5,760 possible.
-            num_possible_masternodes = math.floor(int((coins - (ticket_pool_size * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
-            # ensures target masternodes are greater than those already controlled and smaller than those possible
+            # ensures target tickets are greater than those already controlled and smaller than those possible
             tickets_target = int(tickets_target) \
-                if tickets_target and tickets_controlled < int(tickets_target) <= num_possible_masternodes else MIN_TARGET
+                if tickets_target and tickets_controlled < int(tickets_target) <= MAX_TICKETS else MIN_TARGET
             # budget, coin price and master node numbers related number should be all greater than zero
-            if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and ticket_pool_size >= MIN_REMAINING
+            if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and ticket_pool_size >= MIN_POOL_SIZE
                     and coins >= MIN_CIRCULATION and tickets_controlled >= MIN_CONTROL and tickets_target >= MIN_TARGET):
                 print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again')
                 float(DEF_FILENAME)  # causes intentional exception and re-loop as values should be greater than zero
@@ -936,14 +967,15 @@ DECRED DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     # dictionary is updated based on user choices
     kibana_dict.update({'Budget': budget,
                         'PriceBef': coin_price,
-                        'ActiveBef': ticket_pool_size,  # total honest masternodes
-                        'PossibleBef': num_possible_masternodes,  # possible mn based on total remaining unfrozen coins
+                        'TicketPriceBef': ticket_price,
                         'Inflation': exp,
                         'Circulation': coins,
+                        'TicketPoolSize': ticket_pool_size,
                         'Controlled': tickets_controlled,
                         'Target': tickets_target})
 
-    attack_phase_1(filename, budget, coin_price, exp_incr, ticket_pool_size, coins, tickets_controlled, tickets_target)
+    attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
+                   tickets_target)
     create_csv(filename)
     create_pdf(filename)
 
