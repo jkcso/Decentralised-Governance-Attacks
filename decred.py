@@ -48,7 +48,7 @@ MIN_COINBASE_RANKING = MIN_EXP = ONE_TICKET = 1
 MAX_COINBASE_RANKING = 60
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_POOL_SIZE = MIN_CONTROL = MIN_TARGET = 0
-EXP_FACTOR = 400
+EXP_FACTOR = 200
 OS = 0  # Output Start, used mostly for long floats, strings and percentages
 OE = 4  # Output End
 PERCENTAGE = 100
@@ -352,11 +352,6 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         PDF_REPORT += s13 + ' ' + str(tickets_target) + ' ' + UD + NL
 
     # when neither budget nor ticket target is set, the metric defaults to a malicious 60% of ticket pool size
-    #
-
-
-
-
     elif budget == MIN_BUDGET and tickets_target == MIN_TARGET:
         tickets_target = malicious_60
         s14 = 'Target total tickets: unspecified (defaults to 60% over honest tickets)'
@@ -443,6 +438,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     s22 = 'From which coins frozen for tickets:'
     s23 = 'Therefore, coins remaining available to acquire and freeze:'
     s24 = 'These are enough for this number of tickets:'
+    s29 = 'While this attack will proceed with purchasing:'
     s27 = 'However, this amount is high to be purchased straight away'
     s28 = 'as there exist constraints in tickets supply analysed below'
 
@@ -451,6 +447,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     print(s22, frozen_coins)
     print(s23, unfrozen_coins)
     print(s24, possible_tickets)
+    print(s29, num_tickets_for_attack)
     print(s27)
     print(s28)
 
@@ -458,6 +455,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     PDF_REPORT += s22 + ' ' + str(frozen_coins) + NL
     PDF_REPORT += s23 + ' ' + str(unfrozen_coins) + NL
     PDF_REPORT += s24 + ' ' + str(possible_tickets) + NL
+    PDF_REPORT += s29 + ' ' + str(num_tickets_for_attack) + NL
     PDF_REPORT += s27 + ' ' + s28 + NL + NL
 
     # calls the following method to proceed in attempting the purchase
@@ -480,12 +478,12 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         for i in range(MIN_PRICE, num_tickets_for_attack * EXP_FACTOR):
             cost += new_coin_price
             new_coin_price += exp_incr
-            ticket_price += exp_incr
+            new_ticket_price += exp_incr
         cost = float("{0:.3f}".format(cost))
         new_coin_price = float("{0:.2f}".format(new_coin_price))
         new_ticket_price = float("{0:.2f}".format(new_ticket_price))
 
-    new_num_frozen = int(frozen_coins + num_tickets_for_attack * ticket_price)
+    new_num_frozen = ticket_pool_size * new_ticket_price
     new_remaining = coins - new_num_frozen
     new_num_tickets = ticket_pool_size + num_tickets_for_attack \
         if ticket_pool_size + num_tickets_for_attack < MAX_TICKETS \
@@ -522,30 +520,36 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s27, attack_overhead_in_days, '\n')
     PDF_REPORT += s27 + ' ' + attack_overhead_in_days + NL + NL
 
-    s82 = 'Because 5 (honest) tickets per block will be used to vote and immediately expire which leads to 5 new spots'
-    s83 = 'for malicious tickets to take over. While this is the case for on-chain votes that vote towards PoW block'
-    s84 = 'validity, this is not to be confused with off-chain votes for proposals and consensus rules which is our'
-    s85 = 'focus in this simulation. Luckily, the right to vote for governance proposals remains valid during the'
-    s86 = 'entire voting window as long as tickets were part of the initial proposal quorum (contextually: snapshot of'
-    s87 = 'ticket pool at the time where the voting started.'
-    s88 = 'The number of days required is because Decred blocks are solved every five minutes which equals 288 blocks'
-    s89 = 'per day, therefore 1,440 expired tickets per day able to be replaced by 20 biddable tickets per block that'
-    s90 = 'equals 5,760 tickets as candidates to replace those 1,440'
+    s82 = 'Because 5 (honest) tickets per block will be used to vote and immediately'
+    s96 = 'expire which leads to 5 new spots for malicious tickets to take over.'
+    s83 = 'While this is the case for on-chain votes that vote towards PoW block'
+    s84 = 'validity, this is not to be confused with off-chain votes for proposals'
+    s97 = 'and consensus rules which is our focus in this simulation. Luckily, the'
+    s85 = 'right to vote for governance proposals remains valid during the entire'
+    s86 = 'voting window as long as tickets were part of the initial proposal quorum'
+    s98 = '(contextually: snapshot of ticket pool at the time where the voting started.'
+    s87 = 'The number of days required is because Decred blocks are solved every five'
+    s88 = 'minutes which equals 288 blocks per day, therefore 1,440 expired tickets per'
+    s89 = 'day able to be replaced by 20 biddable tickets per block that equals 5,760'
+    s90 = 'tickets as candidates to replace those 1,440'
 
     print('REASON', '\n')
     print(s82)
+    print(s96)
     print(s83)
     print(s84)
+    print(s97)
     print(s85)
     print(s86)
-    print(s87, '\n')
+    print(s98, '\n')
+    print(s87)
     print(s88)
     print(s89)
     print(s90, '\n')
 
     PDF_REPORT += 'REASON' + NL + NL
-    PDF_REPORT += s82 + ' ' + s83 + ' ' + s84 + ' ' + s85 + ' ' + s86 + ' ' + s87 + NL + NL
-    PDF_REPORT += s88 + ' ' + s89 + ' ' + s90 + NL + NL
+    PDF_REPORT += s82 + ' ' + s96 + ' ' + s83 + ' ' + s84 + ' ' + s97 + ' ' + s85 + s86 + s98 + NL + NL
+    PDF_REPORT += s87 + ' ' + s88 + ' ' + s89 + s90 + NL + NL
 
     s28 = 'HYPOTHETICAL REALISATION'
 
@@ -554,6 +558,8 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s91 = 'Decred ticket price before attack initiaton (£):'
     s92 = 'Estimated ticket price after purchase (£):'
     s31 = 'Estimated total cost with inflation (£):'
+    s99 = 'Cost includes competent bidding with high transaction fees to increase'
+    s100 = 'chances of ticket bids being picked by miners and placed in ticket pool.'
 
     print(s28, '\n')
 
@@ -562,6 +568,8 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s91, ticket_price)
     print(s92, new_ticket_price)
     print(s31, cost)
+    print(s99)
+    print(s100)
 
     PDF_REPORT += s28 + NL + NL
 
@@ -570,6 +578,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += s91 + ' ' + str(ticket_price) + NL
     PDF_REPORT += s92 + ' ' + str(new_ticket_price) + NL
     PDF_REPORT += s31 + ' ' + str(cost) + NL
+    PDF_REPORT += s99 + ' ' + str(s100) + NL
 
     # if budget was set then provide the remaining budget to the user
     if budget > MIN_BUDGET:
@@ -592,15 +601,6 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s94, new_remaining)
     PDF_REPORT += s94 + ' ' + str(new_remaining) + NL
 
-    s34 = 'These are enough to acquire more tickets, specifically:'
-    s35 = 'However, the same constraints for ticket supply hold here too'
-
-    print(s34, new_possible_tickets)
-    print(s35)
-
-    PDF_REPORT += s34 + ' ' + str(new_possible_tickets) + NL
-    PDF_REPORT += s35 + NL
-
     s95 = 'Ticket pool size after purchase:'
     print(s95, new_num_tickets)
     PDF_REPORT += s95 + ' ' + str(new_num_tickets) + NL
@@ -621,7 +621,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s37 = 'Number of tickets required for malicious majority:'
     s38 = 'This will take this number of days to be realised:'
     s39 = 'Estimated total cost with inflation (£):'
-    s40 = 'Ticket pool size after purchase:'
+    s40 = 'Ticket pool size:'
 
     print(s37, malicious_60)
     PDF_REPORT += s37 + ' ' + str(malicious_60) + NL
@@ -637,8 +637,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     print('From which malicious:', str(total_malicious) + '(' + percentage_malicious + '% of total tickets)')
     PDF_REPORT += 'From which malicious: ' + str(total_malicious) + ' (' + percentage_malicious \
-                      + '% of total tickets)' + NL + NL
-
+                  + '% of total tickets)' + NL + NL
 
     # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
     # should hold: positive votes - negative votes >= 10% of active masternodes
