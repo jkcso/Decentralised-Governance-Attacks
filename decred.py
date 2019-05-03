@@ -92,7 +92,6 @@ kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
 
 
 def acquire_real_time_ticket_price():
-
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -103,7 +102,7 @@ def acquire_real_time_ticket_price():
 
     start_index = scrap_stats.find('Ticket Price')
     SCRAP_END_INDEX = 332
-    ticket_string = scrap_stats[start_index:start_index+SCRAP_END_INDEX]
+    ticket_string = scrap_stats[start_index:start_index + SCRAP_END_INDEX]
     TPB = ticket_string.find('int">')
     TPE = ticket_string.find('</span>')
     ticket_price = ticket_string[TPB:TPE]
@@ -114,7 +113,6 @@ def acquire_real_time_ticket_price():
 
 
 def acquire_real_time_ticket_pool_size():
-
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -125,7 +123,7 @@ def acquire_real_time_ticket_pool_size():
 
     start_index = scrap_stats.find('Ticket Pool Size')
     SCRAP_END_INDEX = 332
-    ticket_string = scrap_stats[start_index:start_index+SCRAP_END_INDEX]
+    ticket_string = scrap_stats[start_index:start_index + SCRAP_END_INDEX]
     TPB = ticket_string.find('.poolSize">')
     TPE = ticket_string.find('</span>')
     ticket_price = ticket_string[TPB:TPE]
@@ -137,7 +135,6 @@ def acquire_real_time_ticket_pool_size():
 
 
 def acquire_real_time_price():
-
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
@@ -174,7 +171,6 @@ def acquire_real_time_price():
 
 
 def acquire_real_time_circulation():
-
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
         parameters = {
@@ -211,7 +207,6 @@ def acquire_real_time_circulation():
 
 
 def create_csv(filename):
-
     with open(filename + '.csv', 'w') as f:
         w = csv.DictWriter(f, kibana_dict.keys())
         w.writeheader()
@@ -219,7 +214,6 @@ def create_csv(filename):
 
 
 def create_pdf(filename):
-
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_FOOTER
     html_file = filename + '.html'
@@ -242,7 +236,6 @@ def create_pdf(filename):
 # Outputs the values we proceed during the simulation.
 def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
                    tickets_target):
-
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_HEADER
     PDF_REPORT += PDF_REPORT_INTRO
@@ -322,8 +315,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
             budget_tickets * ticket_price * (coin_price + (
                     budget_to_decred / (budget_to_decred - budget_to_decred / ADAPTOR) * exp_incr))))
 
-
-    #immediate_possible_tickets = MAX_TICKETS - ticket_pool_size if ticket_pool_size < MAX_TICKETS else 0
+    # immediate_possible_tickets = MAX_TICKETS - ticket_pool_size if ticket_pool_size < MAX_TICKETS else 0
     malicious_60 = int(math.ceil(ticket_pool_size * SIXTY_PERCENT))
     kibana_dict.update({'MaliciousNet': malicious_60})
 
@@ -440,7 +432,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     s24 = 'These are enough for this number of tickets:'
     s29 = 'While this attack will proceed with purchasing:'
     s27 = 'However, this amount is high to be purchased straight away'
-    s28 = 'as there exist constraints in tickets supply analysed below'
+    s28 = 'as there exist constraints in tickets supply analysed below.'
 
     print()
     print(s21, coins)
@@ -467,7 +459,6 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
 def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
                    num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, frozen_coins,
                    possible_tickets):
-
     global PDF_REPORT
 
     # when budget is not set it means that what is required is to a dynamic cost for purchasing decred to freeze it
@@ -483,7 +474,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         new_coin_price = float("{0:.2f}".format(new_coin_price))
         new_ticket_price = float("{0:.2f}".format(new_ticket_price))
 
-    new_num_frozen = ticket_pool_size * new_ticket_price
+    new_num_frozen = int(ticket_pool_size * new_ticket_price)
     new_remaining = coins - new_num_frozen
     new_num_tickets = ticket_pool_size + num_tickets_for_attack \
         if ticket_pool_size + num_tickets_for_attack < MAX_TICKETS \
@@ -527,11 +518,11 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s97 = 'and consensus rules which is our focus in this simulation. Luckily, the'
     s85 = 'right to vote for governance proposals remains valid during the entire'
     s86 = 'voting window as long as tickets were part of the initial proposal quorum'
-    s98 = '(contextually: snapshot of ticket pool at the time where the voting started.'
+    s98 = '(contextually: snapshot of ticket pool at the time where the voting started).'
     s87 = 'The number of days required is because Decred blocks are solved every five'
     s88 = 'minutes which equals 288 blocks per day, therefore 1,440 expired tickets per'
     s89 = 'day able to be replaced by 20 biddable tickets per block that equals 5,760'
-    s90 = 'tickets as candidates to replace those 1,440'
+    s90 = 'tickets as candidates to replace those 1,440.'
 
     print('REASON', '\n')
     print(s82)
@@ -606,7 +597,8 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += s95 + ' ' + str(new_num_tickets) + NL
 
     print('From which malicious:',
-          num_tickets_for_attack, '+ ' + str(tickets_controlled) + ' = ' + str(num_tickets_for_attack + tickets_controlled)
+          num_tickets_for_attack,
+          '+ ' + str(tickets_controlled) + ' = ' + str(num_tickets_for_attack + tickets_controlled)
           if tickets_controlled > MIN_CONTROL else '', '(' + percentage_malicious + '% of total tickets)')
     PDF_REPORT += 'From which malicious: ' + str(num_tickets_for_attack) + ' + ' + str(tickets_controlled) + ' = ' \
                   + str(num_tickets_for_attack + tickets_controlled) + ' (' + percentage_malicious \
@@ -641,13 +633,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
     # should hold: positive votes - negative votes >= 10% of active masternodes
-    anti_dos_for_less_than_possible = math.ceil(num_tickets_for_attack * NET_10_PERCENT) + ONE_TICKET \
-        if num_tickets_for_attack > (new_num_tickets * MIN_10_PERCENT) \
-        else math.ceil(new_num_tickets * MIN_10_PERCENT + num_tickets_for_attack)
-
-    anti_dos_for_possible = math.ceil(possible_tickets * NET_10_PERCENT) + ONE_TICKET \
-        if possible_tickets > (new_num_tickets * MIN_10_PERCENT) \
-        else math.ceil(possible_tickets * MIN_10_PERCENT)
+    anti_dos_for_less_than_possible = int(ticket_pool_size * SIXTY_PERCENT)
 
     print('\n')
 
@@ -661,14 +647,14 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     print('EXAMPLE', '\n')
     PDF_REPORT += 'EXAMPLE' + NL + NL
-    s54 = 'Monthly salary of Dash Core Developers or other beneficial investments'
+    s54 = 'Downvote key consensus changes that would make the coin more scalable'
     print(s54, '\n')
     PDF_REPORT += s54 + NL + NL
 
     print('DESIGN VULNERABILITY', '\n')
     PDF_REPORT += 'DESIGN VULNERABILITY' + NL + NL
-    s55 = 'Proposals are not partially funded and remaining governance funds are burnt.'
-    s56 = 'Therefore, if attacked proposal is not in top rankings, it will be rejected.'
+    s55 = 'Decred tries to be cencorship-free and fully guided from its community,'
+    s56 = 'therefore all decisions are respected and final, without asking anything.'
     print(s55)
     print(s56, '\n')
     PDF_REPORT += s55 + NL
@@ -676,50 +662,40 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     print('SUCCESS LIKELIHOOD: HIGH', '\n')
     PDF_REPORT += 'SUCCESS LIKELIHOOD: HIGH' + NL + NL
-    s57 = 'Because even if net 10% is achieved there is no funding guarantee.'
-    s58 = 'Funding is granted to the top X proposals based on net percentage.'
+    s57 = 'Since the dominant motivation of ticket owners is profit from'
+    s58 = 'PoS rewards and not the coin development, it was noticed that'
+    s101 = 'governance proposals do not attract more than half of pool size'
+    s102 = 'votes therefore there exists high voting abstention which makes'
+    s103 = 'this attack very possible to happen'
     print(s57)
-    print(s58, '\n')
+    print(s58)
+    print(s101)
+    print(s102)
+    print(s103)
     PDF_REPORT += s57 + NL
-    PDF_REPORT += s58 + NL + NL
+    PDF_REPORT += s58 + NL
+    PDF_REPORT += s101 + NL
+    PDF_REPORT += s102 + NL
+    PDF_REPORT += s103 + NL + NL
 
     print('METHODOLOGY', '\n')
     PDF_REPORT += 'METHODOLOGY' + NL + NL
-    s59 = 'By down-voting proposals so that the net 10% margin is not achieved'
+    s59 = 'By down-voting proposals so that 60% margin is not achieved'
     print(s59, '\n')
     PDF_REPORT += s59 + NL + NL
 
     print('EXPLOITATION', '\n')
     PDF_REPORT += 'EXPLOITATION' + NL + NL
 
-    s60 = 'Total votes of malicious masternodes:'
+    s60 = 'Total votes from malicious tickets:'
     s61 = 'Least honest votes required for net majority:'
     print(s60, num_tickets_for_attack)
     print(s61, anti_dos_for_less_than_possible)
     PDF_REPORT += s60 + ' ' + str(num_tickets_for_attack) + NL
     PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + NL
 
-    s62 = 'Maximum malicious masternodes based on available circulation:'
-    s63 = 'Least honest votes required for net majority:'
-    print(s62, possible_tickets)
-    print(s63, anti_dos_for_possible)
-    PDF_REPORT += s62 + ' ' + str(possible_tickets) + NL
-    PDF_REPORT += s63 + ' ' + str(anti_dos_for_possible) + NL + NL
-    print('\n')
-
-    # it is assumed that if malicious masternodes controlled are not more than 10% of total, then 0 honest are needed
-    approved_anw_for_less_than_possible = math.floor(num_tickets_for_attack / NET_10_PERCENT) - ONE_TICKET \
-        if num_tickets_for_attack > (new_num_tickets * MIN_10_PERCENT) \
-        else MIN_POOL_SIZE
-
-    # same here as above
-    approved_anw_for_possible = math.floor(possible_tickets / NET_10_PERCENT) - ONE_TICKET \
-        if num_tickets_for_attack > (new_num_tickets * MIN_10_PERCENT) \
-        else MIN_POOL_SIZE
-
-    # calculates 60% of honest masternodes, therefore malicious are excluded from calculation
-    avg_mn_votes = math.ceil((new_num_tickets - num_tickets_for_attack) * SIXTY_PERCENT)
-    net_10_anw = math.ceil(avg_mn_votes * NET_10_PERCENT) + ONE_TICKET
+    # least honest ticket votes required for a malicious proposal to not have net 60% and do not go through
+    approved_anw_for_less_than_possible = int(((num_tickets_for_attack * PERCENTAGE) / SIXTY_PERCENT) + ONE_TICKET)
 
     s64 = '(2) MALICIOUS PROPOSAL PASSES BY NEGLIGENCE'
     print(s64, '\n')
@@ -727,25 +703,29 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     print('EXAMPLE', '\n')
     PDF_REPORT += 'EXAMPLE' + NL + NL
-    s65 = 'Malicious proposal up-voted from malicious masternodes and abstention is high'
-    print(s65, '\n')
-    PDF_REPORT += s65 + NL + NL
+    s65 = 'Malicious proposal up-voted from malicious tickets that had net majority prior to'
+    s104 = 'the start of voting window or even if they had not they can still dominate when'
+    s105 = 'voting abstention is high as it is in 99 out of 100 cases.'
+    print(s65)
+    print(s104)
+    print(s105, '\n')
+    PDF_REPORT += s65 + ' ' + s104 + ' ' + s105 + NL + NL
 
     print('DESIGN VULNERABILITY', '\n')
     PDF_REPORT += 'DESIGN VULNERABILITY' + NL + NL
-    s66 = 'Votes are never questioned therefore if a proposal is accepted, no censorship exists'
+    s66 = 'Votes are never questioned therefore if a proposal is accepted, no censorship exists.'
     print(s66, '\n')
     PDF_REPORT += s66 + NL + NL
 
     print('SUCCESS LIKELIHOOD: MEDIUM', '\n')
     PDF_REPORT += 'SUCCESS LIKELIHOOD: MEDIUM' + NL + NL
-    s67 = 'The controversy of a malicious proposal is expected to unite honest owners'
+    s67 = 'The controversy of a malicious proposal is expected to unite honest owners.'
     print(s67, '\n')
     PDF_REPORT += s67 + NL + NL
 
     print('METHODOLOGY', '\n')
     PDF_REPORT += 'METHODOLOGY' + NL + NL
-    s68 = 'Malicious proposal starts to be up-voted as close as possible to the closing window'
+    s68 = 'Malicious proposal starts to be up-voted as close as possible to the closing window.'
     print(s68, '\n')
     PDF_REPORT += s68 + NL + NL
 
@@ -753,89 +733,21 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += 'EXPLOITATION' + NL + NL
 
     # vice-versa case of malicious denial of service
-    s69 = 'Total votes of malicious masternodes:'
-    s70 = 'Least honest votes required for rejection:'
+    s69 = 'Total votes from malicious tickets:'
+    s70 = 'Least honest votes required for proposal rejection:'
     print(s69, num_tickets_for_attack)
     print(s70, approved_anw_for_less_than_possible)
     PDF_REPORT += s69 + ' ' + str(num_tickets_for_attack) + NL
     PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL
 
-    s71 = 'Maximum malicious masternodes based on available circulation:'
-    s72 = 'Least votes required for net majority against maximum malicious:'
-    print(s71, possible_tickets)
-    print(s72, approved_anw_for_possible, '\n')
-    PDF_REPORT += s71 + ' ' + str(possible_tickets) + NL
-    PDF_REPORT += s72 + ' ' + str(approved_anw_for_possible) + NL + NL
-
-    print('HISTORIC DATA', '\n')
-    PDF_REPORT += 'HISTORIC DATA' + NL + NL
-
-    s73 = 'Maximum votes ever recorded for funding a proposal is: 2147'
-    s74 = 'At the time, this as percentage towards total masternodes was: 44.44%'
-    s75 = 'Assuming a higher percentage this time due to unity from controversy: 60%'
-    s76 = 'Which equals this number of honest masternodes:'
-    s77 = 'Therefore, total malicious masternodes needed for net majority:'
-    print(s73)
-    print(s74)
-    print(s75)
-    print(s76, avg_mn_votes)
-    print(s77, net_10_anw)
-    PDF_REPORT += s73 + NL
-    PDF_REPORT += s74 + NL
-    PDF_REPORT += s75 + NL
-    PDF_REPORT += s76 + ' ' + str(avg_mn_votes) + NL
-    PDF_REPORT += s77 + ' ' + str(net_10_anw) + NL + NL
-
-    total_rem = MAX_SUPPLY - coins
-    total_rem_mn = math.floor(int(total_rem // DASH_MN_COLLATERAL))
-    percentage_total_master_nodes = str(float((coins / MAX_SUPPLY) * PERCENTAGE))[OS:OE]
-    mn2020 = math.floor(int((C2020 - coins) // DASH_MN_COLLATERAL))
-    mn2021 = math.floor(int((C2021 - coins) // DASH_MN_COLLATERAL))
-
-    print('\n')
-    print('INFORMATION FOR THE FUTURE', '\n')
-    PDF_REPORT += 'INFORMATION FOR THE FUTURE' + NL + NL
-
-    s78 = 'Percentage of current circulation against total ever:'
-    s79 = 'Total ever coin supply:'
-    s80 = 'Remaining ever coin supply:'
-    s81 = 'Corresponding masternodes:'
-    print(s78, percentage_total_master_nodes + '%')
-    print(s79, MAX_SUPPLY)
-    print(s80, total_rem)
-    print(s81, total_rem_mn, '\n')
-    PDF_REPORT += s78 + ' ' + percentage_total_master_nodes + '%' + NL
-    PDF_REPORT += s79 + ' ' + str(MAX_SUPPLY) + NL
-    PDF_REPORT += s80 + ' ' + str(total_rem) + NL
-    PDF_REPORT += s81 + ' ' + str(total_rem_mn) + NL + NL
-
-    # TODO correct those numbers
-    print('EXPECTED CIRCULATION PER YEAR', '\n')
-    PDF_REPORT += 'EXPECTED CIRCULATION PER YEAR' + NL + NL
-
-    print('09/2020:', C2020, '(50.14% of total ever)')
-    print('Available masternodes:', mn2020, '\n')
-    print('09/2021:', C2021, '(53.7% of total ever)')
-    print('Available masternodes:', mn2021, '\n')
-    print('08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)')
-
-    PDF_REPORT += '09/2020: ' + str(C2020) + ' (50.14% of total ever)' + NL
-    PDF_REPORT += 'Available masternodes: ' + str(mn2020) + NL + NL
-    PDF_REPORT += '09/2021:' + str(C2021) + ' (53.7% of total ever)' + NL
-    PDF_REPORT += 'Available masternodes: ' + str(mn2021) + NL + NL
-    PDF_REPORT += '08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)' + NL + NL
-
     kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,  # downvote proposal hoping honest majority
                         # not achieved, variable holds the number of honest positive votes required to pass
-                        'MalUpvote': approved_anw_for_less_than_possible,  # upvote proposal hoping honest nodes will
-                        # not achieve denial via honest negative vote; variable holds the upper bound needed for denial
-                        'ExpVoters': avg_mn_votes,  # Expected to vote honestly to prevent a malicious action to occur
-                        'ExpVotAtt': net_10_anw})  # Malicious Net 10% against the expected honest votes
+                        'MalUpvote': approved_anw_for_less_than_possible})  # upvote proposal hoping honest nodes will
+    # not achieve denial via honest negative vote; variable holds the upper bound needed for denial
 
 
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
-
     print('''
 DECRED DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     ''')
