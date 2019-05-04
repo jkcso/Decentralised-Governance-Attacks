@@ -8,41 +8,13 @@ import ssl
 import math
 import pdfkit
 
-# number of remaining possible tickets for someone to control equals the difference between the maximum
-# ticket pool size which is 40,960 and the current ticket pool size, however, it is often noticed that
-# the pool size is bigger than the maximum because the maximum is not strictly defined, rather it is an
-# ideal indication/metric provided necessary to represent the whole coin holders.  Therefore, in the usual
-# case where current pool is bigger than 40,960, the adversary needs to constantly bid for the 20 tickets
-# per block. Blocks are found in the rate of 5 minutes each, the amount of 5 minutes (therefore blocks per
-# day are 288. This means that there exist 288 * 20 = 5,760 new biddable tickets per day while the pool is
-# throwing away 5 tickets every block therefore every 5 minutes. This means that the pool is throwing away
-# 288 * 5 = 1,440 per day to accept this number out of 5,760 possible.
-# For this purpose, our tactic will be to bid high enough for at least 1,440 new tickets per day to ensure
-# that new tickets will be ours and once a good amount of ticket gets mature and concentrated in the pool
-# then we can initiate malicious actions against the governance proposals and particularly those related to
-# consensus rules.
-
 # global variables are defined here once for clarity and duplication-free coding
-MAX_TICKETS = 40960  # default max number of Decred ticket_pool_size ideal to be active for voting
+MAX_TICKETS = 40960  # maximum number of tickets in Decred ticket_pool_size, in reality it is not restrictive
 EXPIRED_TICKETS_PER_BLOCK = 5
 BIDDABLE_TICKETS_PER_BLOCK = 20
 BLOCKS_PER_DAY = 288
 BIDDABLE_TICKETS_PER_DAY = BLOCKS_PER_DAY * BIDDABLE_TICKETS_PER_BLOCK
 MIN_NEW_POOL_TICKETS_PER_DAY = BLOCKS_PER_DAY * EXPIRED_TICKETS_PER_BLOCK
-
-# Do not confuse the 28 days of 50% expiration chance with the proposal voting window because tickets holders have
-# still the right to vote given that ticket was in the initial ticket snapshot. What is crucial in this case is the
-# amount of time that a proposal can be voted when actively receiving votes. I think this is one week.
-# Official:
-# The ticket-voting interval of 2,016 blocks (~1 week) begins. A snapshot of the live ticket pool is taken at 256 blocks
-# prior to the start of voting. Every ticket in the pool when this snapshot was taken can vote ‘Yes’ or ‘No’ on the
-# proposal. Tickets bought after the snapshot cannot vote on the proposal. If a ticket is called to vote on-chain during
-# the ticket-voting interval (to validate blocks or vote on consensus rule changes), it still has until the end of the
-# ticket-voting interval to vote on the proposal.
-# When the ticket-voting period ends, the proposal is formally approved or rejected. There is a quorum requirement for a
-# vote to be considered valid: 20% of the eligible tickets must vote ‘Yes’ or ‘No’. The threshold for a proposal to be
-# approved is 60% ‘Yes’ votes.
-VOTING_WINDOW_DAYS = 7
 DASH_MN_COLLATERAL = 1000
 MIN_COINBASE_RANKING = MIN_EXP = ONE_TICKET = 1
 MAX_COINBASE_RANKING = 60
@@ -51,7 +23,7 @@ MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_POOL_SIZE = MIN_CONTROL = MIN_TAR
 OS = 0  # Output Start, used mostly for long floats, strings and percentages
 OE = 4  # Output End
 PERCENTAGE = 100
-MIN_REJECTION = 0.401
+MIN_REJECTION = 0.401  # 60% is net majority, however with 40.1% of votes against the proposal will not go through
 DOUBLE = 2
 ONE_DAY = 1
 MAX_SUPPLY = 21000000
@@ -62,11 +34,8 @@ DEF_INFLATION = math.pow(math.e, DEF_EXP)
 MAX_EXP = 11
 SANITISE = 5
 SIXTY_PERCENT = 0.6
-MALICIOUS_NET_MAJORITY = 55
 IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = IS_TICKET_PRICE_REAL = IS_TICKET_POOL_REAL = False
 ADAPTOR = 2
-C2020 = 9486800
-C2021 = 10160671
 DEF_FILENAME = 'decred-default'
 RT = '(real time value)'
 UD = '(user defined value)'
@@ -525,6 +494,20 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s27, attack_overhead_in_days, '\n')
     PDF_REPORT += s27 + ' ' + attack_overhead_in_days + NL + NL
 
+    # number of remaining possible tickets for someone to control equals the difference between the maximum
+    # ticket pool size which is 40,960 and the current ticket pool size, however, it is often noticed that
+    # the pool size is bigger than the maximum because the maximum is not strictly defined, rather it is an
+    # ideal indication/metric provided necessary to represent the whole coin holders.  Therefore, in the usual
+    # case where current pool is bigger than 40,960, the adversary needs to constantly bid for the 20 tickets
+    # per block. Blocks are found in the rate of 5 minutes each, the amount of 5 minutes (therefore blocks per
+    # day are 288. This means that there exist 288 * 20 = 5,760 new biddable tickets per day while the pool is
+    # throwing away 5 tickets every block therefore every 5 minutes. This means that the pool is throwing away
+    # 288 * 5 = 1,440 per day to accept this number out of 5,760 possible.
+    # For this purpose, our tactic will be to bid high enough for at least 1,440 new tickets per day to ensure
+    # that new tickets will be ours and once a good amount of ticket gets mature and concentrated in the pool
+    # then we can initiate malicious actions against the governance proposals and particularly those related to
+    # consensus rules.
+
     s82 = 'Because 5 (honest) tickets per block will be used to vote and immediately'
     s96 = 'expire which leads to 5 new spots for malicious tickets to take over.'
     s83 = 'While this is the case for on-chain votes that vote towards PoW block'
@@ -818,7 +801,8 @@ DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
 
             # budget, coin price and master node numbers related number should be all greater than zero
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and ticket_pool_size >= MIN_POOL_SIZE
-                    and coins >= MIN_CIRCULATION and tickets_controlled >= MIN_CONTROL and tickets_target >= MIN_TARGET):
+                    and coins >= MIN_CIRCULATION and tickets_controlled >= MIN_CONTROL
+                    and tickets_target >= MIN_TARGET):
                 print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again!')
                 float(DEF_FILENAME)  # causes intentional exception and re-loop as values should be greater than zero
             break
