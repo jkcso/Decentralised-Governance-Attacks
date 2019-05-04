@@ -485,7 +485,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         if int(MAX_TICKETS - new_num_tickets) < MAX_TICKETS \
         else MIN_CONTROL
     total_malicious = num_tickets_for_attack + tickets_controlled
-    percentage_malicious = str(float((total_malicious / new_num_tickets) * PERCENTAGE))[OS:OE]
+    percentage_malicious = str(float((total_malicious / ticket_pool_size) * PERCENTAGE))[OS:OE]
 
     kibana_dict.update({'Cost': cost,
                         'CoinPriceAft': new_coin_price,
@@ -709,7 +709,10 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += s106 + ' ' + str(ticket_pool_size) + NL + NL
 
     # least honest ticket votes required for a malicious proposal to not have net 60% and do not go through
-    approved_anw_for_less_than_possible = math.ceil(total_malicious * MIN_REJECTION)
+    if total_malicious == int(math.ceil(ticket_pool_size * SIXTY_PERCENT)):
+        approved_anw_for_less_than_possible = math.ceil(ticket_pool_size * MIN_REJECTION)
+    else:
+        approved_anw_for_less_than_possible = math.ceil(total_malicious * MIN_REJECTION)
 
     s64 = '(2) MALICIOUS PROPOSAL PASSES BY NEGLIGENCE'
     print(s64, '\n')
