@@ -48,11 +48,10 @@ MIN_COINBASE_RANKING = MIN_EXP = ONE_TICKET = 1
 MAX_COINBASE_RANKING = 60
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_POOL_SIZE = MIN_CONTROL = MIN_TARGET = 0
-EXP_FACTOR = 120
 OS = 0  # Output Start, used mostly for long floats, strings and percentages
 OE = 4  # Output End
 PERCENTAGE = 100
-MIN_REJECTION = 0.41
+MIN_REJECTION = 0.401
 DOUBLE = 2
 ONE_DAY = 1
 MAX_SUPPLY = 21000000
@@ -304,9 +303,10 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         budget_to_decred = math.floor(budget / coin_price)  # amount of decred exchanged from budget
         for i in range(MIN_PRICE, budget_to_decred):
             new_coin_price += exp_incr
-            new_ticket_price += exp_incr
+            # less inflation on ticket because its price is dynamically determined every 12 hours
+            new_ticket_price += exp_incr / DOUBLE
 
-        budget_tickets = math.floor(int(budget_to_decred // ticket_price))
+        budget_tickets = math.floor(budget_to_decred / ticket_price)
         new_coin_price = float('{0:.2f}'.format(new_coin_price))
         new_ticket_price = float('{0:.2f}'.format(new_ticket_price))
 
@@ -468,10 +468,13 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         cost = float(MIN_PRICE)
         new_coin_price = coin_price
         new_ticket_price = ticket_price
-        for i in range(MIN_PRICE, num_tickets_for_attack * EXP_FACTOR):
-            cost += new_coin_price
+
+        for i in range(MIN_PRICE, num_tickets_for_attack):
             new_coin_price += exp_incr
             new_ticket_price += exp_incr
+            one_ticket_cost_in_pounds = new_coin_price * new_ticket_price
+            cost += one_ticket_cost_in_pounds
+
         cost = float("{0:.3f}".format(cost))
         new_coin_price = float("{0:.2f}".format(new_coin_price))
         new_ticket_price = float("{0:.2f}".format(new_ticket_price))
@@ -557,7 +560,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s29 = 'Decred coin price before attack initiation (£):'
     s30 = 'Estimated coin price after purchase (£):'
     s91 = 'Decred ticket price before attack initiaton (in DCR):'
-    s92 = 'Estimated ticket price after purchase (£):'
+    s92 = 'Estimated ticket price after purchase (in DCR):'
     s31 = 'Estimated total cost with inflation (£):'
     s99 = 'Cost includes competent bidding with high transaction fees to increase'
     s100 = 'chances of ticket bids being picked by miners and placed in ticket pool.'
@@ -801,13 +804,21 @@ DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             coins = int(coins) if coins else acquire_real_time_circulation()
             ticket_pool_size = int(ticket_pool_size) if ticket_pool_size else acquire_real_time_ticket_pool_size()
             tickets_controlled = int(tickets_controlled) if tickets_controlled else MIN_CONTROL
+
             # ensures target tickets are greater than those already controlled and smaller than those possible
-            tickets_target = int(tickets_target) \
-                if tickets_target and tickets_controlled < int(tickets_target) <= MAX_TICKETS else MIN_TARGET
+            if tickets_target and tickets_controlled < int(tickets_target) <= MAX_TICKETS:
+                tickets_target = int(tickets_target)
+            elif tickets_target and tickets_controlled >= int(tickets_target):
+                print('\nError: Target total tickets should be greater than tickets already controlled, please try'
+                      ' again!')
+                float(DEF_FILENAME)
+            else:
+                tickets_target = MIN_TARGET
+
             # budget, coin price and master node numbers related number should be all greater than zero
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and ticket_pool_size >= MIN_POOL_SIZE
                     and coins >= MIN_CIRCULATION and tickets_controlled >= MIN_CONTROL and tickets_target >= MIN_TARGET):
-                print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again')
+                print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again!')
                 float(DEF_FILENAME)  # causes intentional exception and re-loop as values should be greater than zero
             break
         except ValueError:
