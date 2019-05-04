@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/decred.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="301">
-              <caret line="473" column="40" selection-start-line="473" selection-start-column="40" selection-end-line="473" selection-end-column="40" />
+            <state relative-caret-position="385">
+              <caret line="312" lean-forward="true" selection-start-line="312" selection-end-line="312" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -306,12 +306,12 @@
       <workItem from="1556527629969" duration="10284000" />
       <workItem from="1556574308251" duration="508000" />
       <workItem from="1556576443258" duration="6382000" />
-      <workItem from="1556736869580" duration="64709000" />
+      <workItem from="1556736869580" duration="66076000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="271144000" />
+    <option name="totallyTimeSpent" value="272511000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -358,7 +358,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SAADG$python_pdf.coverage" NAME="python_pdf Coverage Results" MODIFIED="1555697766325" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1556738931308" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$decred.coverage" NAME="decred Coverage Results" MODIFIED="1556971613790" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$decred.coverage" NAME="decred Coverage Results" MODIFIED="1556973304454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$mn_stats_error.coverage" NAME="mn_stats_error Coverage Results" MODIFIED="1555757807516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$decred_real_circulation.coverage" NAME="decred_real_circulation Coverage Results" MODIFIED="1556738639914" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$csv_composition.coverage" NAME="csv_composition Coverage Results" MODIFIED="1555534334563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -475,8 +475,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/decred.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="473" column="40" selection-start-line="473" selection-start-column="40" selection-end-line="473" selection-end-column="40" />
+        <state relative-caret-position="385">
+          <caret line="312" lean-forward="true" selection-start-line="312" selection-end-line="312" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

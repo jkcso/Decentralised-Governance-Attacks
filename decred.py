@@ -57,7 +57,7 @@ ONE_DAY = 1
 MAX_SUPPLY = 21000000
 MIN_QUORUM_PERCENTAGE = 0.1
 INVERSE = -1
-DEF_EXP = -13  # corresponds to number 8 from 1-10 scale which is medium to slow exponential increase
+DEF_EXP = -9.5  # Defaults to 5 out of 10 from the exponential scale of how slow or aggressive inflation will be
 DEF_INFLATION = math.pow(math.e, DEF_EXP)
 MAX_EXP = 11
 SANITISE = 5
@@ -301,10 +301,11 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     # if budget is set, exchange it from GBP to Decred and perform inflation estimation for the new price and cost
     if budget > MIN_BUDGET:
         budget_to_decred = math.floor(budget / coin_price)  # amount of decred exchanged from budget
-        for i in range(MIN_PRICE, budget_to_decred):
+        ticket_estimate = int(budget_to_decred / ticket_price)
+        for i in range(MIN_PRICE, ticket_estimate):
             new_coin_price += exp_incr
             # less inflation on ticket because its price is dynamically determined every 12 hours
-            new_ticket_price += exp_incr / DOUBLE
+            new_ticket_price += exp_incr
 
         budget_tickets = math.floor(budget_to_decred / ticket_price)
         new_coin_price = float('{0:.2f}'.format(new_coin_price))
