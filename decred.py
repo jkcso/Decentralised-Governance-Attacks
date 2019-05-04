@@ -267,16 +267,20 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     new_ticket_price = ticket_price
     budget_tickets = MIN_BUDGET
 
+    malicious_60 = int(math.ceil(ticket_pool_size * SIXTY_PERCENT))
+    kibana_dict.update({'MaliciousNet': malicious_60})
+
     # if budget is set, exchange it from GBP to Decred and perform inflation estimation for the new price and cost
     if budget > MIN_BUDGET:
         budget_to_decred = math.floor(budget / coin_price)  # amount of decred exchanged from budget
-        ticket_estimate = int(budget_to_decred / ticket_price)
-        for i in range(MIN_PRICE, ticket_estimate):
+        budget_tickets = math.floor(budget_to_decred / ticket_price)
+        # even if budget is much more, it should be capped to purchase just enough to stay stealthy and save money
+        budget_tickets = budget_tickets if budget_tickets <= malicious_60 else malicious_60
+
+        for i in range(MIN_PRICE, budget_tickets):
             new_coin_price += exp_incr
-            # less inflation on ticket because its price is dynamically determined every 12 hours
             new_ticket_price += exp_incr
 
-        budget_tickets = math.floor(budget_to_decred / ticket_price)
         new_coin_price = float('{0:.2f}'.format(new_coin_price))
         new_ticket_price = float('{0:.2f}'.format(new_ticket_price))
 
@@ -286,9 +290,6 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         cost = float('{0:.3f}'.format(
             budget_tickets * ticket_price * (coin_price + (
                     budget_to_decred / (budget_to_decred - budget_to_decred / ADAPTOR) * exp_incr))))
-
-    malicious_60 = int(math.ceil(ticket_pool_size * SIXTY_PERCENT))
-    kibana_dict.update({'MaliciousNet': malicious_60})
 
     # when budget is set, the number of tickets to acquire should correspond to the budget but also
     # when both budget and a target number of mn is set, then the budget is what matters in estimation
@@ -307,9 +308,9 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         print(s12, tickets_target)
         PDF_REPORT += s12 + ' ' + str(tickets_target) + NL
 
-    # when the budget is not set but a target number of tickets to acquire is provided
+    # when the budget is not set but a target number of tickets is provided
     elif budget == MIN_BUDGET and tickets_target > MIN_TARGET:
-        tickets_target = tickets_target
+        tickets_target = tickets_target if tickets_target <= MAX_TICKETS else MAX_TICKETS
         s13 = 'Target total tickets:'
         print(s13, tickets_target, UD)
         PDF_REPORT += s13 + ' ' + str(tickets_target) + ' ' + UD + NL
@@ -738,7 +739,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     # vice-versa case of malicious denial of service
     s69 = 'Total votes from malicious tickets:'
-    s70 = 'Least honest votes required for proposal rejection:'
+    s70 = 'Least honest votes required for proposal rejection (40.1%):'
     s107 = 'Which does not satisfy the minimum total vote requirements of 10% pool size:'
 
     print(s69, total_malicious)

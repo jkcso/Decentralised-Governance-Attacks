@@ -270,9 +270,11 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         print(s12, mn_target)
         PDF_REPORT += s12 + ' ' + str(mn_target) + NL
 
-    # when the budget is not set but a target number of mn to acquire is provided
+    # when the budget is not set but a target number of masternodes to acquire is provided
+    # we should purchase the amount of masternodes that will give us malicious net majority
+    # to save money even if the target is set to something much higher
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
-        mn_target = mn_target
+        mn_target = mn_target if mn_target <= malicious_net_10 else malicious_net_10
         s13 = 'Target total masternodes:'
         print(s13, mn_target, UD)
         PDF_REPORT += s13 + ' ' + str(mn_target) + ' ' + UD + NL
@@ -878,9 +880,17 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             mn_controlled = int(mn_controlled) if mn_controlled else MIN_CONTROL
             # number of masternodes possible for an adversary to control should equal the unfrozen coins in collateral
             num_possible_masternodes = math.floor(int((coins - (active_mn * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
+
             # ensures target masternodes are greater than those already controlled and smaller than those possible
-            mn_target = int(mn_target) \
-                if mn_target and mn_controlled < int(mn_target) <= num_possible_masternodes else MIN_TARGET
+            if mn_target and mn_controlled < int(mn_target) <= num_possible_masternodes:
+                mn_target = int(mn_target)
+            elif mn_target and mn_controlled >= int(mn_target):
+                print('\nError: Target total masternodes should be greater than those already controlled, please try'
+                      ' again!')
+                float(DEF_FILENAME)
+            else:
+                mn_target = MIN_TARGET
+
             # budget, coin price and master node numbers related number should be all greater than zero
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and active_mn >= MIN_REMAINING
                     and coins >= MIN_CIRCULATION and mn_controlled >= MIN_CONTROL and mn_target >= MIN_TARGET):
