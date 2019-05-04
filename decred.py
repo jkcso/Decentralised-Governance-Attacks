@@ -655,8 +655,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s56 = 'therefore all decisions are respected and final, without asking anything.'
     print(s55)
     print(s56, '\n')
-    PDF_REPORT += s55 + NL
-    PDF_REPORT += s56 + NL + NL
+    PDF_REPORT += s55 + ' ' + s56 + NL + NL
 
     print('SUCCESS LIKELIHOOD: HIGH', '\n')
     PDF_REPORT += 'SUCCESS LIKELIHOOD: HIGH' + NL + NL
@@ -670,11 +669,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s101)
     print(s102)
     print(s103)
-    PDF_REPORT += s57 + NL
-    PDF_REPORT += s58 + NL
-    PDF_REPORT += s101 + NL
-    PDF_REPORT += s102 + NL
-    PDF_REPORT += s103 + NL + NL
+    PDF_REPORT += s57 + ' ' + s58 + ' ' + s101 + ' ' + s102 + ' ' + s103 + NL + NL
 
     print()
     print('METHODOLOGY', '\n')

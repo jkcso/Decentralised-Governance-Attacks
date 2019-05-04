@@ -681,7 +681,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
     print('EXAMPLE', '\n')
     PDF_REPORT += 'EXAMPLE' + NL + NL
-    s54 = 'Monthly salary of Dash Core Developers or other beneficial investments'
+    s54 = 'Monthly salary of Dash Core Developers or other beneficial investments.'
     print(s54, '\n')
     PDF_REPORT += s54 + NL + NL
 
@@ -691,8 +691,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     s56 = 'Therefore, if attacked proposal is not in top rankings, it will be rejected.'
     print(s55)
     print(s56, '\n')
-    PDF_REPORT += s55 + NL
-    PDF_REPORT += s56 + NL + NL
+    PDF_REPORT += s55 + ' ' + s56 + NL + NL
 
     print('SUCCESS LIKELIHOOD: HIGH', '\n')
     PDF_REPORT += 'SUCCESS LIKELIHOOD: HIGH' + NL + NL
@@ -700,12 +699,11 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     s58 = 'Funding is granted to the top X proposals based on net percentage.'
     print(s57)
     print(s58, '\n')
-    PDF_REPORT += s57 + NL
-    PDF_REPORT += s58 + NL + NL
+    PDF_REPORT += s57 + ' ' + s58 + NL + NL
 
     print('METHODOLOGY', '\n')
     PDF_REPORT += 'METHODOLOGY' + NL + NL
-    s59 = 'By down-voting proposals so that the net 10% margin is not achieved'
+    s59 = 'By down-voting proposals so that the net 10% margin is not achieved.'
     print(s59, '\n')
     PDF_REPORT += s59 + NL + NL
 
@@ -747,19 +745,19 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
     print('EXAMPLE', '\n')
     PDF_REPORT += 'EXAMPLE' + NL + NL
-    s65 = 'Malicious proposal up-voted from malicious masternodes and abstention is high'
+    s65 = 'Malicious proposal up-voted from malicious masternodes and abstention is high.'
     print(s65, '\n')
     PDF_REPORT += s65 + NL + NL
 
     print('DESIGN VULNERABILITY', '\n')
     PDF_REPORT += 'DESIGN VULNERABILITY' + NL + NL
-    s66 = 'Votes are never questioned therefore if a proposal is accepted, no censorship exists'
+    s66 = 'Votes are never questioned therefore if a proposal is accepted, no censorship exists.'
     print(s66, '\n')
     PDF_REPORT += s66 + NL + NL
 
     print('SUCCESS LIKELIHOOD: MEDIUM', '\n')
     PDF_REPORT += 'SUCCESS LIKELIHOOD: MEDIUM' + NL + NL
-    s67 = 'The controversy of a malicious proposal is expected to unite honest owners'
+    s67 = 'The controversy of a malicious proposal is expected to unite honest owners.'
     print(s67, '\n')
     PDF_REPORT += s67 + NL + NL
 
