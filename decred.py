@@ -48,13 +48,15 @@ MIN_COINBASE_RANKING = MIN_EXP = ONE_TICKET = 1
 MAX_COINBASE_RANKING = 60
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_POOL_SIZE = MIN_CONTROL = MIN_TARGET = 0
-EXP_FACTOR = 200
+EXP_FACTOR = 120
 OS = 0  # Output Start, used mostly for long floats, strings and percentages
 OE = 4  # Output End
 PERCENTAGE = 100
+NET_MAJORITY = 60
+DOUBLE = 2
+ONE_DAY = 1
 MAX_SUPPLY = 21000000
-NET_10_PERCENT = 1.1
-MIN_10_PERCENT = 0.1
+MIN_QUORUM_PERCENTAGE = 0.1
 INVERSE = -1
 DEF_EXP = -13  # corresponds to number 8 from 1-10 scale which is medium to slow exponential increase
 DEF_INFLATION = math.pow(math.e, DEF_EXP)
@@ -255,7 +257,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     s3 = 'Attack budget (£): unspecified (cost estimated in attack phase two)'
     s4 = 'Attack budget (£):'
     s5 = 'Decred price (£):'
-    s26 = 'Decred ticket price (£):'
+    s26 = 'Decred ticket price (in DCR):'
     s6 = 'Inflation rate:'
     s7 = 'Coins in circulation:'
     s8 = 'Ticket pool size:'
@@ -315,7 +317,6 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
             budget_tickets * ticket_price * (coin_price + (
                     budget_to_decred / (budget_to_decred - budget_to_decred / ADAPTOR) * exp_incr))))
 
-    # immediate_possible_tickets = MAX_TICKETS - ticket_pool_size if ticket_pool_size < MAX_TICKETS else 0
     malicious_60 = int(math.ceil(ticket_pool_size * SIXTY_PERCENT))
     kibana_dict.update({'MaliciousNet': malicious_60})
 
@@ -388,7 +389,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
             tickets_target = budget_tickets
             num_tickets_for_attack = tickets_target - tickets_controlled
 
-    # budget is set to enough to accommodate the target
+    # budget is not set so we accommodate the target
     elif budget == MIN_BUDGET and tickets_target > MIN_TARGET:
         print('Attack budget (£): cost of realise target of', tickets_target,
               'tickets' if tickets_target > ONE_TICKET else 'ticket')
@@ -409,9 +410,9 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     print(s20, num_tickets_for_attack)
     PDF_REPORT += s20 + ' ' + str(num_tickets_for_attack) + NL + NL
 
-    frozen_coins = ticket_price * ticket_pool_size
-    unfrozen_coins = coins - frozen_coins
-    new_frozen_needed_for_sixty_percent = (ticket_pool_size * SIXTY_PERCENT) * ticket_price
+    frozen_coins = int(ticket_price * ticket_pool_size)
+    unfrozen_coins = int(coins - frozen_coins)
+    new_frozen_needed_for_sixty_percent = int((ticket_pool_size * SIXTY_PERCENT) * ticket_price)
     # check limitations on whether unfrozen coins are enough to bid on new openings for tickets
     possible_tickets = MAX_TICKETS \
         if new_frozen_needed_for_sixty_percent <= (unfrozen_coins + MIN_NEW_POOL_TICKETS_PER_DAY) \
@@ -440,25 +441,26 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     print(s23, unfrozen_coins)
     print(s24, possible_tickets)
     print(s29, num_tickets_for_attack)
-    print(s27)
-    print(s28)
+    if num_tickets_for_attack > DOUBLE * MIN_NEW_POOL_TICKETS_PER_DAY:
+        print(s27)
+        print(s28)
 
     PDF_REPORT += s21 + ' ' + str(coins) + NL
     PDF_REPORT += s22 + ' ' + str(frozen_coins) + NL
     PDF_REPORT += s23 + ' ' + str(unfrozen_coins) + NL
     PDF_REPORT += s24 + ' ' + str(possible_tickets) + NL
     PDF_REPORT += s29 + ' ' + str(num_tickets_for_attack) + NL
-    PDF_REPORT += s27 + ' ' + s28 + NL + NL
+    if num_tickets_for_attack > DOUBLE * MIN_NEW_POOL_TICKETS_PER_DAY:
+        PDF_REPORT += s27 + ' ' + s28 + NL + NL
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, frozen_coins,
-                   possible_tickets)
+                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60)
 
 
 def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, frozen_coins,
-                   possible_tickets):
+                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60):
+
     global PDF_REPORT
 
     # when budget is not set it means that what is required is to a dynamic cost for purchasing decred to freeze it
@@ -505,7 +507,15 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         if num_tickets_for_attack > ONE_TICKET \
         else 'PURCHASE ATTEMPT FOR ' + str(num_tickets_for_attack) + ' TICKET' + NL + NL
 
-    attack_overhead_in_days = str(int(num_tickets_for_attack // MIN_NEW_POOL_TICKETS_PER_DAY)) + ' ' + 'DAYS'
+    min_days_to_purchase_tickets = math.ceil(num_tickets_for_attack // MIN_NEW_POOL_TICKETS_PER_DAY)
+    # even if just some hours would be required to purchase the amount of tickets targeted, or even 5 minutes,
+    # in reality what is needed is a whole day so that tickets can 'mature' by leaving the initial pool of
+    # immature tickets to join the normal one.
+    if min_days_to_purchase_tickets < ONE_DAY:
+        min_days_to_purchase_tickets = ONE_DAY
+    attack_overhead_in_days = str(min_days_to_purchase_tickets) + ' DAYS' \
+        if min_days_to_purchase_tickets > ONE_DAY \
+        else str(min_days_to_purchase_tickets) + ' DAY'
 
     s27 = 'PURCHASE OVERHEAD ESTIMATION:'
     print(s27, attack_overhead_in_days, '\n')
@@ -546,7 +556,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     s29 = 'Decred coin price before attack initiation (£):'
     s30 = 'Estimated coin price after purchase (£):'
-    s91 = 'Decred ticket price before attack initiaton (£):'
+    s91 = 'Decred ticket price before attack initiaton (in DCR):'
     s92 = 'Estimated ticket price after purchase (£):'
     s31 = 'Estimated total cost with inflation (£):'
     s99 = 'Cost includes competent bidding with high transaction fees to increase'
@@ -633,7 +643,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
     # should hold: positive votes - negative votes >= 10% of active masternodes
-    anti_dos_for_less_than_possible = int(ticket_pool_size * SIXTY_PERCENT)
+    anti_dos_for_less_than_possible = math.ceil(ticket_pool_size * SIXTY_PERCENT)
 
     print('\n')
 
@@ -666,7 +676,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s58 = 'PoS rewards and not the coin development, it was noticed that'
     s101 = 'governance proposals do not attract more than half of pool size'
     s102 = 'votes therefore there exists high voting abstention which makes'
-    s103 = 'this attack very possible to happen'
+    s103 = 'this attack very possible to happen.'
     print(s57)
     print(s58)
     print(s101)
@@ -678,6 +688,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += s102 + NL
     PDF_REPORT += s103 + NL + NL
 
+    print()
     print('METHODOLOGY', '\n')
     PDF_REPORT += 'METHODOLOGY' + NL + NL
     s59 = 'By down-voting proposals so that 60% margin is not achieved'
@@ -689,13 +700,16 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     s60 = 'Total votes from malicious tickets:'
     s61 = 'Least honest votes required for net majority:'
+    s106 = 'While ticket pool has a size of:'
     print(s60, num_tickets_for_attack)
-    print(s61, anti_dos_for_less_than_possible)
+    print(s61, anti_dos_for_less_than_possible, '(60% of ticket pool)')
+    print(s106, ticket_pool_size, '\n')
     PDF_REPORT += s60 + ' ' + str(num_tickets_for_attack) + NL
-    PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + NL
+    PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + ' ' + '(60% of ticket pool)' + NL
+    PDF_REPORT += s106 + ' ' + str(ticket_pool_size) + NL + NL
 
     # least honest ticket votes required for a malicious proposal to not have net 60% and do not go through
-    approved_anw_for_less_than_possible = int(((num_tickets_for_attack * PERCENTAGE) / SIXTY_PERCENT) + ONE_TICKET)
+    approved_anw_for_less_than_possible = int(((num_tickets_for_attack * PERCENTAGE) / NET_MAJORITY) + ONE_TICKET)
 
     s64 = '(2) MALICIOUS PROPOSAL PASSES BY NEGLIGENCE'
     print(s64, '\n')
@@ -735,10 +749,21 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     # vice-versa case of malicious denial of service
     s69 = 'Total votes from malicious tickets:'
     s70 = 'Least honest votes required for proposal rejection:'
+    s107 = 'Which does not satisfy the minimum total vote requirements of 10% pool size:'
+
     print(s69, num_tickets_for_attack)
-    print(s70, approved_anw_for_less_than_possible)
+    if num_tickets_for_attack < MIN_QUORUM_PERCENTAGE * ticket_pool_size:
+        print(s107, math.ceil(MIN_QUORUM_PERCENTAGE * ticket_pool_size))
+    else:
+        print(s70, approved_anw_for_less_than_possible)
+    print(s106, ticket_pool_size)
+
     PDF_REPORT += s69 + ' ' + str(num_tickets_for_attack) + NL
-    PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL
+    if num_tickets_for_attack < MIN_QUORUM_PERCENTAGE * ticket_pool_size:
+        PDF_REPORT += s107 + str(math.ceil(MIN_QUORUM_PERCENTAGE * ticket_pool_size))
+    else:
+        PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL
+    PDF_REPORT += s106 + ' ' + str(ticket_pool_size) + NL
 
     kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,  # downvote proposal hoping honest majority
                         # not achieved, variable holds the number of honest positive votes required to pass
@@ -749,14 +774,14 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 # This is the main method of the program, responsible for IO using the above methods.
 def main():
     print('''
-DECRED DECENTRALISED GOVERNANCE ATTACK SIMULATOR
+DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
     ''')
 
     while True:
         filename = input('File name for report and dashboard: (press enter for default file name)  ')
         budget = input('Attack budget (£): (press enter for enough budget to be successful)  ')
         coin_price = input('Decred coin price (£): (press enter for real time coin price)  ')
-        ticket_price = input('Decred ticket price (£): (press enter for real time ticket price)  ')
+        ticket_price = input('Decred ticket price (in DCR): (press enter for real time ticket price)  ')
         exp = input('Inflation rate (1-10)(1: Aggressive, 10: Slow): (press enter for default rate)  ')
         coins = input('Coins in circulation: (press enter for real time circulation)  ')
         ticket_pool_size = input('Ticket pool size: (press enter for real time ticket pool size)  ')
