@@ -1,2 +1,2 @@
 Collateral,MaxSupply,Budget,PriceBef,TicketPriceBef,Inflation,Circulation,TicketPoolSize,Controlled,Target,MaliciousNet,ExpiredPerBlock,BiddablePerBlock,BlocksPerDay,NewOpeningsPerDay,BiddablePerDay,FrozenBef,PurchaseBef,PurchaseAft,Cost,CoinPriceAft,TicketPriceAft,FrozenAft,PossibleAft,ActiveAft,Malicious,MalDownvote,MalUpvote
-1000,21000000,0,20.18,119.16,-13.0,9725823,40971,0,24583,24583,5,20,288,1440,5760,4882104,24583,0,69365181.078,26.85,125.83,5155380,0,40960,24583,24583,40972
+1000,21000000,0,1.0,10.0,-13.0,9726040,1000,500,0,600,5,20,288,1440,5760,10000,100,0,12162.73,1.03,10.03,10030,39860,1100,600,600,167

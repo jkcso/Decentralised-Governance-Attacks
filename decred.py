@@ -52,7 +52,7 @@ EXP_FACTOR = 120
 OS = 0  # Output Start, used mostly for long floats, strings and percentages
 OE = 4  # Output End
 PERCENTAGE = 100
-NET_MAJORITY = 60
+MIN_REJECTION = 0.41
 DOUBLE = 2
 ONE_DAY = 1
 MAX_SUPPLY = 21000000
@@ -637,7 +637,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s40, new_num_tickets)
     PDF_REPORT += s40 + ' ' + str(new_num_tickets) + NL
 
-    print('From which malicious:', str(total_malicious) + '(' + percentage_malicious + '% of total tickets)')
+    print('From which malicious:', str(total_malicious) + ' (' + percentage_malicious + '% of total tickets)')
     PDF_REPORT += 'From which malicious: ' + str(total_malicious) + ' (' + percentage_malicious \
                   + '% of total tickets)' + NL + NL
 
@@ -701,15 +701,15 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s60 = 'Total votes from malicious tickets:'
     s61 = 'Least honest votes required for net majority:'
     s106 = 'While ticket pool has a size of:'
-    print(s60, num_tickets_for_attack)
+    print(s60, total_malicious)
     print(s61, anti_dos_for_less_than_possible, '(60% of ticket pool)')
     print(s106, ticket_pool_size, '\n')
-    PDF_REPORT += s60 + ' ' + str(num_tickets_for_attack) + NL
+    PDF_REPORT += s60 + ' ' + str(total_malicious) + NL
     PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + ' ' + '(60% of ticket pool)' + NL
     PDF_REPORT += s106 + ' ' + str(ticket_pool_size) + NL + NL
 
     # least honest ticket votes required for a malicious proposal to not have net 60% and do not go through
-    approved_anw_for_less_than_possible = int(((num_tickets_for_attack * PERCENTAGE) / NET_MAJORITY) + ONE_TICKET)
+    approved_anw_for_less_than_possible = math.ceil(total_malicious * MIN_REJECTION)
 
     s64 = '(2) MALICIOUS PROPOSAL PASSES BY NEGLIGENCE'
     print(s64, '\n')
@@ -751,14 +751,14 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s70 = 'Least honest votes required for proposal rejection:'
     s107 = 'Which does not satisfy the minimum total vote requirements of 10% pool size:'
 
-    print(s69, num_tickets_for_attack)
+    print(s69, total_malicious)
     if num_tickets_for_attack < MIN_QUORUM_PERCENTAGE * ticket_pool_size:
         print(s107, math.ceil(MIN_QUORUM_PERCENTAGE * ticket_pool_size))
     else:
         print(s70, approved_anw_for_less_than_possible)
     print(s106, ticket_pool_size)
 
-    PDF_REPORT += s69 + ' ' + str(num_tickets_for_attack) + NL
+    PDF_REPORT += s69 + ' ' + str(total_malicious) + NL
     if num_tickets_for_attack < MIN_QUORUM_PERCENTAGE * ticket_pool_size:
         PDF_REPORT += s107 + str(math.ceil(MIN_QUORUM_PERCENTAGE * ticket_pool_size))
     else:
