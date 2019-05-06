@@ -104,6 +104,31 @@ def acquire_real_time_ticket_pool_size():
                replace(',', ''))
 
 
+def acquire_real_time_ticket_reward():
+    if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
+            getattr(ssl, '_create_unverified_context', None)):
+        ssl._create_default_https_context = ssl._create_unverified_context
+
+    decred_stats = 'https://explorer.dcrdata.org'
+    req = Request(decred_stats, headers={'User-Agent': 'Mozilla/5.0'})
+    scrap_stats = urlopen(req).read().decode("utf-8")
+
+    start_index = scrap_stats.find('PoW Reward')
+    SCRAP_END_INDEX = 290
+    ticket_string = scrap_stats[start_index:start_index + SCRAP_END_INDEX]
+    TPB = ticket_string.find('int">')
+    TPE = ticket_string.find('</sp')
+    # since this is PoW reward which is 60% of the total reward, then the vote reward which is
+    # 30% is going to be half of it.
+    pow_reward = ticket_string[TPB + len('int">'):TPE]
+    ticket_reward = float('{0:.2f}'.format(float(pow_reward) / 2))
+
+    global IS_TICKET_REWARD_REAL
+    IS_TICKET_REWARD_REAL = True
+
+    return ticket_reward
+
+
 def acquire_real_time_price():
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
@@ -205,7 +230,7 @@ def create_pdf(filename):
 
 # Outputs the values we proceed during the simulation.
 def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   tickets_target):
+                   tickets_target, ticket_reward):
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_HEADER
     PDF_REPORT += PDF_REPORT_INTRO
@@ -325,6 +350,10 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     # based on the above conditions, the number of masternodes to purchase is determined here
     num_tickets_for_attack = tickets_target - tickets_controlled
 
+    s29 = 'Ticket reward per block:'
+    print(s29, ticket_reward)
+    PDF_REPORT += s29 + ' ' + str(ticket_reward) + NL
+
     s15 = 'ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS'
     print('\n')
     print(s15, '\n')
@@ -426,11 +455,11 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60)
+                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, ticket_reward)
 
 
 def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60):
+                   num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, ticket_reward):
 
     global PDF_REPORT
 
@@ -604,7 +633,49 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         else 'From which malicious: ' + str(num_tickets_for_attack) + ' (' + percentage_malicious \
              + '% of total tickets)' + NL + NL
 
-    print()
+    # Return on Investment
+    # one block reward every nine days
+    daily_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD) * total_malicious))
+    daily_earn_gbp = float('{0:.2f}'.format(new_price * daily_earn_dash))
+
+    monthly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_MONTH) / AVG_DAYS_FOR_REWARD) * total_malicious))
+    monthly_earn_gbp = float('{0:.2f}'.format(new_price * monthly_earn_dash))
+
+    yearly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_YEAR) / AVG_DAYS_FOR_REWARD) * total_malicious))
+    yearly_earn_gbp = float('{0:.2f}'.format(new_price * yearly_earn_dash))
+
+    print('\n')
+    print('RETURN ON INVESTMENT', '\n')
+    PDF_REPORT += 'RETURN ON INVESTMENT' + NL + NL
+
+    s87 = 'Money invested in this attack are not lost, just exchanged from GBP to Dash.'
+    s82 = 'Daily Dash expected from masternode block reward:'
+    s83 = 'Monthly Dash expected from masternode block reward:'
+    s84 = 'Yearly Dash expected from masternode block reward:'
+    s85 = 'Estimated profits should also take into consideration any potential increase'
+    s86 = 'in the highly volatile original coin price with which masternodes were acquired.'
+
+    print(s87)
+    print(s82, daily_earn_dash, '(£' + str(daily_earn_gbp) + ')')
+    print(s83, monthly_earn_dash, '(£' + str(monthly_earn_gbp) + ')')
+    print(s84, yearly_earn_dash, '(£' + str(yearly_earn_gbp) + ')')
+    print(s85)
+    print(s86)
+
+    PDF_REPORT += s87 + NL
+    PDF_REPORT += s82 + str(daily_earn_dash) + ' (£' + str(daily_earn_gbp) + ')' + NL
+    PDF_REPORT += s83 + str(monthly_earn_dash) + ' (£' + str(monthly_earn_gbp) + ')' + NL
+    PDF_REPORT += s84 + str(yearly_earn_dash) + ' (£' + str(yearly_earn_gbp) + ')' + NL
+    PDF_REPORT += s85 + ' ' + s86 + NL + NL
+
+    kibana_dict.update({'DailyDash': daily_earn_dash,
+                        'DailyGBP': daily_earn_gbp,
+                        'MonthlyDash': monthly_earn_dash,
+                        'MonthlyGBP': monthly_earn_gbp,
+                        'YearlyDash': yearly_earn_dash,
+                        'YearlyGBP': yearly_earn_gbp})
+
+    print('\n')
     print('SUMMARY', '\n')
     PDF_REPORT += 'SUMMARY' + NL + NL
 
@@ -773,6 +844,7 @@ DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
         ticket_pool_size = input('Ticket pool size: (press enter for real time ticket pool size)  ')
         tickets_controlled = input('Tickets already under control or bribe: (press enter for none)  ')
         tickets_target = input('Target total tickets: (press enter for enough to be successful)  ')
+        ticket_reward = input('Ticket reward per block: (press enter for real time value)  ')
 
         try:
             filename = str(filename) if filename else DEF_FILENAME
@@ -795,6 +867,8 @@ DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             else:
                 tickets_target = MIN_TARGET
 
+            ticket_reward = float(ticket_reward) if ticket_reward else acquire_real_time_ticket_reward()
+
             # budget, coin price and master node numbers related number should be all greater than zero
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and ticket_pool_size >= MIN_POOL_SIZE
                     and coins >= MIN_CIRCULATION and tickets_controlled >= MIN_CONTROL
@@ -814,10 +888,11 @@ DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
                         'Circulation': coins,
                         'TicketPoolSize': ticket_pool_size,
                         'Controlled': tickets_controlled,
-                        'Target': tickets_target})
+                        'Target': tickets_target,
+                        'TicketRew': ticket_reward})
 
     attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
-                   tickets_target)
+                   tickets_target, ticket_reward)
     create_csv(filename)
     create_pdf(filename)
 
