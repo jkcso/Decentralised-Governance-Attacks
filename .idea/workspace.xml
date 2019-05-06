@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ticket_block_reward.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/decred.py" beforeDir="false" afterPath="$PROJECT_DIR$/decred.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,8 +18,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/dash.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="88">
-                  <caret line="549" selection-start-line="549" selection-end-line="549" />
+                <state relative-caret-position="528">
+                  <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
                   <folding>
                     <element signature="e#0#28#0" expanded="true" />
                   </folding>
@@ -35,8 +34,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/decred.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="155">
-                  <caret line="634" selection-start-line="634" selection-end-line="634" />
+                <state relative-caret-position="728">
+                  <caret line="680" lean-forward="true" selection-start-line="680" selection-end-line="680" />
                   <folding>
                     <element signature="e#0#28#0" expanded="true" />
                   </folding>
@@ -57,9 +56,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>percentage_poss_total</find>
-      <find>new_price</find>
-      <find>new_num_mn</find>
       <find>new_possible_mn</find>
       <find>new_coin_price</find>
       <find>ticket_price</find>
@@ -87,6 +83,9 @@
       <find>5</find>
       <find>reward</find>
       <find>int</find>
+      <find>daily_earn_dash</find>
+      <find>monthly_earn_dash</find>
+      <find>yearly_earn_dash</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -108,8 +107,8 @@
         <option value="$PROJECT_DIR$/decred_ticket_price.py" />
         <option value="$PROJECT_DIR$/decred_ticket_pool.py" />
         <option value="$PROJECT_DIR$/dash_block_reward.py" />
-        <option value="$PROJECT_DIR$/dash.py" />
         <option value="$PROJECT_DIR$/ticket_block_reward.py" />
+        <option value="$PROJECT_DIR$/dash.py" />
         <option value="$PROJECT_DIR$/decred.py" />
       </list>
     </option>
@@ -328,12 +327,12 @@
       <workItem from="1556574308251" duration="508000" />
       <workItem from="1556576443258" duration="6382000" />
       <workItem from="1556736869580" duration="71149000" />
-      <workItem from="1557135292374" duration="9187000" />
+      <workItem from="1557135292374" duration="10167000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="286771000" />
+    <option name="totallyTimeSpent" value="287751000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -360,7 +359,7 @@
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32953367" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.29518718" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.29430053" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.3284974" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.32834226" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -511,8 +510,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="549" selection-start-line="549" selection-end-line="549" />
+        <state relative-caret-position="528">
+          <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
@@ -521,8 +520,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/decred.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="634" selection-start-line="634" selection-end-line="634" />
+        <state relative-caret-position="728">
+          <caret line="680" lean-forward="true" selection-start-line="680" selection-end-line="680" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

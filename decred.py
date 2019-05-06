@@ -22,6 +22,10 @@ COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_POOL_SIZE = MIN_CONTROL = MIN_TARGET = 0
 OS = 0  # Output Start, used mostly for long floats, strings and percentages
 OE = 4  # Output End
+AVG_DAYS_FOR_REWARD = 28
+ONE_DAY = 1
+ONE_MONTH = 30.34
+ONE_YEAR = 365
 PERCENTAGE = 100
 MIN_REJECTION = 0.401  # 60% is net majority, however with 40.1% of votes against the proposal will not go through
 DOUBLE = 2
@@ -635,44 +639,44 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     # Return on Investment
     # one block reward every nine days
-    daily_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD) * total_malicious))
-    daily_earn_gbp = float('{0:.2f}'.format(new_price * daily_earn_dash))
+    daily_earn_decred = float('{0:.2f}'.format(((ticket_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD) * total_malicious))
+    daily_earn_gbp = float('{0:.2f}'.format(new_coin_price * daily_earn_decred))
 
-    monthly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_MONTH) / AVG_DAYS_FOR_REWARD) * total_malicious))
-    monthly_earn_gbp = float('{0:.2f}'.format(new_price * monthly_earn_dash))
+    monthly_earn_decred = float('{0:.2f}'.format(((ticket_reward * ONE_MONTH) / AVG_DAYS_FOR_REWARD) * total_malicious))
+    monthly_earn_gbp = float('{0:.2f}'.format(new_coin_price * monthly_earn_decred))
 
-    yearly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_YEAR) / AVG_DAYS_FOR_REWARD) * total_malicious))
-    yearly_earn_gbp = float('{0:.2f}'.format(new_price * yearly_earn_dash))
+    yearly_earn_decred = float('{0:.2f}'.format(((ticket_reward * ONE_YEAR) / AVG_DAYS_FOR_REWARD) * total_malicious))
+    yearly_earn_gbp = float('{0:.2f}'.format(new_coin_price * yearly_earn_decred))
 
     print('\n')
     print('RETURN ON INVESTMENT', '\n')
     PDF_REPORT += 'RETURN ON INVESTMENT' + NL + NL
 
-    s87 = 'Money invested in this attack are not lost, just exchanged from GBP to Dash.'
-    s82 = 'Daily Dash expected from masternode block reward:'
-    s83 = 'Monthly Dash expected from masternode block reward:'
-    s84 = 'Yearly Dash expected from masternode block reward:'
+    s87 = 'Money invested in this attack are not lost, just exchanged from GBP to Decred.'
+    s82 = 'Daily Decred expected from ticket block reward:'
+    s83 = 'Monthly Decred expected from ticket block reward:'
+    s84 = 'Yearly Decred expected from ticket block reward:'
     s85 = 'Estimated profits should also take into consideration any potential increase'
-    s86 = 'in the highly volatile original coin price with which masternodes were acquired.'
+    s86 = 'in the highly volatile original coin price with which tickets were acquired.'
 
     print(s87)
-    print(s82, daily_earn_dash, '(£' + str(daily_earn_gbp) + ')')
-    print(s83, monthly_earn_dash, '(£' + str(monthly_earn_gbp) + ')')
-    print(s84, yearly_earn_dash, '(£' + str(yearly_earn_gbp) + ')')
+    print(s82, daily_earn_decred, '(£' + str(daily_earn_gbp) + ')')
+    print(s83, monthly_earn_decred, '(£' + str(monthly_earn_gbp) + ')')
+    print(s84, yearly_earn_decred, '(£' + str(yearly_earn_gbp) + ')')
     print(s85)
     print(s86)
 
     PDF_REPORT += s87 + NL
-    PDF_REPORT += s82 + str(daily_earn_dash) + ' (£' + str(daily_earn_gbp) + ')' + NL
-    PDF_REPORT += s83 + str(monthly_earn_dash) + ' (£' + str(monthly_earn_gbp) + ')' + NL
-    PDF_REPORT += s84 + str(yearly_earn_dash) + ' (£' + str(yearly_earn_gbp) + ')' + NL
+    PDF_REPORT += s82 + str(daily_earn_decred) + ' (£' + str(daily_earn_gbp) + ')' + NL
+    PDF_REPORT += s83 + str(monthly_earn_decred) + ' (£' + str(monthly_earn_gbp) + ')' + NL
+    PDF_REPORT += s84 + str(yearly_earn_decred) + ' (£' + str(yearly_earn_gbp) + ')' + NL
     PDF_REPORT += s85 + ' ' + s86 + NL + NL
 
-    kibana_dict.update({'DailyDash': daily_earn_dash,
+    kibana_dict.update({'DailyDash': daily_earn_decred,
                         'DailyGBP': daily_earn_gbp,
-                        'MonthlyDash': monthly_earn_dash,
+                        'MonthlyDash': monthly_earn_decred,
                         'MonthlyGBP': monthly_earn_gbp,
-                        'YearlyDash': yearly_earn_dash,
+                        'YearlyDash': yearly_earn_decred,
                         'YearlyGBP': yearly_earn_gbp})
 
     print('\n')
