@@ -20,6 +20,10 @@ PERCENTAGE = 100
 MAX_SUPPLY = 18900000
 NET_10_PERCENT = 1.1
 MIN_10_PERCENT = 0.1
+AVG_DAYS_FOR_REWARD = 8
+ONE_DAY = 1
+ONE_MONTH = 30.5
+ONE_YEAR = 365
 INVERSE = -1
 DEF_EXP = -13  # corresponds to number 8 from 1-10 scale which is medium to slow exponential increase
 DEF_INFLATION = math.pow(math.e, DEF_EXP)
@@ -27,7 +31,7 @@ MAX_EXP = 11
 SANITISE = 5
 SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
-IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = False
+IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = IS_MASTERNODES_BLOCK_REWARD_REAL = False
 ADAPTOR = 2
 C2020 = 9486800
 C2021 = 10160671
@@ -58,8 +62,7 @@ kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
 
 def acquire_real_time_masternodes():
 
-    if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
-            getattr(ssl, '_create_unverified_context', None)):
+    if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
         ssl._create_default_https_context = ssl._create_unverified_context
 
     mn_stats = 'https://stats.masternode.me/network-report/latest/json'
@@ -69,6 +72,20 @@ def acquire_real_time_masternodes():
     global IS_MASTERNODES_NUMBER_REAL
     IS_MASTERNODES_NUMBER_REAL = True
     return stats['raw']['mn_count']
+
+
+def acquire_real_time_mn_block_reward():
+
+    if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
+        ssl._create_default_https_context = ssl._create_unverified_context
+
+    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
+    req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
+    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+
+    global IS_MASTERNODES_BLOCK_REWARD_REAL
+    IS_MASTERNODES_BLOCK_REWARD_REAL = True
+    return float('{0:.2f}'.format(stats['raw']['mn_miner_reward']))
 
 
 def acquire_real_time_price():
@@ -175,7 +192,7 @@ def create_pdf(filename):
 
 
 # Outputs the values we proceed during the simulation.
-def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target):
+def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, mn_block_reward):
 
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_HEADER
@@ -289,6 +306,10 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     # based on the above conditions, the number of masternodes to purchase is determined here
     num_mn_for_attack = mn_target - mn_controlled
 
+    s26 = 'Masternode block reward:'
+    print(s26, mn_block_reward)
+    PDF_REPORT += s26 + ' ' + str(mn_block_reward) + NL
+
     s15 = 'ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS'
     print('\n')
     print(s15, '\n')
@@ -375,7 +396,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
-                   malicious_net_10, frozen_coins, possible_mn)
+                   malicious_net_10, frozen_coins, possible_mn, mn_block_reward)
 
 
 '''
@@ -393,7 +414,7 @@ Example:
 
 
 def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
-                   malicious_net_10, frozen_coins, possible_mn):
+                   malicious_net_10, frozen_coins, possible_mn, mn_block_reward):
 
     global PDF_REPORT
 
@@ -524,7 +545,53 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         else 'From which malicious: ' + str(num_mn_for_attack) + ' (' + percentage_malicious \
              + '% of total masternodes)' + NL + NL
 
-    print()
+    if attack_outcome == p:
+
+        # one block reward every nine days
+        daily_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD)
+                                                 * total_malicious))
+        daily_earn_gbp = float('{0:.2f}'.format(new_price * daily_earn_dash))
+
+        monthly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_MONTH) / AVG_DAYS_FOR_REWARD)
+                                                   * total_malicious))
+        monthly_earn_gbp = float('{0:.2f}'.format(new_price * monthly_earn_dash))
+
+        yearly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_YEAR) / AVG_DAYS_FOR_REWARD)
+                                                  * total_malicious))
+        yearly_earn_gbp = float('{0:.2f}'.format(new_price * yearly_earn_dash))
+
+        print('\n')
+        print('RETURN ON INVESTMENT', '\n')
+        PDF_REPORT += 'RETURN ON INVESTMENT' + NL + NL
+
+        s87 = 'Money invested in this attack are not lost, just exchanged from GBP to Dash.'
+        s82 = 'Daily Dash expected from masternode block reward:'
+        s83 = 'Monthly Dash expected from masternode block reward:'
+        s84 = 'Yearly Dash expected from masternode block reward:'
+        s85 = 'Estimated profits should also take into consideration any potential increase'
+        s86 = 'in the highly volatile original coin price with which masternodes were acquired.'
+
+        print(s87)
+        print(s82, daily_earn_dash, '(£' + str(daily_earn_gbp) + ')')
+        print(s83, monthly_earn_dash, '(£' + str(monthly_earn_gbp) + ')')
+        print(s84, yearly_earn_dash, '(£' + str(yearly_earn_gbp) + ')')
+        print(s85)
+        print(s86)
+
+        PDF_REPORT += s87 + NL
+        PDF_REPORT += s82 + str(daily_earn_dash) + ' (£' + str(daily_earn_gbp) + ')' + NL
+        PDF_REPORT += s83 + str(monthly_earn_dash) + ' (£' + str(monthly_earn_gbp) + ')' + NL
+        PDF_REPORT += s84 + str(yearly_earn_dash) + ' (£' + str(yearly_earn_gbp) + ')' + NL
+        PDF_REPORT += s85 + ' ' + s86 + NL + NL
+
+        kibana_dict.update({'DailyDash': daily_earn_dash,
+                            'DailyGBP': daily_earn_gbp,
+                            'MonthlyDash': monthly_earn_dash,
+                            'MonthlyGBP': monthly_earn_gbp,
+                            'YearlyDash': yearly_earn_dash,
+                            'YearlyGBP': yearly_earn_gbp})
+
+    print('\n')
     print('SUMMARY', '\n')
     PDF_REPORT += 'SUMMARY' + NL + NL
 
@@ -635,7 +702,44 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
             else 'From which malicious: ' + str(num_mn_for_attack) + ' (' + percentage_malicious \
                  + '% of total masternodes)' + NL + NL
 
-        print()
+        # Return on Investment
+        # one block reward every nine days
+        daily_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD) * total_malicious))
+        daily_earn_gbp = float('{0:.2f}'.format(new_price * daily_earn_dash))
+
+        monthly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_MONTH) / AVG_DAYS_FOR_REWARD)
+                                                   * total_malicious))
+        monthly_earn_gbp = float('{0:.2f}'.format(new_price * monthly_earn_dash))
+
+        yearly_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_YEAR) / AVG_DAYS_FOR_REWARD)
+                                                  * total_malicious))
+        yearly_earn_gbp = float('{0:.2f}'.format(new_price * yearly_earn_dash))
+
+        print('\n')
+        print('RETURN ON INVESTMENT', '\n')
+        PDF_REPORT += 'RETURN ON INVESTMENT' + NL + NL
+
+        s87 = 'Money invested in this attack are not lost, just exchanged from GBP to Dash.'
+        s82 = 'Daily Dash expected from masternode block reward:'
+        s83 = 'Monthly Dash expected from masternode block reward:'
+        s84 = 'Yearly Dash expected from masternode block reward:'
+        s85 = 'Estimated profits should also take into consideration any potential increase'
+        s86 = 'in the highly volatile original coin price with which masternodes were acquired.'
+
+        print(s87)
+        print(s82, daily_earn_dash, '(£' + str(daily_earn_gbp) + ')')
+        print(s83, monthly_earn_dash, '(£' + str(monthly_earn_gbp) + ')')
+        print(s84, yearly_earn_dash, '(£' + str(yearly_earn_gbp) + ')')
+        print(s85)
+        print(s86)
+
+        PDF_REPORT += s87 + NL
+        PDF_REPORT += s82 + str(daily_earn_dash) + ' (£' + str(daily_earn_gbp) + ')' + NL
+        PDF_REPORT += s83 + str(monthly_earn_dash) + ' (£' + str(monthly_earn_gbp) + ')' + NL
+        PDF_REPORT += s84 + str(yearly_earn_dash) + ' (£' + str(yearly_earn_gbp) + ')' + NL
+        PDF_REPORT += s85 + ' ' + s86 + NL + NL
+
+        print('\n')
         print('SUMMARY', '\n')
         PDF_REPORT += 'SUMMARY' + NL + NL
 
@@ -866,6 +970,7 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
         active_mn = input('Total of honest masternodes: (press enter for real time active masternodes)  ')
         mn_controlled = input('Honest masternodes already under control or bribe: (press enter for none)  ')
         mn_target = input('Target total masternodes: (press enter for enough to be successful)  ')
+        mn_block_reward = input('Masternode block reward: (press enter for real time value)  ')
 
         try:
             filename = str(filename) if filename else DEF_FILENAME
@@ -889,6 +994,8 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             else:
                 mn_target = MIN_TARGET
 
+            mn_block_reward = float(mn_block_reward) if mn_block_reward else acquire_real_time_mn_block_reward()
+
             # budget, coin price and master node numbers related number should be all greater than zero
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and active_mn >= MIN_REMAINING
                     and coins >= MIN_CIRCULATION and mn_controlled >= MIN_CONTROL and mn_target >= MIN_TARGET):
@@ -907,9 +1014,10 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
                         'Inflation': exp,
                         'Circulation': coins,
                         'Controlled': mn_controlled,
-                        'Target': mn_target})
+                        'Target': mn_target,
+                        'BlockRew': mn_block_reward})
 
-    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target)
+    attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_controlled, mn_target, mn_block_reward)
     create_csv(filename)
     create_pdf(filename)
 
