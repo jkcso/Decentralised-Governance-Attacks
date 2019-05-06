@@ -579,9 +579,9 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         print(s86)
 
         PDF_REPORT += s87 + NL
-        PDF_REPORT += s82 + str(daily_earn_dash) + ' (£' + str(daily_earn_gbp) + ')' + NL
-        PDF_REPORT += s83 + str(monthly_earn_dash) + ' (£' + str(monthly_earn_gbp) + ')' + NL
-        PDF_REPORT += s84 + str(yearly_earn_dash) + ' (£' + str(yearly_earn_gbp) + ')' + NL
+        PDF_REPORT += s82 + ' ' + str(daily_earn_dash) + ' (£' + str(daily_earn_gbp) + ')' + NL
+        PDF_REPORT += s83 + ' ' + str(monthly_earn_dash) + ' (£' + str(monthly_earn_gbp) + ')' + NL
+        PDF_REPORT += s84 + ' ' + str(yearly_earn_dash) + ' (£' + str(yearly_earn_gbp) + ')' + NL
         PDF_REPORT += s85 + ' ' + s86 + NL + NL
 
         kibana_dict.update({'DailyDash': daily_earn_dash,

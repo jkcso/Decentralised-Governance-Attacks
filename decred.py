@@ -667,9 +667,9 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s86)
 
     PDF_REPORT += s87 + NL
-    PDF_REPORT += s82 + str(daily_earn_decred) + ' (£' + str(daily_earn_gbp) + ')' + NL
-    PDF_REPORT += s83 + str(monthly_earn_decred) + ' (£' + str(monthly_earn_gbp) + ')' + NL
-    PDF_REPORT += s84 + str(yearly_earn_decred) + ' (£' + str(yearly_earn_gbp) + ')' + NL
+    PDF_REPORT += s82 + ' ' + str(daily_earn_decred) + ' (£' + str(daily_earn_gbp) + ')' + NL
+    PDF_REPORT += s83 + ' ' + str(monthly_earn_decred) + ' (£' + str(monthly_earn_gbp) + ')' + NL
+    PDF_REPORT += s84 + ' ' + str(yearly_earn_decred) + ' (£' + str(yearly_earn_gbp) + ')' + NL
     PDF_REPORT += s85 + ' ' + s86 + NL + NL
 
     kibana_dict.update({'DailyDash': daily_earn_decred,
