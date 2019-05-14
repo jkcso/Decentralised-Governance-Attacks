@@ -455,7 +455,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     PDF_REPORT += s24 + ' ' + str(possible_tickets) + NL
     PDF_REPORT += s29 + ' ' + str(num_tickets_for_attack) + NL
     if num_tickets_for_attack > DOUBLE * MIN_NEW_POOL_TICKETS_PER_DAY:
-        PDF_REPORT += s27 + ' ' + s28 + NL + NL
+        PDF_REPORT += s27 + ' ' + s28 + NL
 
     # calls the following method to proceed in attempting the purchase
     attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
@@ -506,7 +506,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     s26 = 'ATTACK PHASE TWO: EXECUTION'
     print('\n')
     print(s26, '\n')
-    PDF_REPORT += s26 + NL + NL
+    PDF_REPORT += NL + s26 + NL + NL
 
     print('PURCHASE ATTEMPT FOR', num_tickets_for_attack,
           'TICKETS' if num_tickets_for_attack > ONE_TICKET else 'TICKET', '\n')
@@ -571,7 +571,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     PDF_REPORT += 'REASON' + NL + NL
     PDF_REPORT += s82 + ' ' + s96 + ' ' + s83 + ' ' + s84 + ' ' + s97 + ' ' + s85 + s86 + s98 + NL + NL
-    PDF_REPORT += s87 + ' ' + s88 + ' ' + s89 + s90 + NL + NL
+    PDF_REPORT += s87 + ' ' + s88 + ' ' + s89 + ' ' + s90 + NL + NL
 
     s28 = 'HYPOTHETICAL REALISATION'
 
