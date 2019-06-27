@@ -1,2 +1,2 @@
 Collateral,MaxSupply,Budget,PriceBef,ActiveBef,PossibleBef,Inflation,Circulation,Controlled,Target,BlockRew,MaliciousNet,FrozenBef,PurchaseBef,PurchaseAft,Cost,PriceAft,FrozenAft,PossibleAft,ActiveAft,Malicious,DailyDash,DailyGBP,MonthlyDash,MonthlyGBP,YearlyDash,YearlyGBP,MalDownvote,MalUpvote,ExpVoters,ExpVotAtt
-1000,18900000,0,91.17,4866,3927,-13.0,8793002,0,1,1.55,5354,4866000,1,0,91171.129,91.17,4867000,3926,4867,1,0.19,17.32,5.88,536.08,70.72,6447.54,488,0,2920,3214
+1000,18900000,25000000.0,127.99,4930,3956,-13.0,8886901,0,0,1.55,5424,4930000,195,0,24958050.882,128.43,5125000,3761,5125,195,37.78,4852.09,1146.28,147216.74,13790.16,1771070.25,708,0,2958,3255

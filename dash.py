@@ -307,8 +307,8 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     num_mn_for_attack = mn_target - mn_controlled
 
     s26 = 'Masternode block reward:'
-    print(s26, mn_block_reward)
-    PDF_REPORT += s26 + ' ' + str(mn_block_reward) + NL
+    print(s26, mn_block_reward, 'DASH')
+    PDF_REPORT += s26 + ' ' + str(mn_block_reward) + 'DASH' + NL
 
     s15 = 'ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS'
     print('\n')
@@ -417,6 +417,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                    malicious_net_10, frozen_coins, possible_mn, mn_block_reward):
 
     global PDF_REPORT
+    global full_cost
 
     # when budget is not set it means that what is required is to a dynamic cost for purchasing masternodes only.
     if budget == MIN_BUDGET:
@@ -427,6 +428,15 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
             new_price += exp_incr
         cost = float("{0:.3f}".format(cost))
         new_price = float("{0:.2f}".format(new_price))
+
+    # provides full cost in report's summary so that users get an idea of the amount required to realise attacks.
+    elif budget > MIN_BUDGET:
+        full_cost = float(MIN_PRICE)
+        new_full_cost_coin_price = coin_price
+        for i in range(MIN_PRICE, possible_mn * DASH_MN_COLLATERAL):
+            full_cost += new_full_cost_coin_price
+            new_full_cost_coin_price += exp_incr
+        full_cost = float("{0:.3f}".format(full_cost))
 
     new_num_frozen = frozen_coins + num_mn_for_attack * DASH_MN_COLLATERAL
     new_remaining = coins - new_num_frozen
@@ -599,12 +609,18 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     s38 = 'The available coin supply was enough to buy this amount of masternodes:'
     s39 = 'Estimated total cost with inflation (£):'
     s40 = 'Total active masternodes after purchase:'
+    s53 = 'Estimated cost of maximum possible masternodes (' + str(possible_mn) + ') (£): '
 
     print(s37, malicious_net_10)
     PDF_REPORT += s37 + ' ' + str(malicious_net_10) + NL
 
     print(s38, possible_mn)
     PDF_REPORT += s38 + ' ' + str(possible_mn) + NL
+
+    print(s53 + str(full_cost)
+          if budget > MIN_BUDGET else '')
+    PDF_REPORT += s53 + str(full_cost) + NL + NL \
+        if budget > MIN_BUDGET else ''
 
     print('The attempted purchase was for:', num_mn_for_attack, 'masternodes', '<-- (Problematic metric)'
           if num_mn_for_attack > possible_mn else '')
