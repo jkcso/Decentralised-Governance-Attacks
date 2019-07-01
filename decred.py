@@ -8,8 +8,9 @@ import ssl
 import math
 import pdfkit
 
-# global variables are defined here once for clarity and duplication-free coding
-MAX_TICKETS = 40960  # maximum number of tickets in Decred ticket_pool_size, in reality it is not restrictive
+# Global variables are defined here once for clarity and duplication-free coding.
+# Maximum number of tickets in Decred ticket_pool_size, in reality it is not restrictive.
+MAX_TICKETS = 40960
 EXPIRED_TICKETS_PER_BLOCK = 5
 BIDDABLE_TICKETS_PER_BLOCK = 20
 BLOCKS_PER_DAY = 288
@@ -20,20 +21,24 @@ MIN_COINBASE_RANKING = MIN_EXP = ONE_TICKET = 1
 MAX_COINBASE_RANKING = 60
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_POOL_SIZE = MIN_CONTROL = MIN_TARGET = 0
-OS = 0  # Output Start, used mostly for long floats, strings and percentages
-OE = 4  # Output End
+# Output Start, used mostly for long floats, strings and percentages.
+OS = 0
+# Output End.
+OE = 4
 AVG_DAYS_FOR_REWARD = 28
 ONE_DAY = 1
 ONE_MONTH = 30.34
 ONE_YEAR = 365
 PERCENTAGE = 100
-MIN_REJECTION = 0.401  # 60% is net majority, however with 40.1% of votes against the proposal will not go through
+# 60% is net majority, however with 40.1% of votes against the proposal will not go through.
+MIN_REJECTION = 0.401
 DOUBLE = 2
 ONE_DAY = 1
 MAX_SUPPLY = 21000000
 MIN_QUORUM_PERCENTAGE = 0.1
 INVERSE = -1
-DEF_EXP = -9.5  # Defaults to 5 out of 10 from the exponential scale of how slow or aggressive inflation will be
+# Defaults to 5 out of 10 from the exponential scale of how slow or aggressive inflation will be.
+DEF_EXP = -9.5
 DEF_INFLATION = math.pow(math.e, DEF_EXP)
 MAX_EXP = 11
 SANITISE = 5
@@ -44,8 +49,10 @@ DEF_FILENAME = 'decred-default'
 RT = '(real time value)'
 UD = '(user defined value)'
 DEF = '(default exponential)'
-NL = '<br>'  # new line character for html
-PDF_REPORT = ''  # global variable to hold the current state of pdf report; to be edited along the way
+# New line character for html.
+NL = '<br>'
+# Global variable to hold the current state of pdf report; to be edited along the way.
+PDF_REPORT = ''
 PDF_REPORT_HEADER = '''
 <html>
 <head></head>
@@ -59,12 +66,13 @@ PDF_REPORT_FOOTER = '''
 </html>
 '''
 
-# the dictionary that then becomes the .csv file for Kibana
-# initially has some global variables useful for the dashboard
+# The dictionary that then becomes the .csv file for Kibana
+# initially has some global variables useful for the dashboard.
 kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
                'MaxSupply': MAX_SUPPLY}
 
 
+# Real time ticket prices from Decred open source information.
 def acquire_real_time_ticket_price():
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
@@ -86,6 +94,7 @@ def acquire_real_time_ticket_price():
     return float(ticket_price[len('int">'):ticket_price.find('</span')])
 
 
+# Real time ticket pool size from Decred open source information.
 def acquire_real_time_ticket_pool_size():
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
@@ -108,6 +117,7 @@ def acquire_real_time_ticket_pool_size():
                replace(',', ''))
 
 
+# Real time ticket reward from Decred open source information.
 def acquire_real_time_ticket_reward():
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
             getattr(ssl, '_create_unverified_context', None)):
@@ -133,6 +143,7 @@ def acquire_real_time_ticket_reward():
     return ticket_reward
 
 
+# Real time coin price from Decred open source information.
 def acquire_real_time_price():
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
@@ -169,6 +180,7 @@ def acquire_real_time_price():
         pass
 
 
+# Real time circulation from Decred open source information.
 def acquire_real_time_circulation():
     try:
         url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
@@ -205,6 +217,7 @@ def acquire_real_time_circulation():
         pass
 
 
+# Creates a .csv file to be input to Kibana for visualisation.
 def create_csv(filename):
     with open(filename + '.csv', 'w') as f:
         w = csv.DictWriter(f, kibana_dict.keys())
@@ -212,6 +225,7 @@ def create_csv(filename):
         w.writerow(kibana_dict)
 
 
+# Creates a comprehensive .pdf report.
 def create_pdf(filename):
     global PDF_REPORT
     PDF_REPORT += PDF_REPORT_FOOTER
@@ -299,11 +313,12 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     malicious_60 = int(math.ceil(ticket_pool_size * SIXTY_PERCENT))
     kibana_dict.update({'MaliciousNet': malicious_60})
 
-    # if budget is set, exchange it from GBP to Decred and perform inflation estimation for the new price and cost
+    # If budget is set, exchange it from GBP to Decred and perform inflation estimation for the new price and cost.
     if budget > MIN_BUDGET:
-        budget_to_decred = math.floor(budget / coin_price)  # amount of decred exchanged from budget
+        # Amount of decred exchanged from budget.
+        budget_to_decred = math.floor(budget / coin_price)
         budget_tickets = math.floor(budget_to_decred / ticket_price)
-        # even if budget is much more, it should be capped to purchase just enough to stay stealthy and save money
+        # Even if budget is much more, it should be capped to purchase just enough to stay stealthy and save money.
         budget_tickets = budget_tickets if budget_tickets <= malicious_60 else malicious_60
 
         for i in range(MIN_PRICE, budget_tickets):
@@ -313,15 +328,15 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         new_coin_price = float('{0:.2f}'.format(new_coin_price))
         new_ticket_price = float('{0:.2f}'.format(new_ticket_price))
 
-        # the global value of adaptor is used towards the median new coin price which is necessary for the inclusion
+        # The global value of adaptor is used towards the median new coin price which is necessary for the inclusion
         # of both low and high coin values for when inflated. The initial form (commented) of cost prediction without
         # optimisation would be the following which is however over estimated due to only using the new coin price:
         cost = float('{0:.3f}'.format(
             budget_tickets * ticket_price * (coin_price + (
                     budget_to_decred / (budget_to_decred - budget_to_decred / ADAPTOR) * exp_incr))))
 
-    # when budget is set, the number of tickets to acquire should correspond to the budget but also
-    # when both budget and a target number of mn is set, then the budget is what matters in estimation
+    # When budget is set, the number of tickets to acquire should correspond to the budget but also
+    # when both budget and a target number of mn is set, then the budget is what matters in estimation.
     if budget > MIN_BUDGET and tickets_target >= MIN_TARGET:
         tickets_target = budget_tickets
         s10 = 'Target total tickets:'
@@ -329,29 +344,29 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
         print(s10, tickets_target, s11)
         PDF_REPORT += s10 + ' ' + str(tickets_target) + ' ' + s11 + NL
 
-    # when user provides budget and already controlled tickets, the target should be based on budget and the following
-    # operation is there to erase the subtraction specifying that tickets to buy are those not already controlled
+    # When user provides budget and already controlled tickets, the target should be based on budget and the following
+    # operation is there to erase the subtraction specifying that tickets to buy are those not already controlled.
     if budget > MIN_BUDGET and tickets_target == budget_tickets and tickets_controlled > MIN_CONTROL:
         tickets_target += tickets_controlled
         s12 = 'Total tickets including already controlled or bribed:'
         print(s12, tickets_target)
         PDF_REPORT += s12 + ' ' + str(tickets_target) + NL
 
-    # when the budget is not set but a target number of tickets is provided
+    # When the budget is not set but a target number of tickets is provided.
     elif budget == MIN_BUDGET and tickets_target > MIN_TARGET:
         tickets_target = tickets_target if tickets_target <= MAX_TICKETS else MAX_TICKETS
         s13 = 'Target total tickets:'
         print(s13, tickets_target, UD)
         PDF_REPORT += s13 + ' ' + str(tickets_target) + ' ' + UD + NL
 
-    # when neither budget nor ticket target is set, the metric defaults to a malicious 60% of ticket pool size
+    # When neither budget nor ticket target is set, the metric defaults to a malicious 60% of ticket pool size.
     elif budget == MIN_BUDGET and tickets_target == MIN_TARGET:
         tickets_target = malicious_60
         s14 = 'Target total tickets: unspecified (defaults to 60% over honest tickets)'
         print(s14)
         PDF_REPORT += s14 + NL
 
-    # based on the above conditions, the number of masternodes to purchase is determined here
+    # Based on the above conditions, the number of masternodes to purchase is determined here.
     num_tickets_for_attack = tickets_target - tickets_controlled
 
     s29 = 'Ticket reward per block:'
@@ -371,13 +386,13 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     PDF_REPORT += s16 + ' ' + str(ticket_pool_size) + NL
     PDF_REPORT += s17 + ' ' + str(malicious_60) + NL
 
-    # budget defaults to malicious net 10%
+    # Budget defaults to malicious net 10%.
     if budget == MIN_BUDGET and tickets_target == MIN_TARGET:
         s18 = 'Attack budget: cost of purchase 60% of ticket pool size'
         print(s18)
         PDF_REPORT += s18 + NL
 
-    # budget is set but target dominates
+    # Budget is set but target dominates.
     elif budget > MIN_BUDGET and tickets_target > MIN_TARGET:
         print('Attack budget (£):', budget, '(enough to acquire', budget_tickets,
               'tickets)' if budget_tickets > ONE_TICKET else 'ticket)')
@@ -386,14 +401,14 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
             if budget_tickets > ONE_TICKET \
             else 'Attack budget (£): ' + str(budget) + ' (enough to acquire ' + str(budget_tickets) + ' ticket)' + NL
 
-        # even if the budget is enough to acquire much more of what is needed to be successful, cap it to just enough
-        # to save budget
+        # Even if the budget is enough to acquire much more of what is needed to be successful, cap it to just enough
+        # to save budget.
         if budget_tickets >= malicious_60:
             budget_tickets = malicious_60
             tickets_target = budget_tickets
             num_tickets_for_attack = tickets_target - tickets_controlled
 
-    # budget is not set so we accommodate the target
+    # Budget is not set so we accommodate the target.
     elif budget == MIN_BUDGET and tickets_target > MIN_TARGET:
         print('Attack budget (£): cost of realise target of', tickets_target,
               'tickets' if tickets_target > ONE_TICKET else 'ticket')
@@ -417,7 +432,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     frozen_coins = int(ticket_price * ticket_pool_size)
     unfrozen_coins = int(coins - frozen_coins)
     new_frozen_needed_for_sixty_percent = int((ticket_pool_size * SIXTY_PERCENT) * ticket_price)
-    # check limitations on whether unfrozen coins are enough to bid on new openings for tickets
+    # Check limitations on whether unfrozen coins are enough to bid on new openings for tickets.
     possible_tickets = MAX_TICKETS \
         if new_frozen_needed_for_sixty_percent <= (unfrozen_coins + MIN_NEW_POOL_TICKETS_PER_DAY) \
         else math.floor(unfrozen_coins // ticket_price)
@@ -429,7 +444,8 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
                         'BiddablePerDay': BIDDABLE_TICKETS_PER_DAY,
                         'FrozenBef': frozen_coins,
                         'PurchaseBef': num_tickets_for_attack,
-                        'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
+                        # Placeholder for a potential unsuccessful first purchase attempt.
+                        'PurchaseAft': MIN_TARGET})
 
     s21 = 'Coins in circulation before purchase:'
     s22 = 'From which coins frozen for tickets:'
@@ -457,7 +473,7 @@ def attack_phase_1(filename, budget, coin_price, ticket_price, exp_incr, coins, 
     if num_tickets_for_attack > DOUBLE * MIN_NEW_POOL_TICKETS_PER_DAY:
         PDF_REPORT += s27 + ' ' + s28 + NL
 
-    # calls the following method to proceed in attempting the purchase
+    # Calls the following method to proceed in attempting the purchase.
     attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_pool_size, tickets_controlled,
                    num_tickets_for_attack, cost, new_coin_price, new_ticket_price, malicious_60, ticket_reward)
 
@@ -467,7 +483,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
 
     global PDF_REPORT
 
-    # when budget is not set it means that what is required is to a dynamic cost for purchasing decred to freeze it
+    # When budget is not set it means that what is required is to a dynamic cost for purchasing decred to freeze it.
     if budget == MIN_BUDGET:
         cost = float(MIN_PRICE)
         new_coin_price = coin_price
@@ -498,11 +514,14 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
                         'CoinPriceAft': new_coin_price,
                         'TicketPriceAft': new_ticket_price,
                         'FrozenAft': new_num_frozen,
-                        'PossibleAft': new_possible_tickets,  # possible tickets based on remaining pool
-                        'ActiveAft': new_num_tickets,  # new total masternodes including both honest and malicious
-                        'Malicious': total_malicious})  # total malicious masternodes
+                        # Possible tickets based on remaining pool.
+                        'PossibleAft': new_possible_tickets,
+                        # New total masternodes including both honest and malicious.
+                        'ActiveAft': new_num_tickets,
+                        # Total malicious masternodes.
+                        'Malicious': total_malicious})
 
-    # attempts to purchase initial required amount no matter if impossible as this number is later capped to possible
+    # Attempts to purchase initial required amount no matter if impossible as this number is later capped to possible.
     s26 = 'ATTACK PHASE TWO: EXECUTION'
     print('\n')
     print(s26, '\n')
@@ -515,7 +534,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         else 'PURCHASE ATTEMPT FOR ' + str(num_tickets_for_attack) + ' TICKET' + NL + NL
 
     min_days_to_purchase_tickets = math.ceil(num_tickets_for_attack // MIN_NEW_POOL_TICKETS_PER_DAY)
-    # even if just some hours would be required to purchase the amount of tickets targeted, or even 5 minutes,
+    # Even if just some hours would be required to purchase the amount of tickets targeted, or even 5 minutes,
     # in reality what is needed is a whole day so that tickets can 'mature' by leaving the initial pool of
     # immature tickets to join the normal one.
     if min_days_to_purchase_tickets < ONE_DAY:
@@ -528,7 +547,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print(s27, attack_overhead_in_days, '\n')
     PDF_REPORT += s27 + ' ' + attack_overhead_in_days + NL + NL
 
-    # number of remaining possible tickets for someone to control equals the difference between the maximum
+    # Number of remaining possible tickets for someone to control equals the difference between the maximum
     # ticket pool size which is 40,960 and the current ticket pool size, however, it is often noticed that
     # the pool size is bigger than the maximum because the maximum is not strictly defined, rather it is an
     # ideal indication/metric provided necessary to represent the whole coin holders.  Therefore, in the usual
@@ -602,7 +621,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += s31 + ' ' + str(cost) + NL
     PDF_REPORT += s99 + ' ' + str(s100) + NL
 
-    # if budget was set then provide the remaining budget to the user
+    # If budget was set then provide the remaining budget to the user.
     if budget > MIN_BUDGET:
         s32 = 'Therefore remaining budget equals (£):'
         remaining_budget = float('{0:.3f}'.format(budget - cost))
@@ -637,8 +656,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         else 'From which malicious: ' + str(num_tickets_for_attack) + ' (' + percentage_malicious \
              + '% of total tickets)' + NL + NL
 
-    # Return on Investment
-    # one block reward every nine days
+    # One block reward every nine days as Return on Investment.
     daily_earn_decred = float('{0:.2f}'.format(((ticket_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD) * total_malicious))
     daily_earn_gbp = float('{0:.2f}'.format(new_coin_price * daily_earn_decred))
 
@@ -704,8 +722,8 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += 'From which malicious: ' + str(total_malicious) + ' (' + percentage_malicious \
                   + '% of total tickets)' + NL + NL
 
-    # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
-    # should hold: positive votes - negative votes >= 10% of active masternodes
+    # For a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
+    # should hold: positive votes - negative votes >= 10% of active masternodes.
     anti_dos_for_less_than_possible = math.ceil(ticket_pool_size * SIXTY_PERCENT)
 
     print('\n')
@@ -766,7 +784,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     PDF_REPORT += s61 + ' ' + str(anti_dos_for_less_than_possible) + ' ' + '(60% of ticket pool)' + NL
     PDF_REPORT += s106 + ' ' + str(ticket_pool_size) + NL + NL
 
-    # least honest ticket votes required for a malicious proposal to not have net 60% and do not go through
+    # Least honest ticket votes required for a malicious proposal to not have net 60% and do not go through.
     if total_malicious == int(math.ceil(ticket_pool_size * SIXTY_PERCENT)):
         approved_anw_for_less_than_possible = math.ceil(ticket_pool_size * MIN_REJECTION)
     else:
@@ -807,7 +825,7 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
     print('EXPLOITATION', '\n')
     PDF_REPORT += 'EXPLOITATION' + NL + NL
 
-    # vice-versa case of malicious denial of service
+    # Vice-versa case of malicious denial of service.
     s69 = 'Total votes from malicious tickets:'
     s70 = 'Least honest votes required for proposal rejection (40.1%):'
     s107 = 'Which does not satisfy the minimum total vote requirements of 10% pool size:'
@@ -826,10 +844,12 @@ def attack_phase_2(budget, coin_price, ticket_price, exp_incr, coins, ticket_poo
         PDF_REPORT += s70 + ' ' + str(approved_anw_for_less_than_possible) + NL
     PDF_REPORT += s106 + ' ' + str(ticket_pool_size) + NL
 
-    kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,  # downvote proposal hoping honest majority
-                        # not achieved, variable holds the number of honest positive votes required to pass
-                        'MalUpvote': approved_anw_for_less_than_possible})  # upvote proposal hoping honest nodes will
-    # not achieve denial via honest negative vote; variable holds the upper bound needed for denial
+    # Downvote proposal hoping honest majority.
+    kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,
+                        # Not achieved, variable holds the number of honest positive votes required to pass.
+                        # Upvote proposal hoping honest nodes will # not achieve denial via honest negative vote.
+                        # variable holds the upper bound needed for denial.
+                        'MalUpvote': approved_anw_for_less_than_possible})
 
 
 # This is the main method of the program, responsible for IO using the above methods.
@@ -861,7 +881,7 @@ DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             ticket_pool_size = int(ticket_pool_size) if ticket_pool_size else acquire_real_time_ticket_pool_size()
             tickets_controlled = int(tickets_controlled) if tickets_controlled else MIN_CONTROL
 
-            # ensures target tickets are greater than those already controlled and smaller than those possible
+            # Ensures target tickets are greater than those already controlled and smaller than those possible.
             if tickets_target and tickets_controlled < int(tickets_target) <= MAX_TICKETS:
                 tickets_target = int(tickets_target)
             elif tickets_target and tickets_controlled >= int(tickets_target):
@@ -873,18 +893,19 @@ DECRED (DCR) DECENTRALISED GOVERNANCE ATTACK SIMULATOR
 
             ticket_reward = float(ticket_reward) if ticket_reward else acquire_real_time_ticket_reward()
 
-            # budget, coin price and master node numbers related number should be all greater than zero
+            # Budget, coin price and master node numbers related number should be all greater than zero.
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and ticket_pool_size >= MIN_POOL_SIZE
                     and coins >= MIN_CIRCULATION and tickets_controlled >= MIN_CONTROL
                     and tickets_target >= MIN_TARGET):
                 print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again!')
-                float(DEF_FILENAME)  # causes intentional exception and re-loop as values should be greater than zero
+                # Causes intentional exception and re-loop as values should be greater than zero.
+                float(DEF_FILENAME)
             break
         except ValueError:
             print()
             pass
 
-    # dictionary is updated based on user choices
+    # Dictionary is updated based on user choices.
     kibana_dict.update({'Budget': budget,
                         'PriceBef': coin_price,
                         'TicketPriceBef': ticket_price,

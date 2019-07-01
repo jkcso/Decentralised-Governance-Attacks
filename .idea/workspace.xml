@@ -6,7 +6,8 @@
       <change beforePath="$PROJECT_DIR$/dash-default.csv" beforeDir="false" afterPath="$PROJECT_DIR$/dash-default.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash-default.html" beforeDir="false" afterPath="$PROJECT_DIR$/dash-default.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash-default.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/dash-default.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logstash_dash.config" beforeDir="false" afterPath="$PROJECT_DIR$/logstash_dash.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/decred.py" beforeDir="false" afterPath="$PROJECT_DIR$/decred.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,12 +16,27 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/logstash_dash.config">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dash.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="778">
-              <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
+            <state relative-caret-position="7084">
+              <caret line="322" lean-forward="true" selection-start-line="322" selection-end-line="322" />
+              <folding>
+                <element signature="e#0#28#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/decred.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="907" column="50" selection-start-line="907" selection-start-column="50" selection-end-line="907" selection-end-column="50" />
+              <folding>
+                <element signature="e#0#28#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -36,7 +52,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>new_num_frozen</find>
       <find>METHODO</find>
       <find>anti_dos_for_less_than_possible</find>
       <find>sixty</find>
@@ -66,6 +81,7 @@
       <find>full_cost</find>
       <find>kibana_dict</find>
       <find>float</find>
+      <find>DASH</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -88,9 +104,9 @@
         <option value="$PROJECT_DIR$/decred_ticket_pool.py" />
         <option value="$PROJECT_DIR$/dash_block_reward.py" />
         <option value="$PROJECT_DIR$/ticket_block_reward.py" />
-        <option value="$PROJECT_DIR$/decred.py" />
-        <option value="$PROJECT_DIR$/dash.py" />
         <option value="$PROJECT_DIR$/logstash_dash.config" />
+        <option value="$PROJECT_DIR$/dash.py" />
+        <option value="$PROJECT_DIR$/decred.py" />
       </list>
     </option>
   </component>
@@ -107,6 +123,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -118,7 +135,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -312,12 +328,15 @@
       <workItem from="1557857565206" duration="984000" />
       <workItem from="1558603452259" duration="1938000" />
       <workItem from="1561579234532" duration="17682000" />
-      <workItem from="1561750680086" duration="1192000" />
+      <workItem from="1561750680086" duration="1438000" />
+      <workItem from="1561889862088" duration="2875000" />
+      <workItem from="1561914744086" duration="397000" />
+      <workItem from="1561916243093" duration="3024000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="310145000" />
+    <option name="totallyTimeSpent" value="316687000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -332,7 +351,7 @@
     <frame x="43" y="23" width="1637" height="1027" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26708463" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21191223" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -354,7 +373,7 @@
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="SciView" order="5" weight="0.32897604" />
       <window_info anchor="right" id="Database" order="6" />
-      <window_info anchor="right" x="0" y="45" width="939" height="1005" id="Run" order="7" type="WINDOWED" weight="0.71306473" />
+      <window_info anchor="right" x="201" y="45" width="1016" height="1005" id="Run" order="7" type="WINDOWED" weight="0.71306473" />
       <window_info anchor="right" id="Coverage" order="8" side_tool="true" />
     </layout>
   </component>
@@ -366,7 +385,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SAADG$python_pdf.coverage" NAME="python_pdf Coverage Results" MODIFIED="1555697766325" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1561741646702" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1561916069309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$decred.coverage" NAME="decred Coverage Results" MODIFIED="1558611552882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$mn_stats_error.coverage" NAME="mn_stats_error Coverage Results" MODIFIED="1555757807516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$decred_real_circulation.coverage" NAME="decred_real_circulation Coverage Results" MODIFIED="1556738639914" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -486,40 +505,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/decred.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="508" column="23" selection-start-line="508" selection-start-column="23" selection-end-line="508" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dash-default.csv">
-      <provider editor-type-id="csv-table-editor">
-        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
-      </provider>
       <provider selected="true" editor-type-id="csv-text-editor">
         <state relative-caret-position="44">
           <caret line="2" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logstash_dash.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1166">
+          <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="58" column="11" selection-start-line="58" selection-start-column="11" selection-end-line="58" selection-end-column="11" />
+        <state relative-caret-position="7084">
+          <caret line="322" lean-forward="true" selection-start-line="322" selection-end-line="322" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logstash_dash.config">
+    <entry file="file://$PROJECT_DIR$/decred.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="778">
-          <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
+        <state relative-caret-position="360">
+          <caret line="907" column="50" selection-start-line="907" selection-start-column="50" selection-end-line="907" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

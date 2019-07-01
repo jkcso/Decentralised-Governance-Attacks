@@ -8,14 +8,16 @@ import ssl
 import math
 import pdfkit
 
-# global variables are defined here once for clarity and duplication-free coding
+# Global variables are defined here once for clarity and duplication-free coding.
 DASH_MN_COLLATERAL = 1000
 MIN_COINBASE_RANKING = MIN_EXP = ONE_MN = 1
 MAX_COINBASE_RANKING = 20
 COINBASE_API_KEY = 'c5b33796-bb72-46c2-98eb-ac52807d08c9'
 MIN_PRICE = MIN_CIRCULATION = MIN_BUDGET = MIN_REMAINING = MIN_CONTROL = MIN_TARGET = 0
-OS = 0  # Output Start, used mostly for long floats, strings and percentages
-OE = 4  # Output End
+# Output Start, used mostly for long floats, strings and percentages.
+OS = 0
+# Output End.
+OE = 4
 PERCENTAGE = 100
 MAX_SUPPLY = 18900000
 NET_10_PERCENT = 1.1
@@ -25,7 +27,8 @@ ONE_DAY = 1
 ONE_MONTH = 30.34
 ONE_YEAR = 365
 INVERSE = -1
-DEF_EXP = -13  # corresponds to number 8 from 1-10 scale which is medium to slow exponential increase
+# Corresponds to number 8 from 1-10 scale which is medium to slow exponential increase.
+DEF_EXP = -13
 DEF_INFLATION = math.pow(math.e, DEF_EXP)
 MAX_EXP = 11
 SANITISE = 5
@@ -39,8 +42,10 @@ DEF_FILENAME = 'dash-default'
 RT = '(real time value)'
 UD = '(user defined value)'
 DEF = '(default exponential)'
-NL = '<br>'  # new line character for html
-PDF_REPORT = ''  # global variable to hold the current state of pdf report; to be edited along the way
+# New line character for html.
+NL = '<br>'
+# Global variable to hold the current state of pdf report; to be edited along the way.
+PDF_REPORT = ''
 PDF_REPORT_HEADER = '''
 <html>
 <head></head>
@@ -54,12 +59,13 @@ PDF_REPORT_FOOTER = '''
 </html>
 '''
 
-# the dictionary that then becomes the .csv file for Kibana
+# The dictionary that then becomes the .csv file for Kibana
 # initially has some global variables useful for the dashboard
 kibana_dict = {'Collateral': DASH_MN_COLLATERAL,
                'MaxSupply': MAX_SUPPLY}
 
 
+# Acquires real time number of masternodes from Dash open source information.
 def acquire_real_time_masternodes():
 
     if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
@@ -74,6 +80,7 @@ def acquire_real_time_masternodes():
     return stats['raw']['mn_count']
 
 
+# Acquires real time block reward from Dash open source information.
 def acquire_real_time_mn_block_reward():
 
     if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
@@ -88,6 +95,7 @@ def acquire_real_time_mn_block_reward():
     return float('{0:.2f}'.format(stats['raw']['mn_miner_reward']))
 
 
+# Acquires real time Dash price from open source information.
 def acquire_real_time_price():
 
     try:
@@ -125,6 +133,7 @@ def acquire_real_time_price():
         pass
 
 
+# Acquires real time coin circulation from Dash open source information.
 def acquire_real_time_circulation():
 
     try:
@@ -162,6 +171,7 @@ def acquire_real_time_circulation():
         pass
 
 
+# Creates a .csv file to be the input of Kibana dashboard later.
 def create_csv(filename):
 
     with open(filename + '.csv', 'w') as f:
@@ -170,6 +180,7 @@ def create_csv(filename):
         w.writerow(kibana_dict)
 
 
+# Creates a .pdf file which includes a comprehensive report.
 def create_pdf(filename):
 
     global PDF_REPORT
@@ -248,7 +259,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     new_price = coin_price
     budget_mn = MIN_BUDGET
 
-    # if budget is set, exchange it from GBP to DASH and perform inflation estimation for the new price and cost
+    # If budget is set, exchange it from GBP to DASH and perform inflation estimation for the new price and cost.
     if budget > MIN_BUDGET:
         budget_to_dash = math.floor(budget / coin_price)  # amount of dash exchanged from budget
         for i in range(MIN_PRICE, budget_to_dash):
@@ -257,21 +268,21 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         budget_mn = math.floor(int(budget_to_dash // DASH_MN_COLLATERAL))
         new_price = float('{0:.2f}'.format(new_price))
 
-        # the global value of adaptor is used towards the median new coin price which is necessary for the inclusion
+        # The global value of adaptor is used towards the median new coin price which is necessary for the inclusion
         # of both low and high coin values for when inflated. The initial form (commented) of cost prediction without
         # optimisation would be the following which is however over estimated due to only using the new coin price:
-        # cost = float("{0:.3f}".format(budget_mn * DASH_MN_COLLATERAL * new_price))
+        # cost = float("{0:.3f}".format(budget_mn * DASH_MN_COLLATERAL * new_price)).
         cost = float('{0:.3f}'.format(
             budget_mn * DASH_MN_COLLATERAL * (coin_price +
                                               (budget_to_dash / (
                                                       budget_to_dash - budget_to_dash / ADAPTOR) * exp_incr))))
 
-    # the amount of masternodes required to launch the infamous 55% governance attack
+    # The amount of masternodes required to launch the infamous 55% governance attack.
     malicious_net_10 = int(math.ceil(active_mn * NET_10_PERCENT)) + ONE_MN
     kibana_dict.update({'MaliciousNet': malicious_net_10})
 
-    # when budget is set, the number of mn to acquire should correspond to the budget but also
-    # when both budget and a target number of mn is set, then the budget is what matters in estimation
+    # When budget is set, the number of mn to acquire should correspond to the budget but also
+    # when both budget and a target number of mn is set, then the budget is what matters in estimation.
     if budget > MIN_BUDGET and mn_target >= MIN_TARGET:
         mn_target = budget_mn
         s10 = 'Target total masternodes:'
@@ -279,36 +290,36 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
         print(s10, mn_target, s11)
         PDF_REPORT += s10 + ' ' + str(mn_target) + ' ' + s11 + NL
 
-    # when user provides budget and already controlled nodes, the target should be based on budget and the following
-    # operation is there to erase the subtraction specifying that master nodes to buy are those not already controlled
+    # When user provides budget and already controlled nodes, the target should be based on budget and the following
+    # operation is there to erase the subtraction specifying that master nodes to buy are those not already controlled.
     if budget > MIN_BUDGET and mn_target == budget_mn and mn_controlled > MIN_CONTROL:
         mn_target += mn_controlled
         s12 = 'Total masternodes including already controlled or bribed:'
         print(s12, mn_target)
         PDF_REPORT += s12 + ' ' + str(mn_target) + NL
 
-    # when the budget is not set but a target number of masternodes to acquire is provided
+    # When the budget is not set but a target number of masternodes to acquire is provided
     # we should purchase the amount of masternodes that will give us malicious net majority
-    # to save money even if the target is set to something much higher
+    # to save money even if the target is set to something much higher.
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
         mn_target = mn_target if mn_target <= malicious_net_10 else malicious_net_10
         s13 = 'Target total masternodes:'
         print(s13, mn_target, UD)
         PDF_REPORT += s13 + ' ' + str(mn_target) + ' ' + UD + NL
 
-    # when neither budget nor mn target is set, the metric defaults to a malicious net 10% majority
+    # When neither budget nor mn target is set, the metric defaults to a malicious net 10% majority.
     elif budget == MIN_BUDGET and mn_target == MIN_TARGET:
         mn_target = malicious_net_10
         s14 = 'Target total masternodes: unspecified (defaults to net 10% over honest)'
         print(s14)
         PDF_REPORT += s14 + NL
 
-    # based on the above conditions, the number of masternodes to purchase is determined here
+    # Based on the above conditions, the number of masternodes to purchase is determined here.
     num_mn_for_attack = mn_target - mn_controlled
 
     s26 = 'Masternode block reward:'
     print(s26, mn_block_reward, 'DASH')
-    PDF_REPORT += s26 + ' ' + str(mn_block_reward) + 'DASH' + NL
+    PDF_REPORT += s26 + ' ' + str(mn_block_reward) + ' DASH' + NL
 
     s15 = 'ATTACK PHASE ONE: PRE-PURCHASE ANALYSIS'
     print('\n')
@@ -323,13 +334,13 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     PDF_REPORT += s16 + ' ' + str(active_mn) + NL
     PDF_REPORT += s17 + ' ' + str(malicious_net_10) + NL
 
-    # budget defaults to malicious net 10%
+    # Budget defaults to malicious net 10%.
     if budget == MIN_BUDGET and mn_target == MIN_TARGET:
         s18 = 'Attack budget: cost of purchase net 10%'
         print(s18)
         PDF_REPORT += s18 + NL
 
-    # budget is set but target dominates
+    # Budget is set but target dominates.
     elif budget > MIN_BUDGET and mn_target > MIN_TARGET:
         print('Attack budget (£):', budget, '(enough to acquire', budget_mn,
               'masternodes)' if budget_mn > ONE_MN else 'masternode)')
@@ -338,14 +349,14 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
             if budget_mn > ONE_MN \
             else 'Attack budget (£): ' + str(budget) + ' (enough to acquire ' + str(budget_mn) + ' masternode)' + NL
 
-        # even if the budget is enough to acquire much more of what is needed to be successful, cap it to just enough
-        # to save budget
+        # Even if the budget is enough to acquire much more of what is needed to be successful, cap it to just enough
+        # to save budget.
         if budget_mn >= malicious_net_10:
             budget_mn = malicious_net_10
             mn_target = budget_mn
             num_mn_for_attack = mn_target - mn_controlled
 
-    # budget is set to enough to accommodate the target
+    # Budget is set to enough to accommodate the target.
     elif budget == MIN_BUDGET and mn_target > MIN_TARGET:
         print('Attack budget (£): cost of realise target of', mn_target,
               'masternodes' if mn_target > ONE_MN else 'masternode')
@@ -371,9 +382,10 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     possible_mn = math.floor(int(unfrozen_coins // DASH_MN_COLLATERAL))
     percentage_poss_total = str(float((possible_mn / math.floor(int(coins // DASH_MN_COLLATERAL))) * PERCENTAGE))[OS:OE]
 
+    # Last info is placeholder for a potential unsuccessful first purchase attempt.
     kibana_dict.update({'FrozenBef': frozen_coins,
                         'PurchaseBef': num_mn_for_attack,
-                        'PurchaseAft': MIN_TARGET})  # placeholder for a potential unsuccessful first purchase attempt
+                        'PurchaseAft': MIN_TARGET})
 
     s21 = 'Coins in circulation before purchase:'
     s22 = 'From which coins frozen for required collateral:'
@@ -394,7 +406,7 @@ def attack_phase_1(filename, budget, coin_price, exp_incr, active_mn, coins, mn_
     PDF_REPORT += s24 + ' ' + str(possible_mn) + NL
     PDF_REPORT += s25 + ' ' + percentage_poss_total + '%' + NL + NL
 
-    # calls the following method to proceed in attempting the purchase
+    # Calls the following method to proceed in attempting the purchase.
     attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
                    malicious_net_10, frozen_coins, possible_mn, mn_block_reward)
 
@@ -413,13 +425,14 @@ Example:
 '''
 
 
+# Proceeds into attack execution.
 def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled, num_mn_for_attack, cost, new_price,
                    malicious_net_10, frozen_coins, possible_mn, mn_block_reward):
 
     global PDF_REPORT
     global full_cost
 
-    # when budget is not set it means that what is required is to a dynamic cost for purchasing masternodes only.
+    # When budget is not set it means that what is required is to a dynamic cost for purchasing masternodes only.
     if budget == MIN_BUDGET:
         cost = float(MIN_PRICE)
         new_price = coin_price
@@ -429,7 +442,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         cost = float("{0:.3f}".format(cost))
         new_price = float("{0:.2f}".format(new_price))
 
-    # provides full cost in report's summary so that users get an idea of the amount required to realise attacks.
+    # Provides full cost in report's summary so that users get an idea of the amount required to realise attacks.
     elif budget > MIN_BUDGET:
         full_cost = float(MIN_PRICE)
         new_full_cost_coin_price = coin_price
@@ -454,7 +467,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                         'ActiveAft': new_num_mn,  # new total masternodes including both honest and malicious
                         'Malicious': total_malicious})  # total malicious masternodes
 
-    # attempts to purchase initial required amount no matter if impossible as this number is later capped to possible
+    # Attempts to purchase initial required amount no matter if impossible as this number is later capped to possible.
     s26 = 'ATTACK PHASE TWO: EXECUTION'
     print('\n')
     print(s26, '\n')
@@ -501,7 +514,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     PDF_REPORT += s30 + ' ' + str(new_price) + NL
     PDF_REPORT += s31 + ' ' + str(cost) + NL
 
-    # if budget was set then provide the remaining budget to the user
+    # If budget was set then provide the remaining budget to the user.
     if budget > MIN_BUDGET:
         s32 = 'Therefore remaining budget equals (£):'
         remaining_budget = float('{0:.3f}'.format(budget - cost))
@@ -557,7 +570,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
 
     if attack_outcome == p:
 
-        # one block reward every nine days
+        # One block reward every nine days.
         daily_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD)
                                                  * total_malicious))
         daily_earn_gbp = float('{0:.2f}'.format(new_price * daily_earn_dash))
@@ -642,7 +655,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     # The initial attack was not realised due to the high number of masternodes attempted to purchase, therefore
     # a noisy and determined to succeed adversary can proceed to the purchase of the highest number possible
     # Impossibility of purchase occurs when the number of masternodes to acquire is greater than the possible amount
-    # achievable that is constrained from the unfrozen circulation
+    # achievable that is constrained from the unfrozen circulation.
     if attack_outcome == im:
         num_mn_for_attack = possible_mn
         attack_outcome = p
@@ -669,9 +682,12 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
                             'Cost': cost,
                             'PriceAft': new_price,
                             'FrozenAft': new_num_frozen,
-                            'PossibleAft': new_possible_mn,  # possible masternodes based on remaining unfrozen coins
-                            'ActiveAft': new_num_mn,  # new total masternodes including both honest and malicious
-                            'Malicious': total_malicious})  # total malicious masternodes
+                            # Possible masternodes based on remaining unfrozen coins.
+                            'PossibleAft': new_possible_mn,
+                            # New total masternodes including both honest and malicious.
+                            'ActiveAft': new_num_mn,
+                            # Total malicious masternodes
+                            'Malicious': total_malicious})
 
         print('PURCHASE OUTCOME:', attack_outcome, '\n')
         print('ANALYSIS', '\n')
@@ -718,8 +734,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
             else 'From which malicious: ' + str(num_mn_for_attack) + ' (' + percentage_malicious \
                  + '% of total masternodes)' + NL + NL
 
-        # Return on Investment
-        # one block reward every nine days
+        # One block reward every nine days as Return on Investment.
         daily_earn_dash = float('{0:.2f}'.format(((mn_block_reward * ONE_DAY) / AVG_DAYS_FOR_REWARD) * total_malicious))
         daily_earn_gbp = float('{0:.2f}'.format(new_price * daily_earn_dash))
 
@@ -777,10 +792,11 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
         PDF_REPORT += 'From which malicious: ' + str(total_malicious) + \
                       ' (' + percentage_malicious + '% of total masternodes)' + NL + NL
 
-        attack_outcome = im  # switches back to impossible for better insights later
+        # Used for switching back to 'impossible' for better insights later.
+        attack_outcome = im
 
-    # for a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
-    # should hold: positive votes - negative votes >= 10% of active masternodes
+    # For a proposal to pass in an honest way even if the adversary maliciously downvotes, the following formula
+    # should hold: positive votes - negative votes >= 10% of active masternodes.
     anti_dos_for_less_than_possible = math.ceil(num_mn_for_attack * NET_10_PERCENT) + ONE_MN \
         if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
         else math.ceil(new_num_mn * MIN_10_PERCENT + num_mn_for_attack)
@@ -845,17 +861,17 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     PDF_REPORT += s63 + ' ' + str(anti_dos_for_possible) + NL + NL
     print('\n')
 
-    # it is assumed that if malicious masternodes controlled are not more than 10% of total, then 0 honest are needed
+    # It is assumed that if malicious masternodes controlled are not more than 10% of total, then 0 honest are needed.
     approved_anw_for_less_than_possible = math.floor(num_mn_for_attack / NET_10_PERCENT) - ONE_MN \
         if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
         else MIN_REMAINING
 
-    # same here as above
+    # Same here as above.
     approved_anw_for_possible = math.floor(possible_mn / NET_10_PERCENT) - ONE_MN \
         if num_mn_for_attack > (new_num_mn * MIN_10_PERCENT) \
         else MIN_REMAINING
 
-    # calculates 60% of honest masternodes, therefore malicious are excluded from calculation
+    # Calculates 60% of honest masternodes, therefore malicious are excluded from calculation.
     avg_mn_votes = math.ceil((new_num_mn - num_mn_for_attack) * SIXTY_PERCENT)
     net_10_anw = math.ceil(avg_mn_votes * NET_10_PERCENT) + ONE_MN
 
@@ -890,7 +906,7 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     print('EXPLOITATION', '\n')
     PDF_REPORT += 'EXPLOITATION' + NL + NL
     if attack_outcome == p:
-        # vice-versa case of malicious denial of service
+        # Vice-versa case of malicious denial of service.
         s69 = 'Total votes of malicious masternodes:'
         s70 = 'Least honest votes required for rejection:'
         print(s69, num_mn_for_attack)
@@ -962,12 +978,16 @@ def attack_phase_2(budget, coin_price, exp_incr, active_mn, coins, mn_controlled
     PDF_REPORT += 'Available masternodes: ' + str(mn2021) + NL + NL
     PDF_REPORT += '08/2029 (74.41%), 03/2043 (90.23%), 05/2073 (98.86%), 04/2150 (100%)' + NL + NL
 
-    kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,  # downvote proposal hoping honest majority
-                        # not achieved, variable holds the number of honest positive votes required to pass
-                        'MalUpvote': approved_anw_for_less_than_possible,  # upvote proposal hoping honest nodes will
-                        # not achieve denial via honest negative vote; variable holds the upper bound needed for denial
-                        'ExpVoters': avg_mn_votes,  # Expected to vote honestly to prevent a malicious action to occur
-                        'ExpVotAtt': net_10_anw})  # Malicious Net 10% against the expected honest votes
+    # Downvote proposal hoping honest majority.
+    # Not achieved, variable holds the number of honest positive votes required to pass.
+    kibana_dict.update({'MalDownvote': anti_dos_for_less_than_possible,
+                        # Upvote proposal hoping honest nodes will
+                        # not achieve denial via honest negative vote; variable holds the upper bound needed for denial.
+                        'MalUpvote': approved_anw_for_less_than_possible,
+                        # Expected to vote honestly to prevent a malicious action to occur.
+                        'ExpVoters': avg_mn_votes,
+                        # Malicious Net 10% against the expected honest votes.
+                        'ExpVotAtt': net_10_anw})
 
 
 # This is the main method of the program, responsible for IO using the above methods.
@@ -997,10 +1017,10 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
             coins = int(coins) if coins else acquire_real_time_circulation()
             active_mn = int(active_mn) if active_mn else acquire_real_time_masternodes()
             mn_controlled = int(mn_controlled) if mn_controlled else MIN_CONTROL
-            # number of masternodes possible for an adversary to control should equal the unfrozen coins in collateral
+            # Number of masternodes possible for an adversary to control should equal the unfrozen coins in collateral.
             num_possible_masternodes = math.floor(int((coins - (active_mn * DASH_MN_COLLATERAL)) // DASH_MN_COLLATERAL))
 
-            # ensures target masternodes are greater than those already controlled and smaller than those possible
+            # Ensures target masternodes are greater than those already controlled and smaller than those possible.
             if mn_target and mn_controlled < int(mn_target) <= num_possible_masternodes:
                 mn_target = int(mn_target)
             elif mn_target and mn_controlled >= int(mn_target):
@@ -1012,21 +1032,24 @@ DASH DECENTRALISED GOVERNANCE ATTACK SIMULATOR
 
             mn_block_reward = float(mn_block_reward) if mn_block_reward else acquire_real_time_mn_block_reward()
 
-            # budget, coin price and master node numbers related number should be all greater than zero
+            # Budget, coin price and master node numbers related number should be all greater than zero.
             if not (budget >= MIN_BUDGET and coin_price >= MIN_PRICE and active_mn >= MIN_REMAINING
                     and coins >= MIN_CIRCULATION and mn_controlled >= MIN_CONTROL and mn_target >= MIN_TARGET):
                 print('\nError: all arithmetic parameters should be greater than or equal to zero, please try again')
-                float(DEF_FILENAME)  # causes intentional exception and re-loop as values should be greater than zero
+                # Causes intentional exception and re-loop as values should be greater than zero.
+                float(DEF_FILENAME)
             break
         except ValueError:
             print()
             pass
 
-    # dictionary is updated based on user choices
+    # Dictionary is updated based on user choices.
     kibana_dict.update({'Budget': budget,
                         'PriceBef': coin_price,
-                        'ActiveBef': active_mn,  # total honest masternodes
-                        'PossibleBef': num_possible_masternodes,  # possible mn based on total remaining unfrozen coins
+                        # Total honest masternodes.
+                        'ActiveBef': active_mn,
+                        # Possible mn based on total remaining unfrozen coins.
+                        'PossibleBef': num_possible_masternodes,
                         'Inflation': exp,
                         'Circulation': coins,
                         'Controlled': mn_controlled,
