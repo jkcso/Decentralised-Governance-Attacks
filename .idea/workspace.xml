@@ -2,12 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/new_rt_mn_num.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash-default.csv" beforeDir="false" afterPath="$PROJECT_DIR$/dash-default.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash-default.html" beforeDir="false" afterPath="$PROJECT_DIR$/dash-default.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash-default.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/dash-default.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/decred.py" beforeDir="false" afterPath="$PROJECT_DIR$/decred.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/decred-default.csv" beforeDir="false" afterPath="$PROJECT_DIR$/decred-default.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/decred-default.html" beforeDir="false" afterPath="$PROJECT_DIR$/decred-default.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/decred-default.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/decred-default.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/id_dash_error.py" beforeDir="false" afterPath="$PROJECT_DIR$/id_dash_error.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,32 +20,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dash.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7084">
-              <caret line="322" lean-forward="true" selection-start-line="322" selection-end-line="322" />
-              <folding>
-                <element signature="e#0#28#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/decred.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="907" column="50" selection-start-line="907" selection-start-column="50" selection-end-line="907" selection-end-column="50" />
-              <folding>
-                <element signature="e#0#28#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -52,12 +31,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>METHODO</find>
-      <find>anti_dos_for_less_than_possible</find>
-      <find>sixty</find>
-      <find>frozen_coins</find>
-      <find>days</find>
-      <find>decred tic</find>
       <find>num_tickets_</find>
       <find>approved_anw_for_less_than_possible</find>
       <find>net_ma</find>
@@ -72,7 +45,6 @@
       <find>block reward</find>
       <find>18</find>
       <find>5</find>
-      <find>reward</find>
       <find>int</find>
       <find>daily_earn_dash</find>
       <find>monthly_earn_dash</find>
@@ -82,6 +54,13 @@
       <find>kibana_dict</find>
       <find>float</find>
       <find>DASH</find>
+      <find>Active</find>
+      <find>active</find>
+      <find>Masternodes</find>
+      <find>masternodes</find>
+      <find>Active masternodes</find>
+      <find>reward</find>
+      <find>reward per block</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -91,8 +70,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/mn_stats_error.py" />
-        <option value="$PROJECT_DIR$/id_dash_error.py" />
         <option value="$PROJECT_DIR$/csv_composition.py" />
         <option value="$PROJECT_DIR$/budget_inflated.py" />
         <option value="$PROJECT_DIR$/expr_incr.py" />
@@ -105,15 +82,19 @@
         <option value="$PROJECT_DIR$/dash_block_reward.py" />
         <option value="$PROJECT_DIR$/ticket_block_reward.py" />
         <option value="$PROJECT_DIR$/logstash_dash.config" />
-        <option value="$PROJECT_DIR$/dash.py" />
         <option value="$PROJECT_DIR$/decred.py" />
+        <option value="$PROJECT_DIR$/id_dash_error.py" />
+        <option value="$PROJECT_DIR$/mn_stats_error.py" />
+        <option value="$PROJECT_DIR$/new_rt_mn_num.py" />
+        <option value="$PROJECT_DIR$/dash.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
+    <option name="x" value="45" />
     <option name="y" value="23" />
-    <option name="width" value="1680" />
-    <option name="height" value="1027" />
+    <option name="width" value="1875" />
+    <option name="height" value="1057" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -185,28 +166,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="dash_block_reward" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SIM" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dash_block_reward.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="decred" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SIM" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -229,7 +188,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="decred_ticket_pool" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="id_dash_error" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SIM" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -242,7 +201,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/decred_ticket_pool.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/id_dash_error.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -251,7 +210,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="ticket_block_reward" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="mn_stats_error" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SIM" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -264,7 +223,29 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ticket_block_reward.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mn_stats_error.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="new_rt_mn_num" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SIM" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new_rt_mn_num.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -276,10 +257,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.dash" />
+        <item itemvalue="Python.new_rt_mn_num" />
+        <item itemvalue="Python.mn_stats_error" />
+        <item itemvalue="Python.id_dash_error" />
         <item itemvalue="Python.decred" />
-        <item itemvalue="Python.ticket_block_reward" />
-        <item itemvalue="Python.dash_block_reward" />
-        <item itemvalue="Python.decred_ticket_pool" />
       </list>
     </recent_temporary>
   </component>
@@ -331,12 +312,14 @@
       <workItem from="1561750680086" duration="1438000" />
       <workItem from="1561889862088" duration="2875000" />
       <workItem from="1561914744086" duration="397000" />
-      <workItem from="1561916243093" duration="3024000" />
+      <workItem from="1561916243093" duration="7855000" />
+      <workItem from="1564929309267" duration="72000" />
+      <workItem from="1566491195888" duration="8022000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="316687000" />
+    <option name="totallyTimeSpent" value="329612000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -348,10 +331,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="43" y="23" width="1637" height="1027" extended-state="6" />
-    <editor active="true" />
+    <frame x="45" y="23" width="1875" height="1057" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21191223" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18821605" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -373,7 +355,7 @@
       <window_info anchor="right" id="R Packages" order="4" />
       <window_info anchor="right" id="SciView" order="5" weight="0.32897604" />
       <window_info anchor="right" id="Database" order="6" />
-      <window_info anchor="right" x="201" y="45" width="1016" height="1005" id="Run" order="7" type="WINDOWED" weight="0.71306473" />
+      <window_info anchor="right" x="511" y="45" width="1222" height="1005" id="Run" order="7" type="WINDOWED" weight="0.71306473" />
       <window_info anchor="right" id="Coverage" order="8" side_tool="true" />
     </layout>
   </component>
@@ -385,13 +367,14 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SAADG$python_pdf.coverage" NAME="python_pdf Coverage Results" MODIFIED="1555697766325" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1561916069309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$decred.coverage" NAME="decred Coverage Results" MODIFIED="1558611552882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$mn_stats_error.coverage" NAME="mn_stats_error Coverage Results" MODIFIED="1555757807516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$dash.coverage" NAME="dash Coverage Results" MODIFIED="1566517282146" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$decred.coverage" NAME="decred Coverage Results" MODIFIED="1566492402841" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$mn_stats_error.coverage" NAME="mn_stats_error Coverage Results" MODIFIED="1566493010782" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$decred_real_circulation.coverage" NAME="decred_real_circulation Coverage Results" MODIFIED="1556738639914" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$csv_composition.coverage" NAME="csv_composition Coverage Results" MODIFIED="1555534334563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SAADG$id_dash_error.coverage" NAME="id_dash_error Coverage Results" MODIFIED="1555757878618" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$id_dash_error.coverage" NAME="id_dash_error Coverage Results" MODIFIED="1566492553110" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$decred_real_price.coverage" NAME="decred_real_price Coverage Results" MODIFIED="1556738221930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SAADG$new_rt_mn_num.coverage" NAME="new_rt_mn_num Coverage Results" MODIFIED="1566517261800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$ticket_block_reward.coverage" NAME="ticket_block_reward Coverage Results" MODIFIED="1557153162789" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$budget_inflated.coverage" NAME="budget_inflated Coverage Results" MODIFIED="1555612798244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SAADG$dash_block_reward.coverage" NAME="dash_block_reward Coverage Results" MODIFIED="1557136794397" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -402,7 +385,6 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/.gitignore" />
-    <entry file="file://$PROJECT_DIR$/test.csv" />
     <entry file="file://$PROJECT_DIR$/budget_inflated.py" />
     <entry file="file://$PROJECT_DIR$/ena.csv" />
     <entry file="file://$PROJECT_DIR$/expr_incr.py" />
@@ -449,33 +431,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/decred_ticket_pool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/id_dash_error.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="572">
-          <caret line="28" column="3" selection-start-line="28" selection-start-column="3" selection-end-line="28" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mn_stats_error.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="16" lean-forward="true" selection-end-line="16" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dash_block_reward.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="154">
@@ -505,6 +460,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/logstash_dash.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1166">
+          <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/decred.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19954">
+          <caret line="907" column="50" selection-start-line="907" selection-start-column="50" selection-end-line="907" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dash-default.csv">
       <provider selected="true" editor-type-id="csv-text-editor">
         <state relative-caret-position="44">
@@ -515,27 +493,46 @@
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logstash_dash.config">
+    <entry file="file://$PROJECT_DIR$/id_dash_error.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1166">
-          <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
+        <state relative-caret-position="330">
+          <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/decred_ticket_pool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mn_stats_error.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/new_rt_mn_num.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="698">
+          <caret line="40" column="37" lean-forward="true" selection-start-line="40" selection-start-column="37" selection-end-line="40" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7084">
-          <caret line="322" lean-forward="true" selection-start-line="322" selection-end-line="322" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/decred.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="907" column="50" selection-start-line="907" selection-start-column="50" selection-end-line="907" selection-end-column="50" />
+        <state relative-caret-position="774">
+          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>

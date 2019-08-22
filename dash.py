@@ -35,6 +35,8 @@ SANITISE = 5
 SIXTY_PERCENT = 0.6
 MALICIOUS_NET_MAJORITY = 55
 IS_MASTERNODES_NUMBER_REAL = IS_COIN_PRICE_REAL = IS_CIRCULATION_REAL = IS_MASTERNODES_BLOCK_REWARD_REAL = False
+REAL_TIME_MN_END_INDEX = 45
+REAL_TIME_MN_BLOCK_REWARD_END_INDEX = 18
 ADAPTOR = 2
 C2020 = 9486800
 C2021 = 10160671
@@ -71,13 +73,19 @@ def acquire_real_time_masternodes():
     if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
         ssl._create_default_https_context = ssl._create_unverified_context
 
-    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
+    mn_stats = 'https://masternodes.online/currencies/DASH'
     req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
-    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+    scraped_stats = urlopen(req_stats).read().decode("utf-8")
+
+    start_index = scraped_stats.find('Active masternodes')
+    scraped_end_index = REAL_TIME_MN_END_INDEX
+    mn_string = scraped_stats[start_index:start_index+scraped_end_index]
+    mn_string_begin = mn_string.find('<td>')
+    mn_real_time_total = mn_string[mn_string_begin+OE:INVERSE]
 
     global IS_MASTERNODES_NUMBER_REAL
     IS_MASTERNODES_NUMBER_REAL = True
-    return stats['raw']['mn_count']
+    return int(mn_real_time_total.replace(',', ''))
 
 
 # Acquires real time block reward from Dash open source information.
@@ -86,13 +94,19 @@ def acquire_real_time_mn_block_reward():
     if not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None):
         ssl._create_default_https_context = ssl._create_unverified_context
 
-    mn_stats = 'https://stats.masternode.me/network-report/latest/json'
-    req_stats = Request(mn_stats, headers={'User-Agent': 'Mozilla/5.0'})
-    stats = json.loads(urlopen(req_stats).read().decode("utf-8"))
+    mn_block_rew_stats = 'https://bitinfocharts.com/dash/'
+    req_stats = Request(mn_block_rew_stats, headers={'User-Agent': 'Mozilla/5.0'})
+    scraped_stats = urlopen(req_stats).read().decode("utf-8")
+
+    start_index = scraped_stats.find('block reward')
+    scraped_end_index = REAL_TIME_MN_BLOCK_REWARD_END_INDEX
+    mn_string = scraped_stats[start_index:start_index+scraped_end_index]
+    mn_block_string_begin = mn_string.find('">')
+    mn_block_rew_string = mn_string[mn_block_string_begin+ADAPTOR:]
 
     global IS_MASTERNODES_BLOCK_REWARD_REAL
     IS_MASTERNODES_BLOCK_REWARD_REAL = True
-    return float('{0:.2f}'.format(stats['raw']['mn_miner_reward']))
+    return float(mn_block_rew_string)
 
 
 # Acquires real time Dash price from open source information.
