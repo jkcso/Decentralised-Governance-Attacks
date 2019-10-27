@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76fdda58-7d52-4f8a-b1bb-4aa8e2f0d05b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DASH/id_dash_error.py" beforeDir="false" afterPath="$PROJECT_DIR$/DASH/id_dash_error.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DASH/global_variables.py" beforeDir="false" afterPath="$PROJECT_DIR$/DASH/global_variables.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,14 +12,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/DASH/id_dash_error.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DASH/logstash_dash.config">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+            <state relative-caret-position="410">
+              <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DASH/new_rt_mn_num.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="280">
+              <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
               <folding>
-                <element signature="e#399#427#0" expanded="true" />
+                <element signature="e#0#43#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/DASH/global_variables.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="132">
+              <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -93,6 +110,8 @@
         <option value="$PROJECT_DIR$/new_rt_mn_num.py" />
         <option value="$PROJECT_DIR$/dash.py" />
         <option value="$PROJECT_DIR$/DASH/id_dash_error.py" />
+        <option value="$PROJECT_DIR$/DASH/new_rt_mn_num.py" />
+        <option value="$PROJECT_DIR$/DASH/global_variables.py" />
       </list>
     </option>
   </component>
@@ -332,12 +351,12 @@
       <workItem from="1566491195888" duration="8195000" />
       <workItem from="1566999616113" duration="536000" />
       <workItem from="1567162771254" duration="498000" />
-      <workItem from="1572192930550" duration="34000" />
+      <workItem from="1572192930550" duration="363000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="330853000" />
+    <option name="totallyTimeSpent" value="331182000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -364,7 +383,7 @@
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32953367" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.29326424" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.50362694" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.3284974" />
       <window_info anchor="bottom" id="Python Console" order="11" weight="0.32834226" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -423,13 +442,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/default.html" />
-    <entry file="file://$PROJECT_DIR$/DASH/global_variables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/default.csv" />
     <entry file="file://$PROJECT_DIR$/DECRED/decred_real_circulation.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -479,13 +491,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DASH/logstash_dash.config">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1166">
-          <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test.csv" />
     <entry file="file://$PROJECT_DIR$/decred.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -517,16 +522,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DASH/new_rt_mn_num.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="698">
-          <caret line="40" column="37" lean-forward="true" selection-start-line="40" selection-start-column="37" selection-end-line="40" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dash.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="774">
@@ -539,11 +534,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DASH/id_dash_error.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
+        <state relative-caret-position="-5">
           <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
           <folding>
             <element signature="e#399#427#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DASH/logstash_dash.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="53" column="1" selection-start-line="53" selection-start-column="1" selection-end-line="53" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DASH/new_rt_mn_num.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DASH/global_variables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
