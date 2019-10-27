@@ -21,7 +21,7 @@ def new_mn_rt():
 
     return int(mn_real_time_total.replace(',', ''))
 
-
+# x
 def reward():
 
     if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
