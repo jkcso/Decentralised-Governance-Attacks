@@ -4,7 +4,7 @@ x = 10
 def x_globally_change():
       global x
       x = "x didn't work"
-
+# abcd
 
 x_globally_change()
 print(x)
